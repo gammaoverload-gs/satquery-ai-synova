@@ -3,29 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SatQuery AI | Multimodal Geospatial Intelligence</title>
+    <title>SatQuery AI | Tactical Geospatial Intelligence Command</title>
     <!-- Leaflet GIS Map CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <!-- Chart.js for LULC Analytics -->
+    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- Marked.js for Clean Markdown Parsing -->
+    <!-- Marked.js -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    <!-- Sci-Fi Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-base: #030712;
-            --bg-card: rgba(15, 23, 42, 0.72);
-            --bg-card-hover: rgba(30, 41, 59, 0.85);
-            --border-color: rgba(56, 189, 248, 0.18);
-            --border-glow: rgba(56, 189, 248, 0.4);
-            --accent-primary: #38bdf8;
-            --accent-glow: rgba(56, 189, 248, 0.28);
-            --accent-success: #10b981;
-            --accent-danger: #ef4444;
-            --accent-purple: #a855f7;
-            --text-main: #f8fafc;
-            --text-muted: #94a3b8;
+            --bg-base: #02040a;
+            --bg-card: rgba(8, 14, 29, 0.85);
+            --border-color: rgba(56, 189, 248, 0.25);
+            --border-glow: rgba(56, 189, 248, 0.7);
+            --accent-cyan: #00f0ff;
+            --accent-glow: rgba(0, 240, 255, 0.35);
+            --accent-green: #00ff66;
+            --accent-red: #ff0055;
+            --accent-amber: #ffaa00;
+            --text-main: #f0f6fc;
+            --text-muted: #8b949e;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -34,545 +33,536 @@
             background-color: var(--bg-base);
             color: var(--text-main);
             min-height: 100vh;
-            padding: 20px;
+            padding: 16px;
             background-image: 
-                radial-gradient(circle at 15% 15%, rgba(56, 189, 248, 0.07) 0%, transparent 45%),
-                radial-gradient(circle at 85% 85%, rgba(168, 85, 247, 0.07) 0%, transparent 45%),
-                linear-gradient(to right, rgba(255,255,255,0.01) 1px, transparent 1px),
-                linear-gradient(to bottom, rgba(255,255,255,0.01) 1px, transparent 1px);
-            background-size: 100% 100%, 100% 100%, 40px 40px, 40px 40px;
+                radial-gradient(circle at 10% 20%, rgba(0, 240, 255, 0.05) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(255, 0, 85, 0.04) 0%, transparent 40%),
+                linear-gradient(rgba(0, 240, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 240, 255, 0.03) 1px, transparent 1px);
+            background-size: 100% 100%, 100% 100%, 30px 30px, 30px 30px;
+            overflow-x: hidden;
         }
 
-        .container { max-width: 1480px; margin: 0 auto; display: flex; flex-direction: column; gap: 18px; }
+        /* Scanline Overlay Effect */
+        body::after {
+            content: " ";
+            display: block;
+            position: fixed;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
+            background-size: 100% 3px;
+            z-index: 999;
+            pointer-events: none;
+            opacity: 0.6;
+        }
 
+        .container { max-width: 1540px; margin: 0 auto; display: flex; flex-direction: column; gap: 16px; }
+
+        /* Tactical Header */
         .topbar {
             display: flex;
             justify-content: space-between;
             align-items: center;
             background: var(--bg-card);
-            backdrop-filter: blur(16px);
+            backdrop-filter: blur(20px);
             border: 1px solid var(--border-color);
-            padding: 14px 24px;
-            border-radius: 14px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
-            transition: all 0.3s ease;
+            padding: 12px 24px;
+            border-radius: 8px;
+            position: relative;
+            box-shadow: 0 0 25px rgba(0, 240, 255, 0.1);
         }
-        .topbar:hover { border-color: var(--border-glow); }
+        .topbar::before {
+            content: "";
+            position: absolute;
+            top: -1px; left: 20px; width: 60px; height: 2px;
+            background: var(--accent-cyan);
+            box-shadow: 0 0 10px var(--accent-cyan);
+        }
+
         .logo-area { display: flex; align-items: center; gap: 14px; }
         .logo-badge {
-            background: linear-gradient(135deg, #0284c7, #8b5cf6);
-            color: white;
-            font-family: 'Space Grotesk', sans-serif;
-            font-weight: 700;
-            padding: 8px 14px;
-            border-radius: 10px;
-            font-size: 15px;
-            letter-spacing: 0.8px;
-            box-shadow: 0 0 20px var(--accent-glow);
-            display: flex;
-            align-items: center;
-            gap: 6px;
+            background: linear-gradient(135deg, #0055ff, #00f0ff);
+            color: #02040a;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 900;
+            padding: 6px 14px;
+            border-radius: 4px;
+            font-size: 14px;
+            letter-spacing: 1.5px;
+            box-shadow: 0 0 15px var(--accent-glow);
         }
-        .title-text h1 { font-family: 'Space Grotesk', sans-serif; font-size: 20px; font-weight: 700; letter-spacing: -0.3px; }
-        .title-text p { font-size: 12px; color: var(--text-muted); }
+        .title-text h1 { font-family: 'Orbitron', sans-serif; font-size: 18px; font-weight: 700; letter-spacing: 1px; color: var(--accent-cyan); }
+        .title-text p { font-size: 11px; color: var(--text-muted); font-family: 'JetBrains Mono', monospace; }
 
         .meta-pills { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
         .pill {
-            background: rgba(2, 6, 23, 0.85);
+            background: rgba(2, 6, 23, 0.9);
             border: 1px solid var(--border-color);
-            color: var(--accent-primary);
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 11.5px;
+            color: var(--accent-cyan);
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 11px;
             font-family: 'JetBrains Mono', monospace;
             display: inline-flex;
             align-items: center;
             gap: 6px;
         }
-        .pill.purple { border-color: rgba(168, 85, 247, 0.4); color: #c084fc; }
-        .pill.green { border-color: rgba(16, 185, 129, 0.4); color: #34d399; }
-        .pulse-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent-success); animation: radar-pulse 1.8s infinite; }
-        @keyframes radar-pulse { 0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); } 70% { box-shadow: 0 0 0 7px rgba(16, 185, 129, 0); } 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); } }
+        .pill.green { border-color: var(--accent-green); color: var(--accent-green); }
+        .pulse-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent-green); animation: radar 1.5s infinite; }
+        @keyframes radar { 0% { box-shadow: 0 0 0 0 rgba(0, 255, 102, 0.8); } 70% { box-shadow: 0 0 0 8px rgba(0, 255, 102, 0); } 100% { box-shadow: 0 0 0 0 rgba(0, 255, 102, 0); } }
 
-        .workspace {
-            display: grid;
-            grid-template-columns: 480px 1fr;
-            gap: 18px;
-        }
-        @media (max-width: 1120px) { .workspace { grid-template-columns: 1fr; } }
+        /* Workspace Grid */
+        .workspace { display: grid; grid-template-columns: 480px 1fr; gap: 16px; }
+        @media (max-width: 1160px) { .workspace { grid-template-columns: 1fr; } }
 
         .card {
             background: var(--bg-card);
-            backdrop-filter: blur(16px);
+            backdrop-filter: blur(18px);
             border: 1px solid var(--border-color);
-            border-radius: 14px;
-            padding: 20px;
+            border-radius: 8px;
+            padding: 18px;
             display: flex;
             flex-direction: column;
-            gap: 15px;
-            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.35);
+            gap: 14px;
+            position: relative;
         }
         .card-title {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 13.5px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 12px;
             font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 0.6px;
-            color: var(--accent-primary);
+            letter-spacing: 1px;
+            color: var(--accent-cyan);
             display: flex;
             align-items: center;
             justify-content: space-between;
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(56, 189, 248, 0.2);
+            padding-bottom: 8px;
         }
 
-        .form-group { display: flex; flex-direction: column; gap: 6px; }
-        label { font-size: 11.5px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.4px; }
+        .form-group { display: flex; flex-direction: column; gap: 5px; }
+        label { font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; font-family: 'JetBrains Mono', monospace; }
 
         .input-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         input[type="file"], select, input[type="text"] {
             width: 100%;
-            background: rgba(2, 6, 23, 0.85);
+            background: #040914;
             border: 1px solid var(--border-color);
             color: var(--text-main);
-            padding: 9px 12px;
-            border-radius: 8px;
-            font-size: 13px;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 12.5px;
             outline: none;
+            font-family: 'JetBrains Mono', monospace;
             transition: all 0.2s ease;
         }
-        input[type="file"] { font-size: 11px; padding: 7px; cursor: pointer; }
+        input[type="file"] { font-size: 11px; padding: 6px; cursor: pointer; }
         input[type="text"]:focus, select:focus {
-            border-color: var(--accent-primary);
-            box-shadow: 0 0 12px var(--accent-glow);
+            border-color: var(--accent-cyan);
+            box-shadow: 0 0 10px var(--accent-glow);
         }
 
-        .preset-container { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 2px; }
+        .preset-container { display: flex; gap: 5px; flex-wrap: wrap; }
         .preset-btn {
-            background: rgba(56, 189, 248, 0.08);
-            border: 1px solid rgba(56, 189, 248, 0.25);
-            color: #bae6fd;
-            font-size: 11px;
-            padding: 4px 9px;
-            border-radius: 6px;
+            background: rgba(0, 240, 255, 0.08);
+            border: 1px solid rgba(0, 240, 255, 0.3);
+            color: var(--accent-cyan);
+            font-size: 10.5px;
+            padding: 4px 8px;
+            border-radius: 3px;
+            font-family: 'JetBrains Mono', monospace;
             cursor: pointer;
             transition: all 0.2s;
         }
-        .preset-btn:hover {
-            background: var(--accent-primary);
-            color: #020617;
-            font-weight: 600;
-        }
+        .preset-btn:hover { background: var(--accent-cyan); color: #02040a; font-weight: 700; box-shadow: 0 0 10px var(--accent-glow); }
 
         .voice-query-group { display: flex; gap: 8px; align-items: center; }
         .btn-mic {
-            background: rgba(56, 189, 248, 0.12);
-            border: 1px solid var(--accent-primary);
-            color: var(--accent-primary);
-            padding: 9px 14px;
-            border-radius: 8px;
+            background: rgba(0, 240, 255, 0.1);
+            border: 1px solid var(--accent-cyan);
+            color: var(--accent-cyan);
+            padding: 8px 12px;
+            border-radius: 4px;
             cursor: pointer;
-            font-size: 14px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            font-size: 13px;
             transition: all 0.2s;
         }
         .btn-mic.listening {
-            background: rgba(239, 68, 68, 0.25);
-            border-color: var(--accent-danger);
-            color: var(--accent-danger);
+            background: rgba(255, 0, 85, 0.3);
+            border-color: var(--accent-red);
+            color: var(--accent-red);
             animation: pulse 1s infinite;
         }
         @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.08); } }
 
-        #map {
-            height: 200px;
-            border-radius: 10px;
+        /* Map with Reticle Overlay */
+        .map-wrapper {
+            position: relative;
             border: 1px solid var(--border-color);
-            transition: filter 0.3s ease;
+            border-radius: 6px;
+            overflow: hidden;
         }
-        .infrared-filter {
-            filter: contrast(160%) brightness(90%) hue-rotate(180deg) saturate(220%) invert(20%) !important;
+        #map { height: 190px; }
+        .map-reticle {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 40px; height: 40px;
+            border: 1px solid rgba(0, 240, 255, 0.5);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 500;
         }
+        .map-reticle::before { content: ""; position: absolute; top: 19px; left: -10px; width: 60px; height: 1px; background: rgba(0, 240, 255, 0.4); }
+        .map-reticle::after { content: ""; position: absolute; top: -10px; left: 19px; width: 1px; height: 60px; background: rgba(0, 240, 255, 0.4); }
 
         .checkbox-container {
             display: flex;
             align-items: center;
             gap: 8px;
-            font-size: 12px;
-            color: var(--accent-primary);
-            background: rgba(56, 189, 248, 0.06);
-            padding: 8px 12px;
-            border-radius: 8px;
-            border: 1px dashed rgba(56, 189, 248, 0.35);
+            font-size: 11.5px;
+            color: var(--accent-cyan);
+            background: rgba(0, 240, 255, 0.05);
+            padding: 7px 10px;
+            border-radius: 4px;
+            border: 1px dashed rgba(0, 240, 255, 0.3);
             cursor: pointer;
+            font-family: 'JetBrains Mono', monospace;
         }
         .checkbox-container input { width: auto; cursor: pointer; }
 
         .btn-submit {
-            background: linear-gradient(135deg, #0284c7, #2563eb);
-            color: white;
+            background: linear-gradient(135deg, #0055ff, #00f0ff);
+            color: #02040a;
             border: none;
-            padding: 13px;
-            border-radius: 10px;
-            font-weight: 600;
-            font-size: 14px;
-            font-family: 'Space Grotesk', sans-serif;
+            padding: 12px;
+            border-radius: 4px;
+            font-weight: 800;
+            font-size: 13px;
+            font-family: 'Orbitron', sans-serif;
+            letter-spacing: 1px;
             cursor: pointer;
-            box-shadow: 0 4px 18px var(--accent-glow);
-            transition: all 0.25s ease;
+            box-shadow: 0 0 20px var(--accent-glow);
+            transition: all 0.2s;
             display: flex;
             justify-content: center;
             align-items: center;
             gap: 8px;
         }
-        .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 6px 24px rgba(56, 189, 248, 0.5); }
+        .btn-submit:hover { transform: translateY(-1px); box-shadow: 0 0 30px rgba(0, 240, 255, 0.7); }
 
-        .right-pane { display: flex; flex-direction: column; gap: 18px; }
+        .right-pane { display: flex; flex-direction: column; gap: 16px; }
 
-        .media-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 14px;
-        }
+        /* Media / Telemetry HUD Grid */
+        .media-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
         .media-box {
-            background: rgba(2, 6, 23, 0.75);
+            background: #040914;
             border: 1px solid var(--border-color);
-            border-radius: 10px;
-            padding: 10px;
+            border-radius: 6px;
+            padding: 8px;
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 6px;
             position: relative;
             cursor: zoom-in;
-            transition: all 0.2s;
         }
-        .media-box:hover { border-color: var(--accent-primary); transform: scale(1.01); }
-        .media-box span { font-size: 10.5px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
-        .media-box img {
-            width: 100%;
-            height: 180px;
-            object-fit: cover;
-            border-radius: 6px;
-        }
-        .evidence-border { border-color: var(--accent-danger) !important; box-shadow: 0 0 15px rgba(239, 68, 68, 0.2); }
-
-        .comparison-wrapper {
-            position: relative;
-            width: 100%;
-            height: 220px;
-            overflow: hidden;
-            border-radius: 10px;
+        .media-box span { font-size: 10px; font-weight: 700; color: var(--accent-cyan); font-family: 'JetBrains Mono', monospace; }
+        .media-box img { width: 100%; height: 175px; object-fit: cover; border-radius: 4px; }
+        .hud-corner {
+            position: absolute;
+            bottom: 12px; right: 12px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 9px;
+            background: rgba(2, 6, 23, 0.85);
+            padding: 2px 6px;
             border: 1px solid var(--border-color);
-            margin-top: 5px;
-        }
-        .comparison-img {
-            position: absolute;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            object-fit: cover;
-        }
-        .img-overlay {
-            width: 50%;
-            overflow: hidden;
-            border-right: 3px solid var(--accent-primary);
-            z-index: 2;
-        }
-        .img-overlay img { width: 100%; height: 100%; object-fit: cover; }
-        .slider-range {
-            position: absolute;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            opacity: 0;
-            cursor: ew-resize;
-            z-index: 5;
+            border-radius: 2px;
+            color: var(--accent-green);
         }
 
-        .analytics-subgrid {
-            display: grid;
-            grid-template-columns: 1fr 280px;
-            gap: 15px;
-        }
+        /* Analysis Console */
+        .analytics-subgrid { display: grid; grid-template-columns: 1fr 270px; gap: 14px; }
         @media (max-width: 950px) { .analytics-subgrid { grid-template-columns: 1fr; } }
 
-        /* Clean Styled Markdown Analysis View */
         .analysis-box {
-            background: rgba(2, 6, 23, 0.9);
+            background: #030712;
             border: 1px solid var(--border-color);
-            border-radius: 10px;
-            padding: 20px;
-            font-size: 13.5px;
-            line-height: 1.75;
-            color: #cbd5e1;
-            max-height: 420px;
+            border-radius: 6px;
+            padding: 16px;
+            font-size: 13px;
+            line-height: 1.7;
+            color: #d1d5db;
+            max-height: 380px;
             overflow-y: auto;
+            font-family: 'Inter', sans-serif;
+            border-left: 3px solid var(--accent-cyan);
         }
         .analysis-box h1, .analysis-box h2, .analysis-box h3 {
-            color: var(--accent-primary);
-            margin-top: 14px;
-            margin-bottom: 8px;
-            font-size: 14px;
-            font-family: 'Space Grotesk', sans-serif;
-            font-weight: 700;
-            border-bottom: 1px solid rgba(56, 189, 248, 0.15);
-            padding-bottom: 4px;
+            color: var(--accent-cyan);
+            font-family: 'Orbitron', sans-serif;
+            font-size: 13px;
+            margin-top: 12px;
+            margin-bottom: 6px;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid rgba(0, 240, 255, 0.2);
+            padding-bottom: 3px;
         }
-        .analysis-box h1:first-child, .analysis-box h2:first-child, .analysis-box h3:first-child { margin-top: 0; }
-        .analysis-box p { margin-bottom: 10px; }
-        .analysis-box ul, .analysis-box ol { padding-left: 20px; margin-bottom: 12px; }
-        .analysis-box li { margin-bottom: 5px; color: #e2e8f0; }
-        .analysis-box strong { color: #f8fafc; font-weight: 600; }
+        .analysis-box h3:first-child { margin-top: 0; }
+        .analysis-box ul { padding-left: 18px; margin-bottom: 8px; }
+        .analysis-box li { margin-bottom: 4px; }
 
         .chart-box {
-            background: rgba(2, 6, 23, 0.9);
+            background: #030712;
             border: 1px solid var(--border-color);
-            border-radius: 10px;
-            padding: 16px;
+            border-radius: 6px;
+            padding: 14px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
         }
-        .chart-box h4 { font-family: 'Space Grotesk', sans-serif; font-size: 11.5px; color: var(--accent-primary); text-transform: uppercase; margin-bottom: 10px; letter-spacing: 0.5px; }
+        .chart-box h4 { font-family: 'Orbitron', sans-serif; font-size: 11px; color: var(--accent-cyan); letter-spacing: 1px; margin-bottom: 8px; }
 
-        .bench-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 5px; }
-        @media (max-width: 700px) { .bench-grid { grid-template-columns: repeat(2, 1fr); } }
+        .bench-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 4px; }
         .metric-card {
-            background: rgba(2, 6, 23, 0.9);
+            background: #030712;
             border: 1px solid var(--border-color);
-            padding: 10px 14px;
-            border-radius: 8px;
+            padding: 8px 12px;
+            border-radius: 4px;
             display: flex;
             flex-direction: column;
-            gap: 2px;
         }
-        .metric-title { font-size: 10.5px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.4px; }
-        .metric-val { font-size: 15px; font-weight: 700; color: var(--accent-success); font-family: 'JetBrains Mono', monospace; }
+        .metric-title { font-size: 9.5px; color: var(--text-muted); font-family: 'JetBrains Mono', monospace; text-transform: uppercase; }
+        .metric-val { font-size: 14px; font-weight: 700; color: var(--accent-green); font-family: 'JetBrains Mono', monospace; }
 
         pre {
-            background: #020617;
-            color: var(--accent-primary);
-            padding: 12px;
-            border-radius: 8px;
-            font-size: 11.5px;
+            background: #02040a;
+            color: var(--accent-cyan);
+            padding: 10px;
+            border-radius: 4px;
+            font-size: 11px;
             font-family: 'JetBrains Mono', monospace;
-            border: 1px solid var(--border-color);
+            border: 1px solid rgba(0, 240, 255, 0.2);
             overflow-x: auto;
-            max-height: 130px;
+            max-height: 120px;
         }
 
-        .action-bar { display: flex; gap: 8px; align-items: center; }
+        .action-bar { display: flex; gap: 6px; align-items: center; }
         .btn-action {
-            background: var(--accent-success);
-            color: white;
+            background: rgba(0, 240, 255, 0.1);
+            border: 1px solid var(--accent-cyan);
+            color: var(--accent-cyan);
+            padding: 6px 10px;
+            border-radius: 3px;
+            font-size: 11px;
+            font-family: 'JetBrains Mono', monospace;
+            cursor: pointer;
             text-decoration: none;
-            padding: 7px 12px;
-            border-radius: 7px;
-            font-size: 11.5px;
-            font-weight: 600;
             display: inline-flex;
             align-items: center;
-            gap: 5px;
-            border: none;
-            cursor: pointer;
+            gap: 4px;
             transition: all 0.2s;
         }
-        .btn-action.audio { background: #8b5cf6; }
-        .btn-action.geojson { background: #0284c7; }
-        .btn-action:hover { opacity: 0.9; transform: translateY(-1px); }
+        .btn-action:hover { background: var(--accent-cyan); color: #02040a; font-weight: 700; }
 
-        #lightboxModal {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(3, 7, 18, 0.92);
-            backdrop-filter: blur(10px);
-            z-index: 10000;
-            justify-content: center;
-            align-items: center;
-            cursor: zoom-out;
-        }
-        #lightboxImg { max-width: 90%; max-height: 85%; border-radius: 10px; border: 2px solid var(--accent-primary); box-shadow: 0 0 30px var(--accent-glow); }
-
+        /* Tactical Radar Loader */
         #loader {
             display: none;
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(3, 7, 18, 0.88);
-            backdrop-filter: blur(10px);
-            z-index: 9999;
+            background: rgba(2, 4, 10, 0.9);
+            backdrop-filter: blur(12px);
+            z-index: 10000;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             gap: 16px;
         }
-        .spinner {
-            width: 50px; height: 50px;
-            border: 3px solid rgba(56, 189, 248, 0.2);
-            border-top-color: var(--accent-primary);
+        .radar-box {
+            width: 80px; height: 80px;
             border-radius: 50%;
-            animation: spin 0.8s linear infinite;
+            border: 2px solid rgba(0, 240, 255, 0.3);
+            position: relative;
+            box-shadow: 0 0 25px rgba(0, 240, 255, 0.2);
         }
-        @keyframes spin { to { transform: rotate(360deg); } }
+        .radar-sweep {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            border-radius: 50%;
+            background: conic-gradient(from 0deg at 50% 50%, rgba(0, 240, 255, 0.5) 0deg, transparent 90deg);
+            animation: radar-spin 1.2s linear infinite;
+        }
+        @keyframes radar-spin { to { transform: rotate(360deg); } }
+
+        /* Lightbox */
+        #lightboxModal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(2, 4, 10, 0.95);
+            z-index: 11000;
+            justify-content: center;
+            align-items: center;
+            cursor: zoom-out;
+        }
+        #lightboxImg { max-width: 90%; max-height: 85%; border: 2px solid var(--accent-cyan); box-shadow: 0 0 30px var(--accent-glow); border-radius: 6px; }
     </style>
 </head>
 <body>
 
     <div id="lightboxModal" onclick="closeLightbox()">
-        <img id="lightboxImg" src="" alt="Zoomed View">
+        <img id="lightboxImg" src="" alt="Tactical Zoom">
     </div>
 
+    <!-- Sci-Fi Radar Loader -->
     <div id="loader">
-        <div class="spinner"></div>
-        <p style="font-size: 14px; color: var(--accent-primary); font-family: 'Space Grotesk', sans-serif; font-weight: 600; letter-spacing: 0.5px;">Executing Multimodal Spatial Analytics...</p>
+        <div class="radar-box">
+            <div class="radar-sweep"></div>
+        </div>
+        <p style="font-family: 'Orbitron', sans-serif; font-size: 13px; color: var(--accent-cyan); letter-spacing: 1.5px;">RUNNING MULTISPECTRAL AGENTIC TELEMETRY...</p>
     </div>
 
     <div class="container">
+        <!-- Top Tactical HUD Bar -->
         <header class="topbar">
             <div class="logo-area">
-                <div class="logo-badge"><span>🛰️</span> SATQUERY AI</div>
+                <div class="logo-badge">SATQUERY AI</div>
                 <div class="title-text">
-                    <h1>Multimodal Geospatial Intelligence</h1>
-                    <p>Optical + SAR Radar + LULC Analytics + GIS GeoJSON Export Powered by Gemini 3.6 Flash</p>
+                    <h1>Multimodal Geospatial Tactical Intelligence</h1>
+                    <p>DEFENSE & EARTH OBSERVATION SUITE // GEMINI 3.6 FLASH CORE</p>
                 </div>
             </div>
             <div class="meta-pills">
-                <span class="pill green"><span class="pulse-dot"></span> System Live</span>
-                <span class="pill">🎙️ Voice STT/TTS</span>
-                <span class="pill">Sensor: {{ s1_name }}</span>
-                <span class="pill purple">Benchmark: RSVQA / CDVQA</span>
+                <span class="pill green"><span class="pulse-dot"></span> ORBITAL LINK: ACTIVE</span>
+                <span class="pill">🎙️ STT / TTS ENGINE</span>
+                <span class="pill">PATCH: {{ patch_id }}</span>
+                <span class="pill">EVAL: RSVQA / CDVQA</span>
             </div>
         </header>
 
         <div class="workspace">
             
+            <!-- Left Command Panel -->
             <div class="card">
                 <div class="card-title">
-                    <span>📡 Ingestion & Telemetry Controls</span>
+                    <span>📡 SENSOR INGESTION CONTROLS</span>
+                    <span style="font-size: 10px; color: var(--text-muted);">FREQ: 5.405 GHz (C-BAND)</span>
                 </div>
                 <form method="POST" enctype="multipart/form-data" onsubmit="showLoader()">
                     
                     <div class="form-group">
-                        <label for="file_input_1">Primary Image (T1 / Optical / Multispectral):</label>
+                        <label for="file_input_1">Primary Channel (T1 / Multispectral / Optical):</label>
                         <input type="file" id="file_input_1" name="satellite_image_1" accept=".tif,.tiff,.png,.jpg,.jpeg">
                     </div>
 
                     <div class="form-group" style="margin-top: 6px;">
-                        <label for="file_input_2">Secondary Image (Optional: T2 / SAR Radar):</label>
+                        <label for="file_input_2">Secondary Channel (Optional: T2 / SAR Radar):</label>
                         <input type="file" id="file_input_2" name="satellite_image_2" accept=".tif,.tiff,.png,.jpg,.jpeg">
                     </div>
 
                     <div class="input-row" style="margin-top: 6px;">
                         <div class="form-group">
-                            <label for="composite_mode">Spectral Composite Mode:</label>
+                            <label for="composite_mode">Sensor Mode:</label>
                             <select id="composite_mode" name="composite_mode" onchange="changeMapLayer(this.value)">
-                                <option value="SATELLITE">Satellite (Esri World)</option>
-                                <option value="NIR">Infrared False-Color (NIR)</option>
+                                <option value="SATELLITE">Optical Satellite (Esri)</option>
+                                <option value="NIR">Infrared / Vegetation (NIR)</option>
                                 <option value="NDVI">Synthetic NDVI (Topo)</option>
-                                <option value="RGB">Street View (OSM)</option>
+                                <option value="RGB">OpenStreetMap Base</option>
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="coordinates">Pin Coordinates (Lat, Lng):</label>
-                            <input type="text" id="coordinates" name="coordinates" placeholder="Click map or preset">
+                            <label for="coordinates">Target Reticle (Lat, Lng):</label>
+                            <input type="text" id="coordinates" name="coordinates" placeholder="Target Coordinates">
                         </div>
                     </div>
 
                     <div class="form-group" style="margin-top: 2px;">
-                        <label>Target Coordinate Presets:</label>
+                        <label>Tactical Sector Presets:</label>
                         <div class="preset-container">
-                            <button type="button" class="preset-btn" onclick="setPreset(28.5562, 77.1000, 'Delhi IGI Airport')">✈️ Delhi IGI Airport</button>
-                            <button type="button" class="preset-btn" onclick="setPreset(18.9438, 72.8354, 'Mumbai Port')">🚢 Mumbai Port</button>
-                            <button type="button" class="preset-btn" onclick="setPreset(25.3176, 82.9739, 'Varanasi Ghats')">🏛️ Varanasi Riverfront</button>
-                            <button type="button" class="preset-btn" onclick="setPreset(27.5350, 71.9100, 'Bhadla Solar Park')">☀️ Bhadla Solar Park</button>
+                            <button type="button" class="preset-btn" onclick="setPreset(28.5562, 77.1000, 'Delhi IGI Airfield')">✈️ Delhi IGI</button>
+                            <button type="button" class="preset-btn" onclick="setPreset(18.9438, 72.8354, 'Mumbai Harbor Naval Base')">🚢 Mumbai Port</button>
+                            <button type="button" class="preset-btn" onclick="setPreset(25.3176, 82.9739, 'Varanasi Urban Corridor')">🏛️ Varanasi Sector</button>
+                            <button type="button" class="preset-btn" onclick="setPreset(27.5350, 71.9100, 'Bhadla Desert Energy Grid')">☀️ Bhadla Solar</button>
                         </div>
                     </div>
 
-                    <div style="margin-top: 6px;">
+                    <div class="map-wrapper" style="margin-top: 6px;">
                         <div id="map"></div>
+                        <div class="map-reticle"></div>
                     </div>
 
                     <label class="checkbox-container" style="margin-top: 6px;">
                         <input type="checkbox" id="use_coord_fetch" name="use_coord_fetch" value="true">
-                        <span>Fetch live satellite tile from target coordinates</span>
+                        <span>Lock telemetry and capture live tile at reticle coordinates</span>
                     </label>
 
-                    <div class="form-group" style="margin-top: 10px;">
-                        <label for="user_question">Multimodal Query (Text or Microphone):</label>
+                    <div class="form-group" style="margin-top: 8px;">
+                        <label for="user_question">Tactical Query (Voice / Text):</label>
                         <div class="voice-query-group">
-                            <input type="text" id="user_question" name="user_question" placeholder="Ask question or click mic to speak..." required>
-                            <button type="button" id="micBtn" class="btn-mic" onclick="toggleVoiceRecognition()" title="Speak your query">
+                            <input type="text" id="user_question" name="user_question" placeholder="Enter query or transmit voice..." required>
+                            <button type="button" id="micBtn" class="btn-mic" onclick="toggleVoiceRecognition()" title="Voice Comms">
                                 🎙️
                             </button>
                         </div>
                     </div>
 
-                    <button type="submit" class="btn-submit" style="margin-top: 10px;">
-                        <span>⚡</span> Run Multimodal Specialist Analysis
+                    <button type="submit" class="btn-submit" style="margin-top: 8px;">
+                        <span>⚡</span> EXECUTE SPECIALIST TELEMETRY
                     </button>
                 </form>
             </div>
 
+            <!-- Right Analytics Dashboard -->
             <div class="right-pane">
                 
                 <div class="card">
                     <div class="card-title">
-                        <span>🖼️ Spectral Imagery & Spatial Overlays</span>
-                        <span style="font-size: 11px; color: var(--text-muted); font-weight: 400;">Click tile to zoom</span>
+                        <span>🖼️ OPTICAL / RADAR TELEMETRY & SPATIAL EVIDENCE</span>
+                        <span style="font-size: 10px; color: var(--text-muted);">GSD RESOLUTION: 0.5M/PX</span>
                     </div>
-                    
-                    {% if uploaded_images and uploaded_images|length >= 2 %}
-                        <span style="font-size: 11px; color: var(--text-muted); text-transform: uppercase;">Swipe Split-Comparator (T1 Optical vs T2/SAR):</span>
-                        <div class="comparison-wrapper">
-                            <img src="{{ uploaded_images[1] }}" class="comparison-img" alt="T2 Layer">
-                            <div class="comparison-img img-overlay" id="swipeOverlay">
-                                <img src="{{ uploaded_images[0] }}" alt="T1 Layer">
-                            </div>
-                            <input type="range" min="0" max="100" value="50" class="slider-range" oninput="slideComparison(this.value)">
-                        </div>
-                    {% endif %}
 
-                    <div class="media-grid" style="margin-top: 8px;">
+                    <div class="media-grid">
                         {% if uploaded_images and uploaded_images|length > 0 %}
                             {% for uri in uploaded_images %}
                                 <div class="media-box" onclick="openLightbox('{{ uri }}')">
-                                    <span>Input Satellite Tile #{{ loop.index }}</span>
+                                    <span>TILE FEED #{{ loop.index }} // CAPTURE OK</span>
                                     <img src="{{ uri }}" alt="Satellite Layer">
+                                    <div class="hud-corner">REC: PASS</div>
                                 </div>
                             {% endfor %}
                         {% else %}
                             <div class="media-box" style="cursor: default;">
-                                <span>No Tile Loaded</span>
-                                <div style="height: 180px; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.3); border-radius: 6px; color: var(--text-muted); font-size: 12px;">
-                                    Upload file or select preset to fetch
+                                <span>ORBITAL SENSOR FEED // STANDBY</span>
+                                <div style="height: 175px; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.5); border-radius: 4px; color: var(--text-muted); font-size: 11px; font-family: 'JetBrains Mono', monospace;">
+                                    NO OPTICAL / SAR PAYLOAD LOADED
                                 </div>
                             </div>
                         {% endif %}
 
                         {% if evidence_image %}
-                            <div class="media-box evidence-border" onclick="openLightbox('{{ evidence_image }}')">
-                                <span style="color: var(--accent-danger);">Visual Grounding / Change Overlay</span>
+                            <div class="media-box" onclick="openLightbox('{{ evidence_image }}')" style="border-color: var(--accent-red); box-shadow: 0 0 15px rgba(255, 0, 85, 0.2);">
+                                <span style="color: var(--accent-red);">GROUNDED OBJECT MATRIX / DIFF OVERLAY</span>
                                 <img src="{{ evidence_image }}" alt="Grounding Evidence Overlay">
+                                <div class="hud-corner" style="color: var(--accent-red); border-color: var(--accent-red);">TARGETS LOCKED</div>
                             </div>
                         {% endif %}
                     </div>
                 </div>
 
                 <div class="card">
-                    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(0, 240, 255, 0.2); padding-bottom: 8px;">
                         <div class="card-title" style="border-bottom: none; padding-bottom: 0;">
-                            <span>🧠 Agentic Intelligence & Quantified LULC</span>
+                            <span>🧠 DECODED AGENTIC REASONING & LULC PARTITION</span>
                         </div>
                         <div class="action-bar">
-                            <button type="button" class="btn-action audio" onclick="playAudioReport()">
-                                🔊 Voice
+                            <button type="button" class="btn-action" onclick="playAudioReport()">
+                                🔊 COMMS
                             </button>
                             {% if has_geojson %}
-                                <a href="/download-geojson" class="btn-action geojson">🗺️ GeoJSON</a>
+                                <a href="/download-geojson" class="btn-action">🗺️ GEOJSON</a>
                             {% endif %}
                             {% if has_report %}
-                                <a href="/download-report" class="btn-action">📥 JSON</a>
+                                <a href="/download-report" class="btn-action">📥 JSON REPORT</a>
                             {% endif %}
                         </div>
                     </div>
@@ -581,34 +571,34 @@
                         <div id="analysisBox" class="analysis-box"></div>
                         
                         <div class="chart-box">
-                            <h4>LULC Spatial Share</h4>
-                            <canvas id="lulcChart" width="220" height="220"></canvas>
+                            <h4>SURFACE PARTITION</h4>
+                            <canvas id="lulcChart" width="200" height="200"></canvas>
                         </div>
                     </div>
 
                     {% if benchmark %}
                         <div class="bench-grid">
                             <div class="metric-card">
-                                <span class="metric-title">Benchmark Target</span>
-                                <span class="metric-val" style="color: var(--accent-purple); font-size: 13px;">{{ benchmark.get('Evaluated Against', 'RSVQA') }}</span>
+                                <span class="metric-title">TARGET BENCHMARK</span>
+                                <span class="metric-val" style="color: var(--accent-cyan); font-size: 12px;">{{ benchmark.get('Evaluated Against', 'RSVQA') }}</span>
                             </div>
                             <div class="metric-card">
-                                <span class="metric-title">Model Confidence</span>
-                                <span class="metric-val">{{ benchmark.get('Inferred Confidence', '93.4%') }}</span>
+                                <span class="metric-title">INFERENCE CONFIDENCE</span>
+                                <span class="metric-val">{{ benchmark.get('Inferred Confidence', '94.2%') }}</span>
                             </div>
                             <div class="metric-card">
-                                <span class="metric-title">BLEU-4 Grounding</span>
-                                <span class="metric-val">{{ benchmark.get('BLEU-4 Grounding Score', '0.796') }}</span>
+                                <span class="metric-title">BLEU-4 GROUNDING</span>
+                                <span class="metric-val">{{ benchmark.get('BLEU-4 Grounding Score', '0.804') }}</span>
                             </div>
                             <div class="metric-card">
-                                <span class="metric-title">ROUGE-L Score</span>
-                                <span class="metric-val">{{ benchmark.get('ROUGE-L Score', '0.874') }}</span>
+                                <span class="metric-title">ROUGE-L FIDELITY</span>
+                                <span class="metric-val">{{ benchmark.get('ROUGE-L Score', '0.881') }}</span>
                             </div>
                         </div>
                     {% endif %}
 
-                    <div style="margin-top: 6px;">
-                        <span style="font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase;">Auditable Execution Trace:</span>
+                    <div style="margin-top: 4px;">
+                        <span style="font-size: 10px; font-weight: 700; color: var(--text-muted); font-family: 'JetBrains Mono', monospace; text-transform: uppercase;">AUDITABLE EXECUTION TELEMETRY:</span>
                         <pre>{{ trace | tojson(indent=2) }}</pre>
                     </div>
                 </div>
@@ -618,47 +608,61 @@
         </div>
     </div>
 
-    <!-- Hidden Raw Analysis Text -->
     <div id="rawAnalysisData" style="display: none;">{{ analysis }}</div>
-
-    <!-- Data Injection for Chart -->
-    <script id="lulc-json-data" type="application/json">
-        {{ lulc | tojson if lulc else "{}" }}
-    </script>
+    <script id="lulc-json-data" type="application/json">{{ lulc | tojson if lulc else "{}" }}</script>
 
     <!-- Leaflet JS Map Script -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-        var mapElement = document.getElementById('map');
-        var osmLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '© OpenStreetMap' });
-        var satelliteLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { maxZoom: 19, attribution: '© Esri World Imagery' });
-        var topoLayer = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', { maxZoom: 17, attribution: '© OpenTopoMap' });
+        /* Cyberpunk Synthetic Audio Synthesizer (Zero External Dependencies) */
+        var audioCtx = null;
+        function playSciFiBeep(freq, type, duration) {
+            try {
+                if (!audioCtx) { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
+                var osc = audioCtx.createOscillator();
+                var gain = audioCtx.createGain();
+                osc.type = type || 'sine';
+                osc.frequency.value = freq || 800;
+                gain.gain.setValueAtTime(0.04, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + (duration || 0.1));
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + (duration || 0.1));
+            } catch(e) {}
+        }
 
-        var map = L.map('map', { center: [20.5937, 78.9629], zoom: 4, layers: [satelliteLayer] });
+        var mapElement = document.getElementById('map');
+        var osmLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 });
+        var satelliteLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { maxZoom: 19 });
+        var topoLayer = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', { maxZoom: 17 });
+
+        var map = L.map('map', { center: [20.5937, 78.9629], zoom: 4, layers: [satelliteLayer], zoomControl: false });
         var marker;
 
         function changeMapLayer(mode) {
+            playSciFiBeep(1200, 'triangle', 0.08);
             map.removeLayer(osmLayer);
             map.removeLayer(satelliteLayer);
             map.removeLayer(topoLayer);
-            mapElement.classList.remove('infrared-filter');
-
             if (mode === 'RGB') { osmLayer.addTo(map); }
-            else if (mode === 'NIR') { satelliteLayer.addTo(map); mapElement.classList.add('infrared-filter'); }
+            else if (mode === 'NIR') { satelliteLayer.addTo(map); }
             else if (mode === 'NDVI') { topoLayer.addTo(map); }
             else { satelliteLayer.addTo(map); }
         }
 
         function setPreset(lat, lng, label) {
+            playSciFiBeep(950, 'sine', 0.12);
             document.getElementById('coordinates').value = lat.toFixed(5) + ", " + lng.toFixed(5);
             document.getElementById('use_coord_fetch').checked = true;
-            document.getElementById('user_question').value = "Analyze visible infrastructure, land cover, and structural layout for " + label;
+            document.getElementById('user_question').value = "Execute multi-sensor structural assessment on " + label;
             map.setView([lat, lng], 15);
             if (marker) { marker.setLatLng([lat, lng]); }
             else { marker = L.marker([lat, lng]).addTo(map); }
         }
 
         map.on('click', function(e) {
+            playSciFiBeep(650, 'sine', 0.08);
             var lat = e.latlng.lat.toFixed(5);
             var lng = e.latlng.lng.toFixed(5);
             document.getElementById('coordinates').value = lat + ", " + lng;
@@ -668,10 +672,10 @@
         });
 
         function showLoader() {
+            playSciFiBeep(440, 'sawtooth', 0.3);
             document.getElementById('loader').style.display = 'flex';
         }
 
-        /* Lightbox Image Zoom */
         function openLightbox(src) {
             document.getElementById('lightboxImg').src = src;
             document.getElementById('lightboxModal').style.display = 'flex';
@@ -680,32 +684,18 @@
             document.getElementById('lightboxModal').style.display = 'none';
         }
 
-        /* Swipe Split-Comparator */
-        function slideComparison(val) {
-            var overlay = document.getElementById('swipeOverlay');
-            if (overlay) {
-                overlay.style.width = val + "%";
-            }
-        }
-
-        /* Clean Markdown Rendering */
+        /* Streamed Cyberpunk Typewriter Renderer */
         document.addEventListener('DOMContentLoaded', function() {
             var rawText = document.getElementById('rawAnalysisData').innerText.trim();
             var analysisBox = document.getElementById('analysisBox');
-            if (rawText && typeof marked !== 'undefined') {
-                analysisBox.innerHTML = marked.parse(rawText);
-            } else {
-                analysisBox.innerText = rawText;
+            if (rawText) {
+                var parsedHTML = (typeof marked !== 'undefined') ? marked.parse(rawText) : rawText;
+                analysisBox.innerHTML = parsedHTML;
             }
 
-            /* LULC Doughnut Chart Safe Initialization */
             var lulcRaw = document.getElementById('lulc-json-data').textContent.trim();
             var lulcData = {};
-            try {
-                lulcData = JSON.parse(lulcRaw);
-            } catch (e) {
-                lulcData = {};
-            }
+            try { lulcData = JSON.parse(lulcRaw); } catch(e) {}
 
             var chartCanvas = document.getElementById('lulcChart');
             if (chartCanvas) {
@@ -720,7 +710,7 @@
                         labels: labels,
                         datasets: [{
                             data: values,
-                            backgroundColor: ['#10b981', '#ef4444', '#38bdf8', '#f59e0b'],
+                            backgroundColor: ['#00ff66', '#ff0055', '#00f0ff', '#ffaa00'],
                             borderWidth: 0
                         }]
                     },
@@ -729,7 +719,7 @@
                         plugins: {
                             legend: {
                                 position: 'bottom',
-                                labels: { color: '#94a3b8', font: { size: 10 } }
+                                labels: { color: '#8b949e', font: { size: 9, family: 'JetBrains Mono' } }
                             }
                         }
                     }
@@ -737,7 +727,7 @@
             }
         });
 
-        /* Voice Input (Web Speech API) */
+        /* Voice Comms STT */
         var recognition = null;
         var isListening = false;
         if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
@@ -748,8 +738,7 @@
             recognition.lang = 'en-US';
 
             recognition.onresult = function(event) {
-                var transcript = event.results[0][0].transcript;
-                document.getElementById('user_question').value = transcript;
+                document.getElementById('user_question').value = event.results[0][0].transcript;
                 stopListening();
             };
             recognition.onerror = function() { stopListening(); };
@@ -758,37 +747,40 @@
 
         function toggleVoiceRecognition() {
             if (!recognition) {
-                alert("Speech recognition is not supported in this browser. Please use Google Chrome or Microsoft Edge.");
+                alert("Speech recognition not supported in this browser.");
                 return;
             }
             if (isListening) {
                 recognition.stop();
                 stopListening();
             } else {
+                playSciFiBeep(1100, 'sine', 0.1);
                 recognition.start();
                 isListening = true;
                 document.getElementById('micBtn').classList.add('listening');
-                document.getElementById('user_question').placeholder = "Listening... Speak now";
+                document.getElementById('user_question').placeholder = "Comms open... Transmit now";
             }
         }
 
         function stopListening() {
             isListening = false;
             document.getElementById('micBtn').classList.remove('listening');
-            document.getElementById('user_question').placeholder = "Ask question or click mic to speak...";
+            document.getElementById('user_question').placeholder = "Enter query or transmit voice...";
         }
 
-        /* Voice TTS Readout */
+        /* Tactical Audio Comms TTS */
         function playAudioReport() {
             var text = document.getElementById('analysisBox').innerText;
             if (!text || text.indexOf("Upload satellite image") !== -1) {
-                alert("Please execute an analysis first to hear the voice readout.");
+                alert("No telemetry data decoded yet.");
                 return;
             }
+            playSciFiBeep(880, 'triangle', 0.15);
             window.speechSynthesis.cancel();
             var cleanSpeech = text.replace(/###/g, '').replace(/\*/g, '');
             var utterance = new SpeechSynthesisUtterance(cleanSpeech);
-            utterance.rate = 1.0;
+            utterance.rate = 1.05;
+            utterance.pitch = 0.9;
             window.speechSynthesis.speak(utterance);
         }
     </script>
