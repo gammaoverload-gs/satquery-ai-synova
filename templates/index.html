@@ -315,7 +315,7 @@
         /* ================== EXPANDED GRAND COMMAND HEADER ================== */
         .hero-topbar {
             position: relative;
-            background: linear-gradient(135deg, rgba(2, 7, 22, 0.95) 0%, rgba(6, 19, 45, 0.9) 40%, rgba(10, 6, 36, 0.95) 100%);
+            background: linear-gradient(135deg, rgba(2, 7, 22, 0.88) 0%, rgba(6, 19, 45, 0.82) 40%, rgba(10, 6, 36, 0.88) 100%);
             border: 1.5px solid rgba(0, 240, 255, 0.45);
             border-radius: 14px;
             padding: 34px 42px;
@@ -329,12 +329,24 @@
             backdrop-filter: blur(14px);
         }
 
+        #spaceCanvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+            display: block;
+        }
+
         .hero-topbar::before {
             content: "";
             position: absolute;
             top: 0; left: 0; width: 120px; height: 3px;
             background: linear-gradient(90deg, var(--accent-cyan), transparent);
             box-shadow: 0 0 15px var(--accent-cyan);
+            z-index: 2;
         }
         .hero-topbar::after {
             content: "";
@@ -342,6 +354,7 @@
             bottom: 0; right: 0; width: 120px; height: 3px;
             background: linear-gradient(270deg, var(--accent-purple), transparent);
             box-shadow: 0 0 15px var(--accent-purple);
+            z-index: 2;
         }
 
         .hero-content {
@@ -980,6 +993,9 @@
         
         <!-- EXPANDED HIGH-TECH HERO COMMAND HEADER -->
         <header class="hero-topbar">
+            <!-- 🌌 Dedicated Interactive Header Space Canvas (Stars & Meteors) -->
+            <canvas id="spaceCanvas"></canvas>
+
             <div class="hero-content">
                 <div class="hero-title-row">
                     <div class="hero-badge-glow">
@@ -1219,7 +1235,131 @@
     <!-- Leaflet JS Map Script -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-        /* 🌌 Full-Screen Living Space Wallpaper Engine (Enhanced Large Scale Assets) */
+        /* 🌠 Dedicated Header Space Canvas (Stars, Constellations & Meteors) */
+        document.addEventListener('DOMContentLoaded', function () {
+            var headerCanvas = document.getElementById('spaceCanvas');
+            if (!headerCanvas) return;
+            var hCtx = headerCanvas.getContext('2d');
+            var hStars = [];
+            var hMeteors = [];
+            var hNumStars = 85;
+
+            function resizeHeaderCanvas() {
+                if (headerCanvas.parentElement) {
+                    headerCanvas.width = headerCanvas.parentElement.offsetWidth;
+                    headerCanvas.height = headerCanvas.parentElement.offsetHeight;
+                }
+            }
+            resizeHeaderCanvas();
+            window.addEventListener('resize', resizeHeaderCanvas);
+
+            var colors = ['#ffffff', '#00f0ff', '#c084fc', '#38bdf8', '#fde047'];
+
+            for (var i = 0; i < hNumStars; i++) {
+                hStars.push({
+                    x: Math.random() * (headerCanvas.width || 1200),
+                    y: Math.random() * (headerCanvas.height || 200),
+                    radius: Math.random() * 1.8 + 0.6,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    alpha: Math.random() * 0.9 + 0.2,
+                    speed: Math.random() * 0.04 + 0.01,
+                    delta: Math.random() * Math.PI * 2,
+                    vx: (Math.random() - 0.5) * 0.25,
+                    vy: (Math.random() - 0.5) * 0.25
+                });
+            }
+
+            function spawnHeaderMeteor() {
+                if (hMeteors.length < 2 && Math.random() < 0.04) {
+                    hMeteors.push({
+                        x: Math.random() * headerCanvas.width * 0.85,
+                        y: 0,
+                        len: Math.random() * 90 + 50,
+                        speed: Math.random() * 7 + 5,
+                        angle: Math.PI / 4,
+                        opacity: 1
+                    });
+                }
+            }
+
+            function drawHeaderSpace() {
+                hCtx.clearRect(0, 0, headerCanvas.width, headerCanvas.height);
+
+                // Constellation lines in header
+                for (var i = 0; i < hStars.length; i++) {
+                    for (var j = i + 1; j < hStars.length; j++) {
+                        var dx = hStars[i].x - hStars[j].x;
+                        var dy = hStars[i].y - hStars[j].y;
+                        var dist = Math.sqrt(dx * dx + dy * dy);
+                        if (dist < 80) {
+                            hCtx.beginPath();
+                            hCtx.moveTo(hStars[i].x, hStars[i].y);
+                            hCtx.lineTo(hStars[j].x, hStars[j].y);
+                            hCtx.strokeStyle = "rgba(0, 240, 255, " + (0.24 - dist / 80 * 0.24) + ")";
+                            hCtx.lineWidth = 0.8;
+                            hCtx.stroke();
+                        }
+                    }
+                }
+
+                // Header stars
+                for (var k = 0; k < hStars.length; k++) {
+                    var s = hStars[k];
+                    s.delta += s.speed;
+                    s.x += s.vx;
+                    s.y += s.vy;
+
+                    if (s.x < 0) s.x = headerCanvas.width;
+                    if (s.x > headerCanvas.width) s.x = 0;
+                    if (s.y < 0) s.y = headerCanvas.height;
+                    if (s.y > headerCanvas.height) s.y = 0;
+
+                    var dynamicAlpha = Math.abs(Math.sin(s.delta)) * 0.8 + 0.2;
+                    hCtx.beginPath();
+                    hCtx.arc(s.x, s.y, s.radius, 0, Math.PI * 2);
+                    hCtx.fillStyle = s.color;
+                    hCtx.globalAlpha = dynamicAlpha;
+                    hCtx.shadowBlur = s.radius > 1.2 ? 10 : 0;
+                    hCtx.shadowColor = s.color;
+                    hCtx.fill();
+                    hCtx.shadowBlur = 0;
+                    hCtx.globalAlpha = 1;
+                }
+
+                // Header Meteors
+                spawnHeaderMeteor();
+                for (var m = hMeteors.length - 1; m >= 0; m--) {
+                    var met = hMeteors[m];
+                    var x2 = met.x - met.len * Math.cos(met.angle);
+                    var y2 = met.y - met.len * Math.sin(met.angle);
+
+                    var grad = hCtx.createLinearGradient(met.x, met.y, x2, y2);
+                    grad.addColorStop(0, "rgba(255, 255, 255, " + met.opacity + ")");
+                    grad.addColorStop(0.5, "rgba(0, 240, 255, " + (met.opacity * 0.8) + ")");
+                    grad.addColorStop(1, "transparent");
+
+                    hCtx.beginPath();
+                    hCtx.moveTo(met.x, met.y);
+                    hCtx.lineTo(x2, y2);
+                    hCtx.strokeStyle = grad;
+                    hCtx.lineWidth = 2.4;
+                    hCtx.stroke();
+
+                    met.x += met.speed * Math.cos(met.angle);
+                    met.y += met.speed * Math.sin(met.angle);
+                    met.opacity -= 0.015;
+
+                    if (met.opacity <= 0 || met.x > headerCanvas.width || met.y > headerCanvas.height) {
+                        hMeteors.splice(m, 1);
+                    }
+                }
+
+                requestAnimationFrame(drawHeaderSpace);
+            }
+            drawHeaderSpace();
+        });
+
+        /* 🌌 Full-Screen Living Space Wallpaper Engine (Astronauts & Shuttle) */
         document.addEventListener('DOMContentLoaded', function () {
             var canvas = document.getElementById('globalSpaceCanvas');
             if (!canvas) return;
@@ -1251,13 +1391,11 @@
                 });
             }
 
-            // 🧑‍🚀 Scaled-Up Detailed Astronauts (2.8x Scale)
             var astronauts = [
                 { x: 180, y: 220, vx: 0.22, vy: 0.07, angle: 0.2, rotSpeed: 0.0025, scale: 2.2 },
                 { x: canvas.width - 240, y: canvas.height - 280, vx: -0.18, vy: -0.05, angle: -0.3, rotSpeed: -0.002, scale: 2.0 }
             ];
 
-            // 🚀 Scaled-Up Heavy Shuttle Cruiser (2.5x Scale)
             var shuttle = {
                 x: -120,
                 y: canvas.height * 0.35,
@@ -1273,7 +1411,6 @@
                 ctx.rotate(ast.angle);
                 ctx.scale(ast.scale, ast.scale);
 
-                // Safety Tether Line
                 ctx.beginPath();
                 ctx.moveTo(-10, 0);
                 ctx.quadraticCurveTo(-45, 25, -90, 45);
@@ -1281,19 +1418,16 @@
                 ctx.lineWidth = 1.2;
                 ctx.stroke();
 
-                // PLSS Life Support Backpack
                 ctx.fillStyle = "#1e293b";
                 ctx.fillRect(-13, -14, 8, 28);
                 ctx.fillStyle = "#0284c7";
                 ctx.fillRect(-12, -10, 2, 20);
 
-                // Main Space Suit Torso
                 ctx.fillStyle = "#f8fafc";
                 ctx.beginPath();
                 ctx.roundRect(-6, -13, 16, 26, 4);
                 ctx.fill();
 
-                // Tactical Chest Control Module
                 ctx.fillStyle = "#0284c7";
                 ctx.fillRect(-2, -6, 8, 10);
                 ctx.fillStyle = "#00ff66";
@@ -1301,13 +1435,11 @@
                 ctx.fillStyle = "#ff0055";
                 ctx.fillRect(2, -4, 2, 2);
 
-                // Helmet Assembly
                 ctx.beginPath();
                 ctx.arc(2, -21, 9, 0, Math.PI * 2);
                 ctx.fillStyle = "#f8fafc";
                 ctx.fill();
 
-                // Radiant Gold Foil Visor
                 ctx.beginPath();
                 ctx.arc(4, -21, 5.5, 0, Math.PI * 2);
                 ctx.fillStyle = "#f59e0b";
@@ -1316,20 +1448,16 @@
                 ctx.fill();
                 ctx.shadowBlur = 0;
 
-                // Segmented Articulated Legs
                 ctx.fillStyle = "#e2e8f0";
                 ctx.fillRect(-5, 13, 5, 14);
                 ctx.fillRect(3, 13, 5, 15);
-                // Boots
                 ctx.fillStyle = "#475569";
                 ctx.fillRect(-6, 27, 6, 4);
                 ctx.fillRect(2, 28, 6, 4);
 
-                // Floating Arms
                 ctx.fillStyle = "#e2e8f0";
                 ctx.fillRect(-11, -10, 6, 13);
                 ctx.fillRect(10, -10, 6, 13);
-                // Gloves
                 ctx.fillStyle = "#0284c7";
                 ctx.fillRect(-11, 3, 6, 3);
                 ctx.fillRect(10, 3, 6, 3);
@@ -1343,7 +1471,6 @@
                 ctx.rotate(sh.angle);
                 ctx.scale(sh.scale, sh.scale);
 
-                // Dual Blue Ion-Plasma Thrust Plumes
                 var flameGrad = ctx.createLinearGradient(-40, 0, -10, 0);
                 flameGrad.addColorStop(0, "transparent");
                 flameGrad.addColorStop(0.4, "rgba(0, 240, 255, 0.8)");
@@ -1353,7 +1480,6 @@
                 ctx.shadowColor = "#00f0ff";
                 ctx.shadowBlur = 18;
 
-                // Engine 1
                 ctx.beginPath();
                 ctx.moveTo(-10, -4);
                 ctx.lineTo(-42, -2);
@@ -1361,7 +1487,6 @@
                 ctx.closePath();
                 ctx.fill();
 
-                // Engine 2
                 ctx.beginPath();
                 ctx.moveTo(-10, 0);
                 ctx.lineTo(-42, 2);
@@ -1370,7 +1495,6 @@
                 ctx.fill();
                 ctx.shadowBlur = 0;
 
-                // Delta Wings with Black Heat Shields
                 ctx.beginPath();
                 ctx.moveTo(22, 0);
                 ctx.lineTo(-15, -18);
@@ -1381,7 +1505,6 @@
                 ctx.fillStyle = "#0f172a";
                 ctx.fill();
 
-                // Main Fuselage Orbiter
                 ctx.beginPath();
                 ctx.moveTo(26, 0);
                 ctx.lineTo(10, -7);
@@ -1392,7 +1515,6 @@
                 ctx.fillStyle = "#f8fafc";
                 ctx.fill();
 
-                // Cockpit Windshield Windows
                 ctx.beginPath();
                 ctx.moveTo(26, 0);
                 ctx.lineTo(16, -3.5);
@@ -1401,7 +1523,6 @@
                 ctx.fillStyle = "#0284c7";
                 ctx.fill();
 
-                // Vertical Tail Fin
                 ctx.beginPath();
                 ctx.moveTo(-10, 0);
                 ctx.lineTo(-18, -13);
@@ -1429,7 +1550,6 @@
             function renderLiveSpace() {
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-                // 1. Constellation Mesh Lines
                 for (var i = 0; i < stars.length; i++) {
                     for (var j = i + 1; j < stars.length; j++) {
                         var dx = stars[i].x - stars[j].x;
@@ -1446,7 +1566,6 @@
                     }
                 }
 
-                // 2. Stars
                 for (var k = 0; k < stars.length; k++) {
                     var s = stars[k];
                     s.delta += s.speed;
@@ -1472,7 +1591,6 @@
                     ctx.globalAlpha = 1;
                 }
 
-                // 3. Spacewalk Astronauts Animation
                 for (var a = 0; a < astronauts.length; a++) {
                     var ast = astronauts[a];
                     ast.x += ast.vx;
@@ -1487,7 +1605,6 @@
                     drawAstronaut(ast);
                 }
 
-                // 4. Space Shuttle Cruiser
                 shuttle.x += shuttle.vx;
                 shuttle.y += shuttle.vy;
                 if (shuttle.x > canvas.width + 160) {
@@ -1496,7 +1613,6 @@
                 }
                 drawShuttle(shuttle);
 
-                // 5. Shooting Meteors
                 spawnMeteor();
                 for (var m = meteors.length - 1; m >= 0; m--) {
                     var met = meteors[m];
