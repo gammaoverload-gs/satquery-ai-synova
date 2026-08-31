@@ -8,7 +8,9 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <!-- Chart.js for LULC Analytics -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- Google Font Inter & Space Grotesk -->
+    <!-- Marked.js for Clean Markdown Parsing -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -22,7 +24,6 @@
             --accent-success: #10b981;
             --accent-danger: #ef4444;
             --accent-purple: #a855f7;
-            --accent-amber: #f59e0b;
             --text-main: #f8fafc;
             --text-muted: #94a3b8;
         }
@@ -44,7 +45,6 @@
 
         .container { max-width: 1480px; margin: 0 auto; display: flex; flex-direction: column; gap: 18px; }
 
-        /* Top Bar Navigation */
         .topbar {
             display: flex;
             justify-content: space-between;
@@ -94,7 +94,6 @@
         .pulse-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent-success); animation: radar-pulse 1.8s infinite; }
         @keyframes radar-pulse { 0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); } 70% { box-shadow: 0 0 0 7px rgba(16, 185, 129, 0); } 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); } }
 
-        /* Workspace Grid */
         .workspace {
             display: grid;
             grid-template-columns: 480px 1fr;
@@ -148,7 +147,6 @@
             box-shadow: 0 0 12px var(--accent-glow);
         }
 
-        /* Preset Chips */
         .preset-container { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 2px; }
         .preset-btn {
             background: rgba(56, 189, 248, 0.08);
@@ -298,6 +296,7 @@
         }
         @media (max-width: 950px) { .analytics-subgrid { grid-template-columns: 1fr; } }
 
+        /* Clean Styled Markdown Analysis View */
         .analysis-box {
             background: rgba(2, 6, 23, 0.9);
             border: 1px solid var(--border-color);
@@ -306,12 +305,24 @@
             font-size: 13.5px;
             line-height: 1.75;
             color: #cbd5e1;
-            max-height: 400px;
+            max-height: 420px;
             overflow-y: auto;
         }
-        .analysis-box h3 { color: var(--accent-primary); margin-top: 14px; margin-bottom: 6px; font-size: 14px; font-family: 'Space Grotesk', sans-serif; }
-        .analysis-box ul { padding-left: 18px; margin-bottom: 10px; }
-        .analysis-box li { margin-bottom: 4px; }
+        .analysis-box h1, .analysis-box h2, .analysis-box h3 {
+            color: var(--accent-primary);
+            margin-top: 14px;
+            margin-bottom: 8px;
+            font-size: 14px;
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            border-bottom: 1px solid rgba(56, 189, 248, 0.15);
+            padding-bottom: 4px;
+        }
+        .analysis-box h1:first-child, .analysis-box h2:first-child, .analysis-box h3:first-child { margin-top: 0; }
+        .analysis-box p { margin-bottom: 10px; }
+        .analysis-box ul, .analysis-box ol { padding-left: 20px; margin-bottom: 12px; }
+        .analysis-box li { margin-bottom: 5px; color: #e2e8f0; }
+        .analysis-box strong { color: #f8fafc; font-weight: 600; }
 
         .chart-box {
             background: rgba(2, 6, 23, 0.9);
@@ -371,7 +382,6 @@
         .btn-action.geojson { background: #0284c7; }
         .btn-action:hover { opacity: 0.9; transform: translateY(-1px); }
 
-        /* Lightbox Image Modal */
         #lightboxModal {
             display: none;
             position: fixed;
@@ -409,7 +419,6 @@
 </head>
 <body>
 
-    <!-- Lightbox Zoom Modal -->
     <div id="lightboxModal" onclick="closeLightbox()">
         <img id="lightboxImg" src="" alt="Zoomed View">
     </div>
@@ -470,7 +479,6 @@
                         </div>
                     </div>
 
-                    <!-- Fast Target Presets -->
                     <div class="form-group" style="margin-top: 2px;">
                         <label>Target Coordinate Presets:</label>
                         <div class="preset-container">
@@ -570,7 +578,7 @@
                     </div>
                     
                     <div class="analytics-subgrid">
-                        <div id="analysisText" class="analysis-box">{{ analysis }}</div>
+                        <div id="analysisBox" class="analysis-box"></div>
                         
                         <div class="chart-box">
                             <h4>LULC Spatial Share</h4>
@@ -610,7 +618,10 @@
         </div>
     </div>
 
-    <!-- Data Injection for Chart without Inline JS Syntax Issues -->
+    <!-- Hidden Raw Analysis Text -->
+    <div id="rawAnalysisData" style="display: none;">{{ analysis }}</div>
+
+    <!-- Data Injection for Chart -->
     <script id="lulc-json-data" type="application/json">
         {{ lulc | tojson if lulc else "{}" }}
     </script>
@@ -677,8 +688,17 @@
             }
         }
 
-        /* LULC Doughnut Chart Safe Initialization */
+        /* Clean Markdown Rendering */
         document.addEventListener('DOMContentLoaded', function() {
+            var rawText = document.getElementById('rawAnalysisData').innerText.trim();
+            var analysisBox = document.getElementById('analysisBox');
+            if (rawText && typeof marked !== 'undefined') {
+                analysisBox.innerHTML = marked.parse(rawText);
+            } else {
+                analysisBox.innerText = rawText;
+            }
+
+            /* LULC Doughnut Chart Safe Initialization */
             var lulcRaw = document.getElementById('lulc-json-data').textContent.trim();
             var lulcData = {};
             try {
@@ -760,7 +780,7 @@
 
         /* Voice TTS Readout */
         function playAudioReport() {
-            var text = document.getElementById('analysisText').innerText;
+            var text = document.getElementById('analysisBox').innerText;
             if (!text || text.indexOf("Upload satellite image") !== -1) {
                 alert("Please execute an analysis first to hear the voice readout.");
                 return;
