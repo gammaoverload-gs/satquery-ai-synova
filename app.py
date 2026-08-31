@@ -6,6 +6,7 @@ import json
 import base64
 import datetime
 import webbrowser
+import requests
 from threading import Timer
 from flask import Flask, render_template, request, Response, jsonify
 from dotenv import load_dotenv
@@ -18,8 +19,10 @@ load_dotenv()
 
 app = Flask(__name__)
 
-API_KEY = os.getenv("GEMINI_API_KEY", "")
-client = genai.Client(api_key=API_KEY)
+# Primary & Secondary API Keys
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "").strip()
+OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY", "").strip()
+
 evaluator_engine = RemoteSensingBenchmarkEvaluator()
 
 BEN_METADATA = {
@@ -29,15 +32,6 @@ BEN_METADATA = {
 
 LAST_REPORT = {}
 LAST_GEOJSON = {}
-
-# Candidate models fallback cascade for quota resiliency
-CANDIDATE_MODELS = [
-    "gemini-2.5-flash",
-    "gemini-2.0-flash",
-    "gemini-1.5-flash",
-    "gemini-1.5-flash-8b",
-    "gemini-2.5-pro"
-]
 
 def route_task(query: str, num_images: int) -> str:
     q = query.lower()
@@ -85,32 +79,102 @@ def estimate_lulc_distribution(analysis_text: str) -> dict:
         "Bare Soil / Open Ground": round((soil / total) * 100, 1)
     }
 
-def generate_content_with_resilience(images, prompt):
-    """Executes Gemini multimodal inference with exponential retry and model fallback cascade."""
-    last_exception = None
-    for model_name in CANDIDATE_MODELS:
-        for attempt in range(2):
-            try:
-                response = client.models.generate_content(
-                    model=model_name,
-                    contents=[*images, prompt]
-                )
-                if response and response.text:
-                    return response.text, model_name
-            except Exception as ex:
-                last_exception = ex
-                err_msg = str(ex)
-                if "429" in err_msg or "RESOURCE_EXHAUSTED" in err_msg or "quota" in err_msg.lower():
-                    # If rate limited, pause briefly before next retry/fallback
-                    time.sleep(1.0)
-                    continue
-                else:
-                    # Non-quota error, move to next model
-                    break
+# ==================== DUAL PROVIDER ROUTER ====================
 
-    raise Exception(
-        f"Gemini API Quota Exhausted across all models. Please replace GEMINI_API_KEY in Render Environment Variables. [Details: {str(last_exception)}]"
-    )
+def call_gemini_provider(images, prompt):
+    """Primary Provider: Google Gemini Direct API"""
+    key = os.getenv("GEMINI_API_KEY", "").strip()
+    if not key:
+        raise Exception("Gemini API Key not set.")
+    
+    client = genai.Client(api_key=key)
+    models = ["gemini-2.5-flash", "gemini-2.0-flash"]
+    
+    for m in models:
+        try:
+            resp = client.models.generate_content(
+                model=m,
+                contents=[*images, prompt]
+            )
+            if resp and resp.text:
+                return resp.text, f"Google Gemini ({m})"
+        except Exception as ex:
+            if "429" in str(ex) or "RESOURCE_EXHAUSTED" in str(ex):
+                continue
+            raise ex
+    raise Exception("Gemini Quota Exhausted.")
+
+def call_openrouter_provider(images, prompt):
+    """Secondary Fallback Provider: OpenRouter Multimodal Free Models"""
+    key = os.getenv("OPENROUTER_API_KEY", "").strip()
+    if not key:
+        raise Exception("OpenRouter API Key not set.")
+    
+    # Convert PIL Images to base64 Data URLs
+    image_payloads = []
+    for img in images:
+        buf = io.BytesIO()
+        img.save(buf, format="JPEG")
+        b64 = base64.b64encode(buf.getvalue()).decode("utf-8")
+        image_payloads.append({
+            "type": "image_url",
+            "image_url": {"url": f"data:image/jpeg;base64,{b64}"}
+        })
+    
+    free_models = [
+        "google/gemma-4-31b-it:free",
+        "meta-llama/llama-3.2-11b-vision-instruct:free",
+        "qwen/qwen-2-vl-72b-instruct:free"
+    ]
+    
+    headers = {
+        "Authorization": f"Bearer {key}",
+        "Content-Type": "application/json",
+        "HTTP-Referer": "https://satquery-ai-synova.onrender.com",
+        "X-Title": "SatQuery AI"
+    }
+
+    for m in free_models:
+        try:
+            payload = {
+                "model": m,
+                "messages": [
+                    {
+                        "role": "user",
+                        "content": [
+                            {"type": "text", "text": prompt},
+                            *image_payloads
+                        ]
+                    }
+                ]
+            }
+            res = requests.post("https://openrouter.ai/api/v1/chat/completions", headers=headers, json=payload, timeout=40)
+            if res.status_code == 200:
+                data = res.json()
+                if "choices" in data and len(data["choices"]) > 0:
+                    return data["choices"][0]["message"]["content"], f"OpenRouter Free ({m})"
+        except Exception:
+            continue
+            
+    raise Exception("OpenRouter Fallback Exhausted.")
+
+def resilient_multimodal_pipeline(images, prompt):
+    """Auto-switches from Gemini -> OpenRouter instantly on failure."""
+    # Attempt 1: Gemini Primary
+    try:
+        return call_gemini_provider(images, prompt)
+    except Exception as g_err:
+        print(f"[FAILOVER TRIGGERED] Gemini failed ({g_err}). Switching to OpenRouter...")
+
+    # Attempt 2: OpenRouter Secondary Fallback
+    try:
+        return call_openrouter_provider(images, prompt)
+    except Exception as o_err:
+        print(f"[FAILOVER FAILED] OpenRouter also failed ({o_err}).")
+
+    raise Exception("All AI providers (Gemini & OpenRouter) exhausted. Please verify API keys.")
+
+# ==================== FLASK ROUTES ====================
 
 @app.route("/", methods=["GET", "POST"])
 def home():
@@ -137,7 +201,6 @@ def home():
             loaded_pil_images = []
             metadata_list = []
 
-            # Option A: Automated tile fetch via target coordinates
             if use_coord_fetch and coordinates:
                 try:
                     lat_str, lon_str = [c.strip() for c in coordinates.split(",")]
@@ -152,7 +215,6 @@ def home():
                 except Exception as ex:
                     analysis_text = f"Tile fetch failed: {str(ex)}"
 
-            # Option B: Local image file uploads
             if not loaded_pil_images:
                 for f in [file_1, file_2]:
                     if f and f.filename != "":
@@ -168,7 +230,6 @@ def home():
             if loaded_pil_images:
                 num_images = len(loaded_pil_images)
                 task = route_task(user_question, num_images)
-
                 coord_context = f"\n- Target Geographic Coordinates: {coordinates}" if coordinates else ""
 
                 system_prompt = (
@@ -196,8 +257,8 @@ def home():
                     "### Assessment Confidence"
                 )
 
-                # Resilient Multimodal Inference with Cascade Fallback
-                raw_text, active_model = generate_content_with_resilience(loaded_pil_images, system_prompt)
+                # Call Hybrid Failover Pipeline
+                raw_text, active_provider = resilient_multimodal_pipeline(loaded_pil_images, system_prompt)
                 clean_text, detected_boxes = extract_boxes_from_response(raw_text)
                 analysis_text = clean_text
 
@@ -230,7 +291,7 @@ def home():
 
                 execution_trace = {
                     "timestamp": datetime.datetime.utcnow().isoformat() + "Z",
-                    "active_model": active_model,
+                    "active_provider": active_provider,
                     "task": task,
                     "num_inputs": num_images,
                     "composite_mode": composite_mode,
