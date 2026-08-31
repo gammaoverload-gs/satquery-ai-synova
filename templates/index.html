@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SatQuery AI | Tactical Multimodal Geospatial Command Center</title>
     
-    <!-- Browser Tab Glowing Space Favicon -->
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛰️</text></svg>">
+    <!-- High-Compatibility Glowing Space Satellite Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%9B%B0%EF%B8%8F%3C/text%3E%3C/svg%3E">
     
     <!-- Leaflet GIS Map CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -42,6 +42,145 @@
             overflow-x: hidden;
         }
 
+        /* ================== 🎬 CINEMATIC SATELLITE LAUNCH OVERLAY ================== */
+        #launchSequenceOverlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: #01040a;
+            z-index: 99999;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.8s cubic-bezier(0.85, 0, 0.15, 1), transform 0.8s ease;
+            overflow: hidden;
+        }
+        #launchSequenceOverlay.fade-out {
+            opacity: 0;
+            transform: scale(1.15);
+            pointer-events: none;
+        }
+
+        #warpCanvas {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 1;
+        }
+
+        .cinematic-hud {
+            position: relative;
+            z-index: 5;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            text-align: center;
+        }
+
+        /* Spacecraft / Rocket Animation Container */
+        .spacecraft-box {
+            position: relative;
+            width: 140px; height: 140px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .rocket-icon {
+            font-size: 54px;
+            filter: drop-shadow(0 0 25px var(--accent-cyan));
+            animation: rocketThrust 0.1s infinite alternate, ascendFlight 2.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+
+        .lens-portal {
+            position: absolute;
+            width: 10px; height: 10px;
+            border-radius: 50%;
+            border: 2px solid var(--accent-cyan);
+            opacity: 0;
+            animation: portalZoom 1.2s 2.4s cubic-bezier(0.8, 0, 0.2, 1) forwards;
+        }
+
+        @keyframes rocketThrust {
+            from { transform: translateY(0px) rotate(-45deg); }
+            to { transform: translateY(-3px) rotate(-45deg); }
+        }
+
+        @keyframes ascendFlight {
+            0% { transform: scale(0.6) translateY(120px) rotate(-45deg); opacity: 0; }
+            25% { transform: scale(1) translateY(0px) rotate(-45deg); opacity: 1; }
+            65% { transform: scale(1.4) translateY(-30px) rotate(-45deg); }
+            100% { transform: scale(4) translateY(-250px) rotate(-45deg); opacity: 0; }
+        }
+
+        @keyframes portalZoom {
+            0% { width: 10px; height: 10px; opacity: 1; border-width: 2px; }
+            50% { box-shadow: 0 0 50px var(--accent-cyan); }
+            100% { width: 2500px; height: 2500px; opacity: 1; border-width: 40px; background: rgba(0, 240, 255, 0.15); }
+        }
+
+        .launch-terminal-text {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 18px;
+            font-weight: 800;
+            letter-spacing: 3px;
+            color: var(--accent-cyan);
+            text-shadow: 0 0 15px var(--accent-cyan);
+            min-height: 28px;
+        }
+
+        .launch-subtext {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            color: #94a3b8;
+            letter-spacing: 1px;
+        }
+
+        .progress-bar-container {
+            width: 280px;
+            height: 4px;
+            background: rgba(56, 189, 248, 0.2);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 6px;
+        }
+        .progress-bar-fill {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, #0055ff, var(--accent-cyan), #00ff66);
+            box-shadow: 0 0 10px var(--accent-cyan);
+            animation: fillProgress 3.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+        @keyframes fillProgress {
+            0% { width: 0%; }
+            30% { width: 35%; }
+            70% { width: 80%; }
+            100% { width: 100%; }
+        }
+
+        .btn-skip-intro {
+            position: absolute;
+            bottom: 30px; right: 40px;
+            z-index: 10;
+            background: rgba(4, 9, 20, 0.8);
+            border: 1px solid var(--border-color);
+            color: var(--accent-cyan);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+            letter-spacing: 1px;
+        }
+        .btn-skip-intro:hover {
+            background: var(--accent-cyan);
+            color: #010409;
+            font-weight: 700;
+            box-shadow: 0 0 15px var(--accent-glow);
+        }
+
+        /* ================== MAIN APP WRAPPER ================== */
         .container { max-width: 1580px; margin: 0 auto; display: flex; flex-direction: column; gap: 16px; position: relative; z-index: 10; }
 
         /* ================== EXPANDED GRAND COMMAND HEADER ================== */
@@ -60,7 +199,6 @@
             min-height: 190px;
         }
 
-        /* Ambient Corner Radar Lasers */
         .hero-topbar::before {
             content: "";
             position: absolute;
@@ -76,7 +214,6 @@
             box-shadow: 0 0 15px var(--accent-purple);
         }
 
-        /* High-Visibility Animated Deep Space Canvas */
         #spaceCanvas {
             position: absolute;
             top: 0; left: 0;
@@ -560,6 +697,27 @@
 </head>
 <body>
 
+    <!-- ================== CINEMATIC ORBITAL LAUNCH INTRO OVERLAY ================== -->
+    <div id="launchSequenceOverlay">
+        <canvas id="warpCanvas"></canvas>
+        
+        <div class="cinematic-hud">
+            <div class="spacecraft-box">
+                <div class="rocket-icon">🚀</div>
+                <div class="lens-portal"></div>
+            </div>
+
+            <div class="launch-terminal-text" id="launchStatusMsg">INITIALIZING ORBITAL ASCENT...</div>
+            <div class="launch-subtext">CONNECTING TO CARTOSAT / SENTINEL SENSOR ARRAY</div>
+
+            <div class="progress-bar-container">
+                <div class="progress-bar-fill"></div>
+            </div>
+        </div>
+
+        <button class="btn-skip-intro" onclick="endIntroSequence()">SKIP INTRO ⏩</button>
+    </div>
+
     <div id="lightboxModal" onclick="closeLightbox()">
         <img id="lightboxImg" src="" alt="Tactical Zoom">
     </div>
@@ -574,7 +732,7 @@
 
     <div class="container">
         
-        <!-- EXPANDED HIGH-TECH HERO COMMAND HEADER WITH DEEP SPACE STARFIELD -->
+        <!-- EXPANDED HIGH-TECH HERO COMMAND HEADER -->
         <header class="hero-topbar">
             <canvas id="spaceCanvas"></canvas>
             
@@ -800,7 +958,87 @@
     <!-- Leaflet JS Map Script -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-        /* 🌌 High-Visibility Deep Space Starfield & Shooting Meteors Canvas */
+        /* 🚀 3.5-Second Hyperspace Warp Launch Sequence Engine */
+        var warpCanvas = document.getElementById('warpCanvas');
+        var warpCtx = warpCanvas.getContext('2d');
+        var warpStars = [];
+        var warpRunning = true;
+
+        function resizeWarp() {
+            warpCanvas.width = window.innerWidth;
+            warpCanvas.height = window.innerHeight;
+        }
+        resizeWarp();
+        window.addEventListener('resize', resizeWarp);
+
+        for (var i = 0; i < 240; i++) {
+            warpStars.push({
+                x: (Math.random() - 0.5) * warpCanvas.width * 2,
+                y: (Math.random() - 0.5) * warpCanvas.height * 2,
+                z: Math.random() * warpCanvas.width
+            });
+        }
+
+        function drawWarp() {
+            if (!warpRunning) return;
+            warpCtx.fillStyle = "rgba(1, 4, 10, 0.35)";
+            warpCtx.fillRect(0, 0, warpCanvas.width, warpCanvas.height);
+
+            var cx = warpCanvas.width / 2;
+            var cy = warpCanvas.height / 2;
+
+            for (var i = 0; i < warpStars.length; i++) {
+                var s = warpStars[i];
+                s.z -= 18;
+                if (s.z <= 0) s.z = warpCanvas.width;
+
+                var k = 250 / s.z;
+                var px = s.x * k + cx;
+                var py = s.y * k + cy;
+
+                if (px >= 0 && px <= warpCanvas.width && py >= 0 && py <= warpCanvas.height) {
+                    var size = (1 - s.z / warpCanvas.width) * 3.5;
+                    var alpha = (1 - s.z / warpCanvas.width);
+                    warpCtx.beginPath();
+                    warpCtx.arc(px, py, size, 0, Math.PI * 2);
+                    warpCtx.fillStyle = "rgba(0, 240, 255, " + alpha + ")";
+                    warpCtx.shadowBlur = 10;
+                    warpCtx.shadowColor = "#00f0ff";
+                    warpCtx.fill();
+                }
+            }
+            requestAnimationFrame(drawWarp);
+        }
+        drawWarp();
+
+        /* Dynamic Sequence Text Status Changes */
+        setTimeout(function() {
+            var msg = document.getElementById('launchStatusMsg');
+            if (msg) msg.innerText = "STAGE 2: FAIRING SEPARATION & SOLAR ARRAY UNFURL...";
+            playSciFiBeep(880, 'sine', 0.15);
+        }, 1200);
+
+        setTimeout(function() {
+            var msg = document.getElementById('launchStatusMsg');
+            if (msg) msg.innerText = "STAGE 3: ENTERING MULTISPECTRAL SENSOR PAYLOAD...";
+            playSciFiBeep(1200, 'triangle', 0.2);
+        }, 2300);
+
+        setTimeout(function() {
+            endIntroSequence();
+        }, 3400);
+
+        function endIntroSequence() {
+            warpRunning = false;
+            var overlay = document.getElementById('launchSequenceOverlay');
+            if (overlay) {
+                overlay.classList.add('fade-out');
+                setTimeout(function() { overlay.style.display = 'none'; }, 850);
+            }
+            playSciFiBeep(1400, 'sawtooth', 0.25);
+        }
+
+        /* 🌌 Header Background Starfield */
         document.addEventListener('DOMContentLoaded', function() {
             var canvas = document.getElementById('spaceCanvas');
             if (!canvas) return;
@@ -850,7 +1088,6 @@
             function draw() {
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-                /* Constellation Connection Laser Lines */
                 for (var i = 0; i < stars.length; i++) {
                     for (var j = i + 1; j < stars.length; j++) {
                         var dx = stars[i].x - stars[j].x;
@@ -867,7 +1104,6 @@
                     }
                 }
 
-                /* Draw Twinkling Stars */
                 for (var k = 0; k < stars.length; k++) {
                     var s = stars[k];
                     s.delta += s.speed;
@@ -890,7 +1126,6 @@
                     ctx.globalAlpha = 1;
                 }
 
-                /* Draw Shooting Meteors */
                 spawnMeteor();
                 for (var m = meteors.length - 1; m >= 0; m--) {
                     var met = meteors[m];
