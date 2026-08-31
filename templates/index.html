@@ -14,8 +14,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-base: #010409;
-            --bg-card: rgba(8, 14, 28, 0.88);
+            --bg-base: #02050e;
+            --bg-card: rgba(8, 14, 28, 0.9);
             --border-color: rgba(56, 189, 248, 0.25);
             --border-glow: rgba(0, 240, 255, 0.6);
             --accent-cyan: #00f0ff;
@@ -35,57 +35,39 @@
             color: var(--text-main);
             min-height: 100vh;
             padding: 16px;
-            background-image: 
-                radial-gradient(circle at 10% 15%, rgba(0, 240, 255, 0.05) 0%, transparent 40%),
-                radial-gradient(circle at 90% 85%, rgba(255, 0, 85, 0.04) 0%, transparent 40%),
-                linear-gradient(rgba(0, 240, 255, 0.02) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0, 240, 255, 0.02) 1px, transparent 1px);
-            background-size: 100% 100%, 100% 100%, 32px 32px, 32px 32px;
             overflow-x: hidden;
         }
 
-        /* Scanline Overlay Effect */
-        body::after {
-            content: " ";
-            display: block;
-            position: fixed;
-            top: 0; left: 0; bottom: 0; right: 0;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
-            background-size: 100% 3px;
-            z-index: 999;
-            pointer-events: none;
-            opacity: 0.4;
-        }
-
-        .container { max-width: 1580px; margin: 0 auto; display: flex; flex-direction: column; gap: 16px; }
+        .container { max-width: 1580px; margin: 0 auto; display: flex; flex-direction: column; gap: 16px; position: relative; z-index: 10; }
 
         /* ================== EXPANDED HERO COMMAND HEADER ================== */
         .hero-topbar {
             position: relative;
-            background: radial-gradient(ellipse at center, rgba(12, 24, 48, 0.95) 0%, rgba(3, 7, 18, 0.98) 100%);
-            border: 1px solid var(--border-color);
+            background: linear-gradient(135deg, #030816 0%, #07142c 50%, #0a0720 100%);
+            border: 1px solid rgba(0, 240, 255, 0.35);
             border-radius: 12px;
             padding: 24px 32px;
             overflow: hidden;
-            box-shadow: 0 0 35px rgba(0, 240, 255, 0.15), inset 0 0 30px rgba(0, 240, 255, 0.05);
+            box-shadow: 0 0 35px rgba(0, 240, 255, 0.2), inset 0 0 30px rgba(0, 240, 255, 0.08);
             display: grid;
             grid-template-columns: 1fr auto;
             align-items: center;
             gap: 24px;
         }
 
-        /* Animated Deep Space Canvas in Header Background */
+        /* High-Visibility Animated Deep Space Canvas */
         #spaceCanvas {
             position: absolute;
             top: 0; left: 0;
             width: 100%; height: 100%;
             pointer-events: none;
             z-index: 1;
+            display: block;
         }
 
         .hero-content {
             position: relative;
-            z-index: 2;
+            z-index: 3;
             display: flex;
             flex-direction: column;
             gap: 12px;
@@ -118,11 +100,11 @@
             font-size: 26px;
             font-weight: 900;
             letter-spacing: 1.5px;
-            background: linear-gradient(90deg, #ffffff, var(--accent-cyan), #a855f7);
+            background: linear-gradient(90deg, #ffffff, var(--accent-cyan), #c084fc);
             -webkit-background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
-            text-shadow: 0 0 30px rgba(0, 240, 255, 0.3);
+            text-shadow: 0 0 30px rgba(0, 240, 255, 0.4);
         }
 
         .hero-subtitle {
@@ -145,7 +127,7 @@
         }
 
         .pill {
-            background: rgba(4, 9, 20, 0.85);
+            background: rgba(4, 9, 20, 0.9);
             border: 1px solid var(--border-color);
             color: var(--accent-cyan);
             padding: 5px 12px;
@@ -166,7 +148,7 @@
         /* Animated Satellite Orbit Graphic in Header */
         .hero-orbit-graphic {
             position: relative;
-            z-index: 2;
+            z-index: 3;
             width: 140px;
             height: 140px;
             display: flex;
@@ -177,29 +159,29 @@
             position: absolute;
             width: 130px;
             height: 130px;
-            border: 1px dashed rgba(0, 240, 255, 0.4);
+            border: 1px dashed rgba(0, 240, 255, 0.6);
             border-radius: 50%;
-            animation: rotateOrbit 14s linear infinite;
+            animation: rotateOrbit 12s linear infinite;
         }
         .orbit-circle::before {
             content: "🛰️";
             position: absolute;
             top: -12px; left: 50%;
             transform: translateX(-50%);
-            font-size: 16px;
-            filter: drop-shadow(0 0 8px var(--accent-cyan));
+            font-size: 18px;
+            filter: drop-shadow(0 0 10px var(--accent-cyan));
         }
         .earth-core {
-            width: 60px;
-            height: 60px;
-            background: radial-gradient(circle at 35% 35%, #0284c7 0%, #082f49 70%, #030712 100%);
+            width: 62px;
+            height: 62px;
+            background: radial-gradient(circle at 35% 35%, #0284c7 0%, #0369a1 40%, #082f49 75%, #020617 100%);
             border-radius: 50%;
-            box-shadow: 0 0 25px rgba(56, 189, 248, 0.6), inset -5px -5px 15px rgba(0,0,0,0.8);
+            box-shadow: 0 0 30px rgba(56, 189, 248, 0.7), inset -5px -5px 15px rgba(0,0,0,0.9);
             position: relative;
             animation: pulseEarth 3s ease-in-out infinite alternate;
         }
         @keyframes rotateOrbit { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-        @keyframes pulseEarth { from { box-shadow: 0 0 15px rgba(56, 189, 248, 0.4); } to { box-shadow: 0 0 30px rgba(0, 240, 255, 0.8); } }
+        @keyframes pulseEarth { from { box-shadow: 0 0 20px rgba(56, 189, 248, 0.5); } to { box-shadow: 0 0 40px rgba(0, 240, 255, 0.9); } }
 
         @media (max-width: 1024px) {
             .hero-topbar { grid-template-columns: 1fr; }
@@ -568,7 +550,7 @@
 
     <div class="container">
         
-        <!-- EXPANDED HIGH-TECH HERO COMMAND HEADER -->
+        <!-- EXPANDED HIGH-TECH HERO COMMAND HEADER WITH DEEP SPACE STARFIELD -->
         <header class="hero-topbar">
             <canvas id="spaceCanvas"></canvas>
             
@@ -794,49 +776,128 @@
     <!-- Leaflet JS Map Script -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-        /* 🌌 Deep-Space Animated Starfield Canvas */
-        (function initSpaceCanvas() {
+        /* 🌌 High-Visibility Deep Space Starfield & Shooting Meteors Canvas */
+        document.addEventListener('DOMContentLoaded', function() {
             var canvas = document.getElementById('spaceCanvas');
             if (!canvas) return;
             var ctx = canvas.getContext('2d');
             var stars = [];
-            var numStars = 65;
+            var meteors = [];
+            var numStars = 100;
 
             function resize() {
-                canvas.width = canvas.parentElement.offsetWidth;
-                canvas.height = canvas.parentElement.offsetHeight;
+                if (canvas.parentElement) {
+                    canvas.width = canvas.parentElement.offsetWidth;
+                    canvas.height = canvas.parentElement.offsetHeight;
+                }
             }
             resize();
             window.addEventListener('resize', resize);
 
+            var colors = ['#ffffff', '#00f0ff', '#a855f7', '#38bdf8'];
+
             for (var i = 0; i < numStars; i++) {
                 stars.push({
-                    x: Math.random() * canvas.width,
-                    y: Math.random() * canvas.height,
-                    radius: Math.random() * 1.4 + 0.3,
-                    alpha: Math.random() * 0.8 + 0.2,
-                    speed: Math.random() * 0.02 + 0.005,
-                    delta: Math.random() * Math.PI * 2
+                    x: Math.random() * (canvas.width || 1200),
+                    y: Math.random() * (canvas.height || 180),
+                    radius: Math.random() * 1.6 + 0.5,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    alpha: Math.random() * 0.9 + 0.2,
+                    speed: Math.random() * 0.04 + 0.01,
+                    delta: Math.random() * Math.PI * 2,
+                    vx: (Math.random() - 0.5) * 0.2,
+                    vy: (Math.random() - 0.5) * 0.2
                 });
+            }
+
+            function spawnMeteor() {
+                if (meteors.length < 2 && Math.random() < 0.03) {
+                    meteors.push({
+                        x: Math.random() * canvas.width * 0.8,
+                        y: 0,
+                        len: Math.random() * 80 + 40,
+                        speed: Math.random() * 6 + 4,
+                        angle: Math.PI / 4,
+                        opacity: 1
+                    });
+                }
             }
 
             function draw() {
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                /* Constellation Connection Laser Lines */
                 for (var i = 0; i < stars.length; i++) {
-                    var s = stars[i];
+                    for (var j = i + 1; j < stars.length; j++) {
+                        var dx = stars[i].x - stars[j].x;
+                        var dy = stars[i].y - stars[j].y;
+                        var dist = Math.sqrt(dx * dx + dy * dy);
+                        if (dist < 75) {
+                            ctx.beginPath();
+                            ctx.moveTo(stars[i].x, stars[i].y);
+                            ctx.lineTo(stars[j].x, stars[j].y);
+                            ctx.strokeStyle = "rgba(0, 240, 255, " + (0.18 - dist / 75 * 0.18) + ")";
+                            ctx.lineWidth = 0.6;
+                            ctx.stroke();
+                        }
+                    }
+                }
+
+                /* Draw Twinkling Stars */
+                for (var k = 0; k < stars.length; k++) {
+                    var s = stars[k];
                     s.delta += s.speed;
+                    s.x += s.vx;
+                    s.y += s.vy;
+
+                    if (s.x < 0) s.x = canvas.width;
+                    if (s.x > canvas.width) s.x = 0;
+                    if (s.y < 0) s.y = canvas.height;
+                    if (s.y > canvas.height) s.y = 0;
+
                     var dynamicAlpha = Math.abs(Math.sin(s.delta)) * 0.8 + 0.2;
                     ctx.beginPath();
                     ctx.arc(s.x, s.y, s.radius, 0, Math.PI * 2);
-                    ctx.fillStyle = "rgba(0, 240, 255, " + dynamicAlpha + ")";
-                    ctx.shadowBlur = s.radius > 1 ? 6 : 0;
-                    ctx.shadowColor = "#00f0ff";
+                    ctx.fillStyle = s.color;
+                    ctx.globalAlpha = dynamicAlpha;
+                    ctx.shadowBlur = s.radius > 1.2 ? 8 : 0;
+                    ctx.shadowColor = s.color;
                     ctx.fill();
+                    ctx.globalAlpha = 1;
                 }
+
+                /* Draw Shooting Meteors */
+                spawnMeteor();
+                for (var m = meteors.length - 1; m >= 0; m--) {
+                    var met = meteors[m];
+                    var x2 = met.x - met.len * Math.cos(met.angle);
+                    var y2 = met.y - met.len * Math.sin(met.angle);
+
+                    var grad = ctx.createLinearGradient(met.x, met.y, x2, y2);
+                    grad.addColorStop(0, "rgba(255, 255, 255, " + met.opacity + ")");
+                    grad.addColorStop(0.5, "rgba(0, 240, 255, " + (met.opacity * 0.7) + ")");
+                    grad.addColorStop(1, "transparent");
+
+                    ctx.beginPath();
+                    ctx.moveTo(met.x, met.y);
+                    ctx.lineTo(x2, y2);
+                    ctx.strokeStyle = grad;
+                    ctx.lineWidth = 1.8;
+                    ctx.stroke();
+
+                    met.x += met.speed * Math.cos(met.angle);
+                    met.y += met.speed * Math.sin(met.angle);
+                    met.opacity -= 0.015;
+
+                    if (met.opacity <= 0 || met.x > canvas.width || met.y > canvas.height) {
+                        meteors.splice(m, 1);
+                    }
+                }
+
                 requestAnimationFrame(draw);
             }
             draw();
-        })();
+        });
 
         /* ⏱️ Live UTC Mission Telemetry Clock */
         setInterval(function() {
