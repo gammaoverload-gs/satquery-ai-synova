@@ -5,16 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SatQuery AI | Tactical Multimodal Geospatial Command Center</title>
     
-    <!-- High-Compatibility Glowing Space Satellite Favicon -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%9B%B0%EF%B8%8F%3C/text%3E%3C/svg%3E">
     
-    <!-- Leaflet GIS Map CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <!-- Chart.js for LULC Analytics & Spectral Histogram -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- Marked.js for Clean Markdown Parsing -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    <!-- Sci-Fi Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -42,13 +37,13 @@
             overflow-x: hidden;
         }
 
-        /* ================== 🎬 GUARANTEED 7-SECOND SATELLITE LAUNCH OVERLAY ================== */
+        /* ================== 🎬 7-SECOND LAUNCH INTRO OVERLAY ================== */
         #launchSequenceOverlay {
             position: fixed;
             top: 0; left: 0; width: 100vw; height: 100vh;
             background: #01040a;
             z-index: 9999999;
-            display: flex !important;
+            display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
@@ -77,7 +72,6 @@
             text-align: center;
         }
 
-        /* Spacecraft / Rocket Animation Container */
         .spacecraft-box {
             position: relative;
             width: 170px; height: 170px;
@@ -717,7 +711,6 @@
 </head>
 <body>
 
-    <!-- ================== 🎬 7-SECOND SATELLITE LAUNCH OVERLAY ================== -->
     <div id="launchSequenceOverlay">
         <canvas id="warpCanvas"></canvas>
         
@@ -742,7 +735,6 @@
         <img id="lightboxImg" src="" alt="Tactical Zoom">
     </div>
 
-    <!-- Sci-Fi Radar Loader -->
     <div id="loader">
         <div class="radar-box">
             <div class="radar-sweep"></div>
@@ -752,7 +744,6 @@
 
     <div class="container">
         
-        <!-- EXPANDED HIGH-TECH HERO COMMAND HEADER -->
         <header class="hero-topbar">
             <canvas id="spaceCanvas"></canvas>
             
@@ -781,7 +772,6 @@
                 </div>
             </div>
 
-            <!-- Orbiting 3D/Vector Earth & Satellite Graphic -->
             <div class="hero-orbit-graphic">
                 <div class="orbit-circle"></div>
                 <div class="earth-core"></div>
@@ -790,7 +780,6 @@
 
         <div class="workspace">
             
-            <!-- Left Command Panel -->
             <div class="card">
                 <div class="card-title">
                     <span>📡 SENSOR INGESTION & TARGETING</span>
@@ -864,7 +853,6 @@
                 </form>
             </div>
 
-            <!-- Right Analytics Dashboard -->
             <div class="right-pane">
                 
                 <div class="card">
@@ -975,10 +963,9 @@
     <div id="rawAnalysisData" style="display: none;">{{ analysis }}</div>
     <script id="lulc-json-data" type="application/json">{{ lulc | tojson if lulc else "{}" }}</script>
 
-    <!-- Leaflet JS Map Script -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-        /* 🚀 IMMEDIATE SELF-EXECUTING 7-SECOND LAUNCH ENGINE */
+        /* 🚀 7-Second Hyperspace Warp Launch Sequence (Smart One-Time Session Control) */
         var warpCanvas = document.getElementById('warpCanvas');
         var warpCtx = warpCanvas.getContext('2d');
         var warpStars = [];
@@ -1032,6 +1019,13 @@
         }
 
         function startLaunchSequence() {
+            // Agar session me already animation dekh chuke hain, dubara mat chalao (Direct App Reveal)
+            if (sessionStorage.getItem('hasSeenLaunch') === 'true') {
+                var overlay = document.getElementById('launchSequenceOverlay');
+                if (overlay) overlay.style.display = 'none';
+                return;
+            }
+
             warpRunning = true;
             var overlay = document.getElementById('launchSequenceOverlay');
             if (overlay) {
@@ -1040,41 +1034,37 @@
             }
             drawWarp();
 
-            /* STAGE 1: Ignition */
             var msg = document.getElementById('launchStatusMsg');
             var sub = document.getElementById('launchSubMsg');
             if (msg) msg.innerText = "STAGE 1: LAUNCH PAD IGNITION & ASCENT...";
             if (sub) sub.innerText = "CARTOSAT / SENTINEL SENSOR ARRAY CALIBRATION";
             playSciFiBeep(520, 'sawtooth', 0.2);
 
-            /* STAGE 2: Fairing Separation (1.8s) */
             introTimers.push(setTimeout(function() {
                 if (msg) msg.innerText = "STAGE 2: FAIRING SEPARATION & STRATOSPHERE ESCAPE...";
                 if (sub) sub.innerText = "ACCELERATING TO ESCAPE VELOCITY (7.8 KM/S)";
                 playSciFiBeep(880, 'sine', 0.15);
             }, 1800));
 
-            /* STAGE 3: Orbital Insertion (3.6s) */
             introTimers.push(setTimeout(function() {
                 if (msg) msg.innerText = "STAGE 3: ORBITAL INSERTION & SOLAR ARRAYS UNFURLED...";
                 if (sub) sub.innerText = "LOCKING 786 KM SUN-SYNCHRONOUS ORBIT (SSO)";
                 playSciFiBeep(1100, 'triangle', 0.2);
             }, 3600));
 
-            /* STAGE 4: Entering Payload Sensor (5.2s) */
             introTimers.push(setTimeout(function() {
                 if (msg) msg.innerText = "STAGE 4: ENTERING MULTISPECTRAL SENSOR PAYLOAD...";
                 if (sub) sub.innerText = "ACTIVATING GEMINI 3.6 FLASH VISION-LANGUAGE NEURAL MATRIX";
                 playSciFiBeep(1400, 'sine', 0.25);
             }, 5200));
 
-            /* STAGE 5: Complete & Reveal (7.0s) */
             introTimers.push(setTimeout(function() {
                 endIntroSequence();
             }, 7000));
         }
 
         function endIntroSequence() {
+            sessionStorage.setItem('hasSeenLaunch', 'true');
             introTimers.forEach(clearTimeout);
             warpRunning = false;
             var overlay = document.getElementById('launchSequenceOverlay');
@@ -1086,6 +1076,7 @@
         }
 
         function replayLaunchSequence() {
+            sessionStorage.removeItem('hasSeenLaunch');
             var overlay = document.getElementById('launchSequenceOverlay');
             var rocket = document.querySelector('.rocket-icon');
             var progress = document.querySelector('.progress-bar-fill');
@@ -1103,7 +1094,7 @@
             startLaunchSequence();
         }
 
-        /* DIRECT IMMEDIATE INVOCATION WITHOUT ANY WRAPPER DELAY */
+        // Initialize Launch Sequence
         startLaunchSequence();
 
         /* 🌌 Header Background Starfield */
