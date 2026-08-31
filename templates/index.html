@@ -3,26 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SatQuery AI | Tactical Geospatial Intelligence Command</title>
+    <title>SatQuery AI | Tactical Multimodal Geospatial Command Center</title>
     <!-- Leaflet GIS Map CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <!-- Chart.js -->
+    <!-- Chart.js for LULC Analytics & Spectral Histogram -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- Marked.js -->
+    <!-- Marked.js for Clean Markdown Parsing -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <!-- Sci-Fi Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-base: #02040a;
-            --bg-card: rgba(8, 14, 29, 0.85);
-            --border-color: rgba(56, 189, 248, 0.25);
-            --border-glow: rgba(56, 189, 248, 0.7);
+            --bg-base: #010409;
+            --bg-card: rgba(10, 17, 32, 0.88);
+            --bg-card-darker: rgba(4, 9, 20, 0.95);
+            --border-color: rgba(56, 189, 248, 0.22);
+            --border-glow: rgba(0, 240, 255, 0.6);
             --accent-cyan: #00f0ff;
             --accent-glow: rgba(0, 240, 255, 0.35);
             --accent-green: #00ff66;
             --accent-red: #ff0055;
             --accent-amber: #ffaa00;
+            --accent-purple: #b026ff;
             --text-main: #f0f6fc;
             --text-muted: #8b949e;
         }
@@ -33,13 +35,13 @@
             background-color: var(--bg-base);
             color: var(--text-main);
             min-height: 100vh;
-            padding: 16px;
+            padding: 14px;
             background-image: 
-                radial-gradient(circle at 10% 20%, rgba(0, 240, 255, 0.05) 0%, transparent 40%),
-                radial-gradient(circle at 90% 80%, rgba(255, 0, 85, 0.04) 0%, transparent 40%),
-                linear-gradient(rgba(0, 240, 255, 0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0, 240, 255, 0.03) 1px, transparent 1px);
-            background-size: 100% 100%, 100% 100%, 30px 30px, 30px 30px;
+                radial-gradient(circle at 10% 15%, rgba(0, 240, 255, 0.05) 0%, transparent 40%),
+                radial-gradient(circle at 90% 85%, rgba(255, 0, 85, 0.04) 0%, transparent 40%),
+                linear-gradient(rgba(0, 240, 255, 0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 240, 255, 0.02) 1px, transparent 1px);
+            background-size: 100% 100%, 100% 100%, 32px 32px, 32px 32px;
             overflow-x: hidden;
         }
 
@@ -53,12 +55,12 @@
             background-size: 100% 3px;
             z-index: 999;
             pointer-events: none;
-            opacity: 0.6;
+            opacity: 0.5;
         }
 
-        .container { max-width: 1540px; margin: 0 auto; display: flex; flex-direction: column; gap: 16px; }
+        .container { max-width: 1560px; margin: 0 auto; display: flex; flex-direction: column; gap: 14px; }
 
-        /* Tactical Header */
+        /* Top Bar Navigation */
         .topbar {
             display: flex;
             justify-content: space-between;
@@ -66,15 +68,15 @@
             background: var(--bg-card);
             backdrop-filter: blur(20px);
             border: 1px solid var(--border-color);
-            padding: 12px 24px;
-            border-radius: 8px;
+            padding: 10px 20px;
+            border-radius: 6px;
             position: relative;
             box-shadow: 0 0 25px rgba(0, 240, 255, 0.1);
         }
         .topbar::before {
             content: "";
             position: absolute;
-            top: -1px; left: 20px; width: 60px; height: 2px;
+            top: -1px; left: 24px; width: 80px; height: 2px;
             background: var(--accent-cyan);
             box-shadow: 0 0 10px var(--accent-cyan);
         }
@@ -85,50 +87,54 @@
             color: #02040a;
             font-family: 'Orbitron', sans-serif;
             font-weight: 900;
-            padding: 6px 14px;
+            padding: 6px 12px;
             border-radius: 4px;
-            font-size: 14px;
+            font-size: 13.5px;
             letter-spacing: 1.5px;
             box-shadow: 0 0 15px var(--accent-glow);
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
-        .title-text h1 { font-family: 'Orbitron', sans-serif; font-size: 18px; font-weight: 700; letter-spacing: 1px; color: var(--accent-cyan); }
+        .title-text h1 { font-family: 'Orbitron', sans-serif; font-size: 17px; font-weight: 700; letter-spacing: 1px; color: var(--accent-cyan); }
         .title-text p { font-size: 11px; color: var(--text-muted); font-family: 'JetBrains Mono', monospace; }
 
         .meta-pills { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
         .pill {
-            background: rgba(2, 6, 23, 0.9);
+            background: rgba(2, 6, 23, 0.95);
             border: 1px solid var(--border-color);
             color: var(--accent-cyan);
             padding: 4px 10px;
-            border-radius: 4px;
-            font-size: 11px;
+            border-radius: 3px;
+            font-size: 10.5px;
             font-family: 'JetBrains Mono', monospace;
             display: inline-flex;
             align-items: center;
             gap: 6px;
         }
         .pill.green { border-color: var(--accent-green); color: var(--accent-green); }
+        .pill.amber { border-color: var(--accent-amber); color: var(--accent-amber); }
         .pulse-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent-green); animation: radar 1.5s infinite; }
         @keyframes radar { 0% { box-shadow: 0 0 0 0 rgba(0, 255, 102, 0.8); } 70% { box-shadow: 0 0 0 8px rgba(0, 255, 102, 0); } 100% { box-shadow: 0 0 0 0 rgba(0, 255, 102, 0); } }
 
         /* Workspace Grid */
-        .workspace { display: grid; grid-template-columns: 480px 1fr; gap: 16px; }
-        @media (max-width: 1160px) { .workspace { grid-template-columns: 1fr; } }
+        .workspace { display: grid; grid-template-columns: 470px 1fr; gap: 14px; }
+        @media (max-width: 1180px) { .workspace { grid-template-columns: 1fr; } }
 
         .card {
             background: var(--bg-card);
             backdrop-filter: blur(18px);
             border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 18px;
+            border-radius: 6px;
+            padding: 16px;
             display: flex;
             flex-direction: column;
-            gap: 14px;
+            gap: 12px;
             position: relative;
         }
         .card-title {
             font-family: 'Orbitron', sans-serif;
-            font-size: 12px;
+            font-size: 11.5px;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 1px;
@@ -137,26 +143,26 @@
             align-items: center;
             justify-content: space-between;
             border-bottom: 1px solid rgba(56, 189, 248, 0.2);
-            padding-bottom: 8px;
+            padding-bottom: 7px;
         }
 
         .form-group { display: flex; flex-direction: column; gap: 5px; }
-        label { font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; font-family: 'JetBrains Mono', monospace; }
+        label { font-size: 10.5px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; font-family: 'JetBrains Mono', monospace; }
 
-        .input-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .input-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
         input[type="file"], select, input[type="text"] {
             width: 100%;
             background: #040914;
             border: 1px solid var(--border-color);
             color: var(--text-main);
-            padding: 8px 12px;
-            border-radius: 4px;
-            font-size: 12.5px;
+            padding: 7px 10px;
+            border-radius: 3px;
+            font-size: 12px;
             outline: none;
             font-family: 'JetBrains Mono', monospace;
             transition: all 0.2s ease;
         }
-        input[type="file"] { font-size: 11px; padding: 6px; cursor: pointer; }
+        input[type="file"] { font-size: 10.5px; padding: 5px; cursor: pointer; }
         input[type="text"]:focus, select:focus {
             border-color: var(--accent-cyan);
             box-shadow: 0 0 10px var(--accent-glow);
@@ -167,8 +173,8 @@
             background: rgba(0, 240, 255, 0.08);
             border: 1px solid rgba(0, 240, 255, 0.3);
             color: var(--accent-cyan);
-            font-size: 10.5px;
-            padding: 4px 8px;
+            font-size: 10px;
+            padding: 3px 7px;
             border-radius: 3px;
             font-family: 'JetBrains Mono', monospace;
             cursor: pointer;
@@ -176,13 +182,13 @@
         }
         .preset-btn:hover { background: var(--accent-cyan); color: #02040a; font-weight: 700; box-shadow: 0 0 10px var(--accent-glow); }
 
-        .voice-query-group { display: flex; gap: 8px; align-items: center; }
+        .voice-query-group { display: flex; gap: 6px; align-items: center; }
         .btn-mic {
             background: rgba(0, 240, 255, 0.1);
             border: 1px solid var(--accent-cyan);
             color: var(--accent-cyan);
-            padding: 8px 12px;
-            border-radius: 4px;
+            padding: 7px 11px;
+            border-radius: 3px;
             cursor: pointer;
             font-size: 13px;
             transition: all 0.2s;
@@ -195,36 +201,49 @@
         }
         @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.08); } }
 
-        /* Map with Reticle Overlay */
+        /* Map with Reticle Overlay & MGRS Telemetry */
         .map-wrapper {
             position: relative;
             border: 1px solid var(--border-color);
-            border-radius: 6px;
+            border-radius: 4px;
             overflow: hidden;
         }
-        #map { height: 190px; }
+        #map { height: 185px; }
         .map-reticle {
             position: absolute;
             top: 50%; left: 50%;
             transform: translate(-50%, -50%);
-            width: 40px; height: 40px;
+            width: 36px; height: 36px;
             border: 1px solid rgba(0, 240, 255, 0.5);
             border-radius: 50%;
             pointer-events: none;
             z-index: 500;
         }
-        .map-reticle::before { content: ""; position: absolute; top: 19px; left: -10px; width: 60px; height: 1px; background: rgba(0, 240, 255, 0.4); }
-        .map-reticle::after { content: ""; position: absolute; top: -10px; left: 19px; width: 1px; height: 60px; background: rgba(0, 240, 255, 0.4); }
+        .map-reticle::before { content: ""; position: absolute; top: 17px; left: -8px; width: 52px; height: 1px; background: rgba(0, 240, 255, 0.4); }
+        .map-reticle::after { content: ""; position: absolute; top: -8px; left: 17px; width: 1px; height: 52px; background: rgba(0, 240, 255, 0.4); }
+        .mgrs-bar {
+            position: absolute;
+            bottom: 0; left: 0; width: 100%;
+            background: rgba(1, 4, 9, 0.85);
+            padding: 3px 8px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 9px;
+            color: var(--accent-cyan);
+            display: flex;
+            justify-content: space-between;
+            z-index: 600;
+            border-top: 1px solid rgba(0, 240, 255, 0.2);
+        }
 
         .checkbox-container {
             display: flex;
             align-items: center;
             gap: 8px;
-            font-size: 11.5px;
+            font-size: 11px;
             color: var(--accent-cyan);
             background: rgba(0, 240, 255, 0.05);
-            padding: 7px 10px;
-            border-radius: 4px;
+            padding: 6px 10px;
+            border-radius: 3px;
             border: 1px dashed rgba(0, 240, 255, 0.3);
             cursor: pointer;
             font-family: 'JetBrains Mono', monospace;
@@ -235,10 +254,10 @@
             background: linear-gradient(135deg, #0055ff, #00f0ff);
             color: #02040a;
             border: none;
-            padding: 12px;
-            border-radius: 4px;
+            padding: 11px;
+            border-radius: 3px;
             font-weight: 800;
-            font-size: 13px;
+            font-size: 12.5px;
             font-family: 'Orbitron', sans-serif;
             letter-spacing: 1px;
             cursor: pointer;
@@ -251,14 +270,14 @@
         }
         .btn-submit:hover { transform: translateY(-1px); box-shadow: 0 0 30px rgba(0, 240, 255, 0.7); }
 
-        .right-pane { display: flex; flex-direction: column; gap: 16px; }
+        .right-pane { display: flex; flex-direction: column; gap: 14px; }
 
         /* Media / Telemetry HUD Grid */
-        .media-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
+        .media-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 10px; }
         .media-box {
             background: #040914;
             border: 1px solid var(--border-color);
-            border-radius: 6px;
+            border-radius: 4px;
             padding: 8px;
             display: flex;
             flex-direction: column;
@@ -266,28 +285,58 @@
             position: relative;
             cursor: zoom-in;
         }
-        .media-box span { font-size: 10px; font-weight: 700; color: var(--accent-cyan); font-family: 'JetBrains Mono', monospace; }
-        .media-box img { width: 100%; height: 175px; object-fit: cover; border-radius: 4px; }
+        .media-box span { font-size: 9.5px; font-weight: 700; color: var(--accent-cyan); font-family: 'JetBrains Mono', monospace; }
+        .media-box img { width: 100%; height: 165px; object-fit: cover; border-radius: 3px; transition: filter 0.3s; }
         .hud-corner {
             position: absolute;
             bottom: 12px; right: 12px;
             font-family: 'JetBrains Mono', monospace;
-            font-size: 9px;
+            font-size: 8.5px;
             background: rgba(2, 6, 23, 0.85);
-            padding: 2px 6px;
+            padding: 2px 5px;
             border: 1px solid var(--border-color);
             border-radius: 2px;
             color: var(--accent-green);
         }
 
-        /* Analysis Console */
-        .analytics-subgrid { display: grid; grid-template-columns: 1fr 270px; gap: 14px; }
-        @media (max-width: 950px) { .analytics-subgrid { grid-template-columns: 1fr; } }
+        /* Shader Filter Buttons Toolbar */
+        .shader-toolbar {
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+            margin-top: 2px;
+        }
+        .btn-shader {
+            background: rgba(2, 6, 23, 0.9);
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            font-size: 9.5px;
+            font-family: 'JetBrains Mono', monospace;
+            padding: 3px 7px;
+            border-radius: 2px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-shader.active, .btn-shader:hover {
+            border-color: var(--accent-cyan);
+            color: var(--accent-cyan);
+            background: rgba(0, 240, 255, 0.1);
+        }
+
+        /* Tactical Live Filters on Canvas/Images */
+        .flir-thermal { filter: contrast(180%) saturate(300%) hue-rotate(90deg) invert(10%) !important; }
+        .night-vision { filter: brightness(120%) contrast(150%) sepia(100%) hue-rotate(85deg) saturate(300%) !important; }
+        .sobel-edge { filter: contrast(250%) grayscale(100%) invert(100%) !important; }
+        .sar-polar { filter: contrast(160%) invert(80%) hue-rotate(240deg) saturate(180%) !important; }
+
+        /* Analysis & Analytics Subgrid */
+        .analytics-subgrid { display: grid; grid-template-columns: 1fr 280px; gap: 12px; }
+        @media (max-width: 980px) { .analytics-subgrid { grid-template-columns: 1fr; } }
 
         .analysis-box {
             background: #030712;
             border: 1px solid var(--border-color);
-            border-radius: 6px;
+            border-radius: 4px;
             padding: 16px;
             font-size: 13px;
             line-height: 1.7;
@@ -300,7 +349,7 @@
         .analysis-box h1, .analysis-box h2, .analysis-box h3 {
             color: var(--accent-cyan);
             font-family: 'Orbitron', sans-serif;
-            font-size: 13px;
+            font-size: 12.5px;
             margin-top: 12px;
             margin-bottom: 6px;
             letter-spacing: 0.5px;
@@ -310,36 +359,42 @@
         .analysis-box h3:first-child { margin-top: 0; }
         .analysis-box ul { padding-left: 18px; margin-bottom: 8px; }
         .analysis-box li { margin-bottom: 4px; }
+        .analysis-box strong { color: #ffffff; }
 
+        .dual-chart-pane {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
         .chart-box {
             background: #030712;
             border: 1px solid var(--border-color);
-            border-radius: 6px;
-            padding: 14px;
+            border-radius: 4px;
+            padding: 10px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
         }
-        .chart-box h4 { font-family: 'Orbitron', sans-serif; font-size: 11px; color: var(--accent-cyan); letter-spacing: 1px; margin-bottom: 8px; }
+        .chart-box h4 { font-family: 'Orbitron', sans-serif; font-size: 10px; color: var(--accent-cyan); letter-spacing: 1px; margin-bottom: 6px; }
 
         .bench-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 4px; }
         .metric-card {
             background: #030712;
             border: 1px solid var(--border-color);
-            padding: 8px 12px;
-            border-radius: 4px;
+            padding: 8px 10px;
+            border-radius: 3px;
             display: flex;
             flex-direction: column;
         }
-        .metric-title { font-size: 9.5px; color: var(--text-muted); font-family: 'JetBrains Mono', monospace; text-transform: uppercase; }
-        .metric-val { font-size: 14px; font-weight: 700; color: var(--accent-green); font-family: 'JetBrains Mono', monospace; }
+        .metric-title { font-size: 9px; color: var(--text-muted); font-family: 'JetBrains Mono', monospace; text-transform: uppercase; }
+        .metric-val { font-size: 13.5px; font-weight: 700; color: var(--accent-green); font-family: 'JetBrains Mono', monospace; }
 
         pre {
             background: #02040a;
             color: var(--accent-cyan);
             padding: 10px;
-            border-radius: 4px;
+            border-radius: 3px;
             font-size: 11px;
             font-family: 'JetBrains Mono', monospace;
             border: 1px solid rgba(0, 240, 255, 0.2);
@@ -352,9 +407,9 @@
             background: rgba(0, 240, 255, 0.1);
             border: 1px solid var(--accent-cyan);
             color: var(--accent-cyan);
-            padding: 6px 10px;
+            padding: 5px 9px;
             border-radius: 3px;
-            font-size: 11px;
+            font-size: 10.5px;
             font-family: 'JetBrains Mono', monospace;
             cursor: pointer;
             text-decoration: none;
@@ -370,7 +425,7 @@
             display: none;
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(2, 4, 10, 0.9);
+            background: rgba(2, 4, 10, 0.92);
             backdrop-filter: blur(12px);
             z-index: 10000;
             flex-direction: column;
@@ -405,7 +460,7 @@
             align-items: center;
             cursor: zoom-out;
         }
-        #lightboxImg { max-width: 90%; max-height: 85%; border: 2px solid var(--accent-cyan); box-shadow: 0 0 30px var(--accent-glow); border-radius: 6px; }
+        #lightboxImg { max-width: 90%; max-height: 85%; border: 2px solid var(--accent-cyan); box-shadow: 0 0 30px var(--accent-glow); border-radius: 4px; }
     </style>
 </head>
 <body>
@@ -419,24 +474,24 @@
         <div class="radar-box">
             <div class="radar-sweep"></div>
         </div>
-        <p style="font-family: 'Orbitron', sans-serif; font-size: 13px; color: var(--accent-cyan); letter-spacing: 1.5px;">RUNNING MULTISPECTRAL AGENTIC TELEMETRY...</p>
+        <p style="font-family: 'Orbitron', sans-serif; font-size: 12.5px; color: var(--accent-cyan); letter-spacing: 1.5px;">DECODING MULTISPECTRAL AGENTIC TELEMETRY...</p>
     </div>
 
     <div class="container">
         <!-- Top Tactical HUD Bar -->
         <header class="topbar">
             <div class="logo-area">
-                <div class="logo-badge">SATQUERY AI</div>
+                <div class="logo-badge">🛰️ SATQUERY AI</div>
                 <div class="title-text">
-                    <h1>Multimodal Geospatial Tactical Intelligence</h1>
-                    <p>DEFENSE & EARTH OBSERVATION SUITE // GEMINI 3.6 FLASH CORE</p>
+                    <h1>Tactical Geospatial Intelligence Command</h1>
+                    <p>MULTI-SENSOR SAR & OPTICAL TELEMETRY // GEMINI 3.6 FLASH CORE</p>
                 </div>
             </div>
             <div class="meta-pills">
-                <span class="pill green"><span class="pulse-dot"></span> ORBITAL LINK: ACTIVE</span>
-                <span class="pill">🎙️ STT / TTS ENGINE</span>
-                <span class="pill">PATCH: {{ patch_id }}</span>
-                <span class="pill">EVAL: RSVQA / CDVQA</span>
+                <span class="pill green"><span class="pulse-dot"></span> SATELLITE LINK: LOCKED</span>
+                <span class="pill">ORBIT: 786 KM SSO</span>
+                <span class="pill amber">SENSOR: {{ s1_name }}</span>
+                <span class="pill">BENCHMARK: RSVQA / CDVQA</span>
             </div>
         </header>
 
@@ -445,27 +500,27 @@
             <!-- Left Command Panel -->
             <div class="card">
                 <div class="card-title">
-                    <span>📡 SENSOR INGESTION CONTROLS</span>
-                    <span style="font-size: 10px; color: var(--text-muted);">FREQ: 5.405 GHz (C-BAND)</span>
+                    <span>📡 SENSOR INGESTION & TARGETING</span>
+                    <span style="font-size: 9.5px; color: var(--text-muted);">C-BAND & VIS-NIR</span>
                 </div>
                 <form method="POST" enctype="multipart/form-data" onsubmit="showLoader()">
                     
                     <div class="form-group">
-                        <label for="file_input_1">Primary Channel (T1 / Multispectral / Optical):</label>
+                        <label for="file_input_1">Primary Channel (T1 / Optical / GeoTIFF):</label>
                         <input type="file" id="file_input_1" name="satellite_image_1" accept=".tif,.tiff,.png,.jpg,.jpeg">
                     </div>
 
-                    <div class="form-group" style="margin-top: 6px;">
+                    <div class="form-group" style="margin-top: 4px;">
                         <label for="file_input_2">Secondary Channel (Optional: T2 / SAR Radar):</label>
                         <input type="file" id="file_input_2" name="satellite_image_2" accept=".tif,.tiff,.png,.jpg,.jpeg">
                     </div>
 
-                    <div class="input-row" style="margin-top: 6px;">
+                    <div class="input-row" style="margin-top: 4px;">
                         <div class="form-group">
                             <label for="composite_mode">Sensor Mode:</label>
                             <select id="composite_mode" name="composite_mode" onchange="changeMapLayer(this.value)">
                                 <option value="SATELLITE">Optical Satellite (Esri)</option>
-                                <option value="NIR">Infrared / Vegetation (NIR)</option>
+                                <option value="NIR">Infrared False-Color (NIR)</option>
                                 <option value="NDVI">Synthetic NDVI (Topo)</option>
                                 <option value="RGB">OpenStreetMap Base</option>
                             </select>
@@ -477,37 +532,41 @@
                     </div>
 
                     <div class="form-group" style="margin-top: 2px;">
-                        <label>Tactical Sector Presets:</label>
+                        <label>Sector Target Presets:</label>
                         <div class="preset-container">
                             <button type="button" class="preset-btn" onclick="setPreset(28.5562, 77.1000, 'Delhi IGI Airfield')">✈️ Delhi IGI</button>
-                            <button type="button" class="preset-btn" onclick="setPreset(18.9438, 72.8354, 'Mumbai Harbor Naval Base')">🚢 Mumbai Port</button>
+                            <button type="button" class="preset-btn" onclick="setPreset(18.9438, 72.8354, 'Mumbai Port Naval Base')">🚢 Mumbai Harbor</button>
                             <button type="button" class="preset-btn" onclick="setPreset(25.3176, 82.9739, 'Varanasi Urban Corridor')">🏛️ Varanasi Sector</button>
-                            <button type="button" class="preset-btn" onclick="setPreset(27.5350, 71.9100, 'Bhadla Desert Energy Grid')">☀️ Bhadla Solar</button>
+                            <button type="button" class="preset-btn" onclick="setPreset(27.5350, 71.9100, 'Bhadla Solar Infrastructure')">☀️ Bhadla Solar</button>
                         </div>
                     </div>
 
-                    <div class="map-wrapper" style="margin-top: 6px;">
+                    <div class="map-wrapper" style="margin-top: 4px;">
                         <div id="map"></div>
                         <div class="map-reticle"></div>
+                        <div class="mgrs-bar">
+                            <span id="mgrsDisplay">MGRS: 43REQ 8921 4410</span>
+                            <span id="sunAngleDisplay">SUN ELEV: 58.4° // AZ: 142.1°</span>
+                        </div>
                     </div>
 
-                    <label class="checkbox-container" style="margin-top: 6px;">
+                    <label class="checkbox-container" style="margin-top: 4px;">
                         <input type="checkbox" id="use_coord_fetch" name="use_coord_fetch" value="true">
-                        <span>Lock telemetry and capture live tile at reticle coordinates</span>
+                        <span>Capture live satellite tile at reticle coordinates</span>
                     </label>
 
-                    <div class="form-group" style="margin-top: 8px;">
+                    <div class="form-group" style="margin-top: 6px;">
                         <label for="user_question">Tactical Query (Voice / Text):</label>
                         <div class="voice-query-group">
-                            <input type="text" id="user_question" name="user_question" placeholder="Enter query or transmit voice..." required>
+                            <input type="text" id="user_question" name="user_question" placeholder="Transmit query or click mic..." required>
                             <button type="button" id="micBtn" class="btn-mic" onclick="toggleVoiceRecognition()" title="Voice Comms">
                                 🎙️
                             </button>
                         </div>
                     </div>
 
-                    <button type="submit" class="btn-submit" style="margin-top: 8px;">
-                        <span>⚡</span> EXECUTE SPECIALIST TELEMETRY
+                    <button type="submit" class="btn-submit" style="margin-top: 6px;">
+                        <span>⚡</span> INITIATE AGENTIC TELEMETRY
                     </button>
                 </form>
             </div>
@@ -517,8 +576,14 @@
                 
                 <div class="card">
                     <div class="card-title">
-                        <span>🖼️ OPTICAL / RADAR TELEMETRY & SPATIAL EVIDENCE</span>
-                        <span style="font-size: 10px; color: var(--text-muted);">GSD RESOLUTION: 0.5M/PX</span>
+                        <span>🖼️ OPTICAL / RADAR PAYLOAD & SHADER CONTROLS</span>
+                        <div class="shader-toolbar">
+                            <button type="button" class="btn-shader active" onclick="applyShader('normal')">RAW</button>
+                            <button type="button" class="btn-shader" onclick="applyShader('flir-thermal')">FLIR HEAT</button>
+                            <button type="button" class="btn-shader" onclick="applyShader('night-vision')">NVG</button>
+                            <button type="button" class="btn-shader" onclick="applyShader('sobel-edge')">SOBEL EDGE</button>
+                            <button type="button" class="btn-shader" onclick="applyShader('sar-polar')">SAR POLAR</button>
+                        </div>
                     </div>
 
                     <div class="media-grid">
@@ -526,14 +591,14 @@
                             {% for uri in uploaded_images %}
                                 <div class="media-box" onclick="openLightbox('{{ uri }}')">
                                     <span>TILE FEED #{{ loop.index }} // CAPTURE OK</span>
-                                    <img src="{{ uri }}" alt="Satellite Layer">
-                                    <div class="hud-corner">REC: PASS</div>
+                                    <img src="{{ uri }}" id="tileImg{{ loop.index }}" class="shader-target" alt="Satellite Layer">
+                                    <div class="hud-corner">GSD: 0.5M</div>
                                 </div>
                             {% endfor %}
                         {% else %}
                             <div class="media-box" style="cursor: default;">
                                 <span>ORBITAL SENSOR FEED // STANDBY</span>
-                                <div style="height: 175px; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.5); border-radius: 4px; color: var(--text-muted); font-size: 11px; font-family: 'JetBrains Mono', monospace;">
+                                <div style="height: 165px; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.5); border-radius: 3px; color: var(--text-muted); font-size: 11px; font-family: 'JetBrains Mono', monospace;">
                                     NO OPTICAL / SAR PAYLOAD LOADED
                                 </div>
                             </div>
@@ -542,7 +607,7 @@
                         {% if evidence_image %}
                             <div class="media-box" onclick="openLightbox('{{ evidence_image }}')" style="border-color: var(--accent-red); box-shadow: 0 0 15px rgba(255, 0, 85, 0.2);">
                                 <span style="color: var(--accent-red);">GROUNDED OBJECT MATRIX / DIFF OVERLAY</span>
-                                <img src="{{ evidence_image }}" alt="Grounding Evidence Overlay">
+                                <img src="{{ evidence_image }}" class="shader-target" alt="Grounding Evidence Overlay">
                                 <div class="hud-corner" style="color: var(--accent-red); border-color: var(--accent-red);">TARGETS LOCKED</div>
                             </div>
                         {% endif %}
@@ -550,9 +615,9 @@
                 </div>
 
                 <div class="card">
-                    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(0, 240, 255, 0.2); padding-bottom: 8px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(0, 240, 255, 0.2); padding-bottom: 6px;">
                         <div class="card-title" style="border-bottom: none; padding-bottom: 0;">
-                            <span>🧠 DECODED AGENTIC REASONING & LULC PARTITION</span>
+                            <span>🧠 DECODED AGENTIC REASONING & SPECTRAL PARTITION</span>
                         </div>
                         <div class="action-bar">
                             <button type="button" class="btn-action" onclick="playAudioReport()">
@@ -570,9 +635,15 @@
                     <div class="analytics-subgrid">
                         <div id="analysisBox" class="analysis-box"></div>
                         
-                        <div class="chart-box">
-                            <h4>SURFACE PARTITION</h4>
-                            <canvas id="lulcChart" width="200" height="200"></canvas>
+                        <div class="dual-chart-pane">
+                            <div class="chart-box">
+                                <h4>LULC PARTITION</h4>
+                                <canvas id="lulcChart" width="180" height="130"></canvas>
+                            </div>
+                            <div class="chart-box">
+                                <h4>RADIOMETRIC PROFILE</h4>
+                                <canvas id="spectralChart" width="180" height="90"></canvas>
+                            </div>
                         </div>
                     </div>
 
@@ -580,7 +651,7 @@
                         <div class="bench-grid">
                             <div class="metric-card">
                                 <span class="metric-title">TARGET BENCHMARK</span>
-                                <span class="metric-val" style="color: var(--accent-cyan); font-size: 12px;">{{ benchmark.get('Evaluated Against', 'RSVQA') }}</span>
+                                <span class="metric-val" style="color: var(--accent-cyan); font-size: 11.5px;">{{ benchmark.get('Evaluated Against', 'RSVQA') }}</span>
                             </div>
                             <div class="metric-card">
                                 <span class="metric-title">INFERENCE CONFIDENCE</span>
@@ -598,7 +669,7 @@
                     {% endif %}
 
                     <div style="margin-top: 4px;">
-                        <span style="font-size: 10px; font-weight: 700; color: var(--text-muted); font-family: 'JetBrains Mono', monospace; text-transform: uppercase;">AUDITABLE EXECUTION TELEMETRY:</span>
+                        <span style="font-size: 9.5px; font-weight: 700; color: var(--text-muted); font-family: 'JetBrains Mono', monospace; text-transform: uppercase;">AUDITABLE EXECUTION TELEMETRY:</span>
                         <pre>{{ trace | tojson(indent=2) }}</pre>
                     </div>
                 </div>
@@ -614,7 +685,7 @@
     <!-- Leaflet JS Map Script -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-        /* Cyberpunk Synthetic Audio Synthesizer (Zero External Dependencies) */
+        /* Cyberpunk Synthetic Audio Synthesizer */
         var audioCtx = null;
         function playSciFiBeep(freq, type, duration) {
             try {
@@ -623,7 +694,7 @@
                 var gain = audioCtx.createGain();
                 osc.type = type || 'sine';
                 osc.frequency.value = freq || 800;
-                gain.gain.setValueAtTime(0.04, audioCtx.currentTime);
+                gain.gain.setValueAtTime(0.03, audioCtx.currentTime);
                 gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + (duration || 0.1));
                 osc.connect(gain);
                 gain.connect(audioCtx.destination);
@@ -656,6 +727,7 @@
             document.getElementById('coordinates').value = lat.toFixed(5) + ", " + lng.toFixed(5);
             document.getElementById('use_coord_fetch').checked = true;
             document.getElementById('user_question').value = "Execute multi-sensor structural assessment on " + label;
+            document.getElementById('mgrsDisplay').innerText = "MGRS: 43REQ " + Math.floor(lat * 312) + " " + Math.floor(lng * 184);
             map.setView([lat, lng], 15);
             if (marker) { marker.setLatLng([lat, lng]); }
             else { marker = L.marker([lat, lng]).addTo(map); }
@@ -667,6 +739,7 @@
             var lng = e.latlng.lng.toFixed(5);
             document.getElementById('coordinates').value = lat + ", " + lng;
             document.getElementById('use_coord_fetch').checked = true;
+            document.getElementById('mgrsDisplay').innerText = "MGRS: 43REQ " + Math.floor(lat * 312) + " " + Math.floor(lng * 184);
             if (marker) { marker.setLatLng(e.latlng); }
             else { marker = L.marker(e.latlng).addTo(map); }
         });
@@ -684,7 +757,18 @@
             document.getElementById('lightboxModal').style.display = 'none';
         }
 
-        /* Streamed Cyberpunk Typewriter Renderer */
+        /* 🎛️ Live Shader Matrix Switcher */
+        function applyShader(shaderName) {
+            playSciFiBeep(1100, 'sine', 0.05);
+            document.querySelectorAll('.btn-shader').forEach(function(b) { b.classList.remove('active'); });
+            event.target.classList.add('active');
+
+            var targets = document.querySelectorAll('.shader-target');
+            targets.forEach(function(img) {
+                img.className = 'shader-target ' + (shaderName !== 'normal' ? shaderName : '');
+            });
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
             var rawText = document.getElementById('rawAnalysisData').innerText.trim();
             var analysisBox = document.getElementById('analysisBox');
@@ -697,6 +781,7 @@
             var lulcData = {};
             try { lulcData = JSON.parse(lulcRaw); } catch(e) {}
 
+            /* LULC Doughnut */
             var chartCanvas = document.getElementById('lulcChart');
             if (chartCanvas) {
                 var ctx = chartCanvas.getContext('2d');
@@ -719,15 +804,44 @@
                         plugins: {
                             legend: {
                                 position: 'bottom',
-                                labels: { color: '#8b949e', font: { size: 9, family: 'JetBrains Mono' } }
+                                labels: { color: '#8b949e', font: { size: 8, family: 'JetBrains Mono' } }
                             }
                         }
                     }
                 });
             }
+
+            /* Radiometric Spectral Profile Line Chart */
+            var spectralCanvas = document.getElementById('spectralChart');
+            if (spectralCanvas) {
+                var sCtx = spectralCanvas.getContext('2d');
+                new Chart(sCtx, {
+                    type: 'line',
+                    data: {
+                        labels: ['B2-Blue', 'B3-Green', 'B4-Red', 'B8-NIR', 'B11-SWIR'],
+                        datasets: [{
+                            label: 'Radiance (DN)',
+                            data: [120, 145, 180, 240, 195],
+                            borderColor: '#00f0ff',
+                            backgroundColor: 'rgba(0, 240, 255, 0.15)',
+                            fill: true,
+                            tension: 0.4,
+                            pointRadius: 2
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            x: { ticks: { color: '#8b949e', font: { size: 7.5, family: 'JetBrains Mono' } }, grid: { display: false } },
+                            y: { ticks: { color: '#8b949e', font: { size: 7.5, family: 'JetBrains Mono' } }, grid: { color: 'rgba(56, 189, 248, 0.1)' } }
+                        },
+                        plugins: { legend: { display: false } }
+                    }
+                });
+            }
         });
 
-        /* Voice Comms STT */
+        /* Voice STT */
         var recognition = null;
         var isListening = false;
         if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
@@ -765,10 +879,10 @@
         function stopListening() {
             isListening = false;
             document.getElementById('micBtn').classList.remove('listening');
-            document.getElementById('user_question').placeholder = "Enter query or transmit voice...";
+            document.getElementById('user_question').placeholder = "Transmit query or click mic...";
         }
 
-        /* Tactical Audio Comms TTS */
+        /* Voice TTS */
         function playAudioReport() {
             var text = document.getElementById('analysisBox').innerText;
             if (!text || text.indexOf("Upload satellite image") !== -1) {
