@@ -40,19 +40,36 @@
 
         .container { max-width: 1580px; margin: 0 auto; display: flex; flex-direction: column; gap: 16px; position: relative; z-index: 10; }
 
-        /* ================== EXPANDED HERO COMMAND HEADER ================== */
+        /* ================== EXPANDED GRAND COMMAND HEADER ================== */
         .hero-topbar {
             position: relative;
-            background: linear-gradient(135deg, #030816 0%, #07142c 50%, #0a0720 100%);
-            border: 1px solid rgba(0, 240, 255, 0.35);
-            border-radius: 12px;
-            padding: 24px 32px;
+            background: linear-gradient(135deg, #020716 0%, #06132d 40%, #0a0624 100%);
+            border: 1.5px solid rgba(0, 240, 255, 0.45);
+            border-radius: 14px;
+            padding: 34px 42px;
             overflow: hidden;
-            box-shadow: 0 0 35px rgba(0, 240, 255, 0.2), inset 0 0 30px rgba(0, 240, 255, 0.08);
+            box-shadow: 0 0 45px rgba(0, 240, 255, 0.22), inset 0 0 35px rgba(0, 240, 255, 0.1);
             display: grid;
             grid-template-columns: 1fr auto;
             align-items: center;
-            gap: 24px;
+            gap: 32px;
+            min-height: 190px;
+        }
+
+        /* Ambient Corner Radar Lasers */
+        .hero-topbar::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; width: 120px; height: 3px;
+            background: linear-gradient(90deg, var(--accent-cyan), transparent);
+            box-shadow: 0 0 15px var(--accent-cyan);
+        }
+        .hero-topbar::after {
+            content: "";
+            position: absolute;
+            bottom: 0; right: 0; width: 120px; height: 3px;
+            background: linear-gradient(270deg, var(--accent-purple), transparent);
+            box-shadow: 0 0 15px var(--accent-purple);
         }
 
         /* High-Visibility Animated Deep Space Canvas */
@@ -70,13 +87,13 @@
             z-index: 3;
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 14px;
         }
 
         .hero-title-row {
             display: flex;
             align-items: center;
-            gap: 16px;
+            gap: 18px;
             flex-wrap: wrap;
         }
 
@@ -85,106 +102,109 @@
             color: #010409;
             font-family: 'Orbitron', sans-serif;
             font-weight: 900;
-            padding: 8px 16px;
-            border-radius: 6px;
-            font-size: 16px;
-            letter-spacing: 2px;
-            box-shadow: 0 0 25px var(--accent-glow);
+            padding: 10px 18px;
+            border-radius: 8px;
+            font-size: 18px;
+            letter-spacing: 2.5px;
+            box-shadow: 0 0 30px var(--accent-glow);
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
         }
 
         .hero-title {
             font-family: 'Orbitron', sans-serif;
-            font-size: 26px;
+            font-size: 32px;
             font-weight: 900;
-            letter-spacing: 1.5px;
-            background: linear-gradient(90deg, #ffffff, var(--accent-cyan), #c084fc);
+            letter-spacing: 2px;
+            background: linear-gradient(90deg, #ffffff 0%, var(--accent-cyan) 50%, #d8b4fe 100%);
             -webkit-background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
-            text-shadow: 0 0 30px rgba(0, 240, 255, 0.4);
+            text-shadow: 0 0 35px rgba(0, 240, 255, 0.45);
         }
 
         .hero-subtitle {
-            font-size: 13px;
+            font-size: 13.5px;
             color: #94a3b8;
             font-family: 'JetBrains Mono', monospace;
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 14px;
             flex-wrap: wrap;
+            letter-spacing: 0.5px;
         }
         .hero-subtitle strong { color: var(--accent-cyan); font-weight: 600; }
 
         .hero-telemetry-strip {
             display: flex;
-            gap: 10px;
+            gap: 12px;
             align-items: center;
             flex-wrap: wrap;
-            margin-top: 4px;
+            margin-top: 6px;
         }
 
         .pill {
-            background: rgba(4, 9, 20, 0.9);
+            background: rgba(4, 9, 20, 0.92);
             border: 1px solid var(--border-color);
             color: var(--accent-cyan);
-            padding: 5px 12px;
-            border-radius: 4px;
-            font-size: 11px;
+            padding: 6px 14px;
+            border-radius: 6px;
+            font-size: 11.5px;
             font-family: 'JetBrains Mono', monospace;
             display: inline-flex;
             align-items: center;
-            gap: 6px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.4);
+            gap: 8px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.5);
+            letter-spacing: 0.5px;
         }
         .pill.green { border-color: var(--accent-green); color: var(--accent-green); }
         .pill.amber { border-color: var(--accent-amber); color: var(--accent-amber); }
-        .pill.purple { border-color: var(--accent-purple); color: #d8b4fe; }
-        .pulse-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent-green); animation: radar 1.5s infinite; }
-        @keyframes radar { 0% { box-shadow: 0 0 0 0 rgba(0, 255, 102, 0.8); } 70% { box-shadow: 0 0 0 8px rgba(0, 255, 102, 0); } 100% { box-shadow: 0 0 0 0 rgba(0, 255, 102, 0); } }
+        .pill.purple { border-color: var(--accent-purple); color: #e9d5ff; }
+        .pulse-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent-green); animation: radar 1.5s infinite; }
+        @keyframes radar { 0% { box-shadow: 0 0 0 0 rgba(0, 255, 102, 0.8); } 70% { box-shadow: 0 0 0 9px rgba(0, 255, 102, 0); } 100% { box-shadow: 0 0 0 0 rgba(0, 255, 102, 0); } }
 
         /* Animated Satellite Orbit Graphic in Header */
         .hero-orbit-graphic {
             position: relative;
             z-index: 3;
-            width: 140px;
-            height: 140px;
+            width: 160px;
+            height: 160px;
             display: flex;
             align-items: center;
             justify-content: center;
         }
         .orbit-circle {
             position: absolute;
-            width: 130px;
-            height: 130px;
-            border: 1px dashed rgba(0, 240, 255, 0.6);
+            width: 150px;
+            height: 150px;
+            border: 1.5px dashed rgba(0, 240, 255, 0.65);
             border-radius: 50%;
             animation: rotateOrbit 12s linear infinite;
         }
         .orbit-circle::before {
             content: "🛰️";
             position: absolute;
-            top: -12px; left: 50%;
+            top: -14px; left: 50%;
             transform: translateX(-50%);
-            font-size: 18px;
-            filter: drop-shadow(0 0 10px var(--accent-cyan));
+            font-size: 22px;
+            filter: drop-shadow(0 0 12px var(--accent-cyan));
         }
         .earth-core {
-            width: 62px;
-            height: 62px;
+            width: 72px;
+            height: 72px;
             background: radial-gradient(circle at 35% 35%, #0284c7 0%, #0369a1 40%, #082f49 75%, #020617 100%);
             border-radius: 50%;
-            box-shadow: 0 0 30px rgba(56, 189, 248, 0.7), inset -5px -5px 15px rgba(0,0,0,0.9);
+            box-shadow: 0 0 35px rgba(56, 189, 248, 0.75), inset -6px -6px 18px rgba(0,0,0,0.9);
             position: relative;
             animation: pulseEarth 3s ease-in-out infinite alternate;
         }
         @keyframes rotateOrbit { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-        @keyframes pulseEarth { from { box-shadow: 0 0 20px rgba(56, 189, 248, 0.5); } to { box-shadow: 0 0 40px rgba(0, 240, 255, 0.9); } }
+        @keyframes pulseEarth { from { box-shadow: 0 0 25px rgba(56, 189, 248, 0.5); } to { box-shadow: 0 0 50px rgba(0, 240, 255, 0.95); } }
 
-        @media (max-width: 1024px) {
-            .hero-topbar { grid-template-columns: 1fr; }
+        @media (max-width: 1080px) {
+            .hero-topbar { grid-template-columns: 1fr; padding: 24px 20px; }
+            .hero-title { font-size: 24px; }
             .hero-orbit-graphic { display: none; }
         }
 
@@ -550,7 +570,7 @@
 
     <div class="container">
         
-        <!-- EXPANDED HIGH-TECH HERO COMMAND HEADER WITH DEEP SPACE STARFIELD -->
+        <!-- EXPANDED HIGH-TECH HERO COMMAND HEADER -->
         <header class="hero-topbar">
             <canvas id="spaceCanvas"></canvas>
             
@@ -783,7 +803,7 @@
             var ctx = canvas.getContext('2d');
             var stars = [];
             var meteors = [];
-            var numStars = 100;
+            var numStars = 110;
 
             function resize() {
                 if (canvas.parentElement) {
@@ -794,29 +814,29 @@
             resize();
             window.addEventListener('resize', resize);
 
-            var colors = ['#ffffff', '#00f0ff', '#a855f7', '#38bdf8'];
+            var colors = ['#ffffff', '#00f0ff', '#c084fc', '#38bdf8'];
 
             for (var i = 0; i < numStars; i++) {
                 stars.push({
                     x: Math.random() * (canvas.width || 1200),
-                    y: Math.random() * (canvas.height || 180),
-                    radius: Math.random() * 1.6 + 0.5,
+                    y: Math.random() * (canvas.height || 200),
+                    radius: Math.random() * 1.8 + 0.6,
                     color: colors[Math.floor(Math.random() * colors.length)],
                     alpha: Math.random() * 0.9 + 0.2,
                     speed: Math.random() * 0.04 + 0.01,
                     delta: Math.random() * Math.PI * 2,
-                    vx: (Math.random() - 0.5) * 0.2,
-                    vy: (Math.random() - 0.5) * 0.2
+                    vx: (Math.random() - 0.5) * 0.25,
+                    vy: (Math.random() - 0.5) * 0.25
                 });
             }
 
             function spawnMeteor() {
-                if (meteors.length < 2 && Math.random() < 0.03) {
+                if (meteors.length < 2 && Math.random() < 0.035) {
                     meteors.push({
                         x: Math.random() * canvas.width * 0.8,
                         y: 0,
-                        len: Math.random() * 80 + 40,
-                        speed: Math.random() * 6 + 4,
+                        len: Math.random() * 90 + 50,
+                        speed: Math.random() * 7 + 5,
                         angle: Math.PI / 4,
                         opacity: 1
                     });
@@ -832,12 +852,12 @@
                         var dx = stars[i].x - stars[j].x;
                         var dy = stars[i].y - stars[j].y;
                         var dist = Math.sqrt(dx * dx + dy * dy);
-                        if (dist < 75) {
+                        if (dist < 80) {
                             ctx.beginPath();
                             ctx.moveTo(stars[i].x, stars[i].y);
                             ctx.lineTo(stars[j].x, stars[j].y);
-                            ctx.strokeStyle = "rgba(0, 240, 255, " + (0.18 - dist / 75 * 0.18) + ")";
-                            ctx.lineWidth = 0.6;
+                            ctx.strokeStyle = "rgba(0, 240, 255, " + (0.22 - dist / 80 * 0.22) + ")";
+                            ctx.lineWidth = 0.7;
                             ctx.stroke();
                         }
                     }
@@ -860,7 +880,7 @@
                     ctx.arc(s.x, s.y, s.radius, 0, Math.PI * 2);
                     ctx.fillStyle = s.color;
                     ctx.globalAlpha = dynamicAlpha;
-                    ctx.shadowBlur = s.radius > 1.2 ? 8 : 0;
+                    ctx.shadowBlur = s.radius > 1.2 ? 10 : 0;
                     ctx.shadowColor = s.color;
                     ctx.fill();
                     ctx.globalAlpha = 1;
@@ -875,14 +895,14 @@
 
                     var grad = ctx.createLinearGradient(met.x, met.y, x2, y2);
                     grad.addColorStop(0, "rgba(255, 255, 255, " + met.opacity + ")");
-                    grad.addColorStop(0.5, "rgba(0, 240, 255, " + (met.opacity * 0.7) + ")");
+                    grad.addColorStop(0.5, "rgba(0, 240, 255, " + (met.opacity * 0.75) + ")");
                     grad.addColorStop(1, "transparent");
 
                     ctx.beginPath();
                     ctx.moveTo(met.x, met.y);
                     ctx.lineTo(x2, y2);
                     ctx.strokeStyle = grad;
-                    ctx.lineWidth = 1.8;
+                    ctx.lineWidth = 2.2;
                     ctx.stroke();
 
                     met.x += met.speed * Math.cos(met.angle);
