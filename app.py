@@ -1,29 +1,25 @@
 import os
 import io
 import re
-import time
 import json
 import base64
 import datetime
 import webbrowser
-import requests
 from threading import Timer
-from flask import Flask, render_template, request, Response, jsonify
+from flask import Flask, render_template, request, Response
 from dotenv import load_dotenv
 from google import genai
-from preprocessor import load_satellite_image, draw_bounding_boxes, generate_change_diff_map, boxes_to_geojson
+from preprocessor import (
+    load_satellite_image,
+    draw_bounding_boxes,
+    generate_change_diff_map,
+    boxes_to_geojson
+)
 from satellite_fetcher import CoordinateSatelliteFetcher
-from evaluator import RemoteSensingBenchmarkEvaluator
 
 load_dotenv()
 
 app = Flask(__name__)
-
-# Primary & Secondary API Keys
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "").strip()
-OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY", "").strip()
-
-evaluator_engine = RemoteSensingBenchmarkEvaluator()
 
 BEN_METADATA = {
     "s1_name": "Sentinel-1A_IW_GRDH_1SDV",
@@ -33,21 +29,36 @@ BEN_METADATA = {
 LAST_REPORT = {}
 LAST_GEOJSON = {}
 
+def get_genai_client():
+    """Initializes and returns the Google GenAI client securely."""
+    api_key = os.getenv("GEMINI_API_KEY", "").strip()
+    if not api_key:
+        raise ValueError("GEMINI_API_KEY not configured. Set it in your .env or Render Environment Variables.")
+    return genai.Client(api_key=api_key)
+
 def route_task(query: str, num_images: int) -> str:
+    """Routes the query to specialized remote-sensing VLM pipelines."""
     q = query.lower()
     if num_images == 1:
-        if any(w in q for w in ["ground", "highlight", "localize", "box", "detect", "segment", "locate", "where"]):
+        if any(w in q for w in ["ground", "highlight", "localize", "box", "detect", "segment", "locate", "where", "bounding"]):
             return "SINGLE_IMAGE_GROUNDING"
+        elif any(w in q for w in ["count", "how many", "number of", "enumerate"]):
+            return "OBJECT_COUNTING_AND_ENUMERATION"
+        elif any(w in q for w in ["classify", "lulc", "land cover", "land use", "segmentation"]):
+            return "LULC_SEMANTIC_CLASSIFICATION"
+        elif any(w in q for w in ["spectral", "ndvi", "nir", "radiometric", "band", "reflectance"]):
+            return "SPECTRAL_RADIOMETRIC_ANALYSIS"
         return "SINGLE_IMAGE_VQA_CAPTION"
     elif num_images == 2:
-        if any(w in q for w in ["change", "diff", "before", "after", "increased", "decreased"]):
+        if any(w in q for w in ["change", "diff", "before", "after", "increased", "decreased", "urban expansion", "deforestation"]):
             return "BITEMPORAL_CHANGE_ANALYSIS"
-        elif any(w in q for w in ["sar", "radar", "optical", "cross-modal", "fusion"]):
-            return "CROSS_MODAL_OPTICAL_SAR"
+        elif any(w in q for w in ["sar", "radar", "optical", "cross-modal", "fusion", "c-band", "backscatter"]):
+            return "CROSS_MODAL_OPTICAL_SAR_FUSION"
         return "BITEMPORAL_CHANGE_ANALYSIS"
-    return "UNKNOWN_TASK"
+    return "UNKNOWN_GEOSPATIAL_TASK"
 
 def extract_boxes_from_response(text: str) -> tuple:
+    """Extracts structured 2D bounding boxes from VLM response."""
     boxes = []
     clean_text = text
     json_match = re.search(r"```(?:json)?\s*(\[.*?\]|\{.*?\})\s*```", text, re.DOTALL)
@@ -65,116 +76,60 @@ def extract_boxes_from_response(text: str) -> tuple:
     return clean_text, boxes
 
 def estimate_lulc_distribution(analysis_text: str) -> dict:
+    """Computes heuristic LULC radiometric distribution from telemetry."""
     text = analysis_text.lower()
-    veg = 45 if any(k in text for k in ["vegetation", "forest", "agriculture", "crop", "trees", "greenery"]) else 25
-    urban = 35 if any(k in text for k in ["urban", "building", "built-up", "settlement", "infrastructure", "runway", "port"]) else 15
-    water = 20 if any(k in text for k in ["water", "river", "lake", "ocean", "sea", "canal"]) else 10
-    soil = max(5, 100 - (veg + urban + water))
     
-    total = veg + urban + water + soil
+    veg_keywords = ["vegetation", "forest", "agriculture", "crop", "trees", "greenery", "canopy", "grassland", "riparian"]
+    veg_score = 45 if any(k in text for k in veg_keywords) else 20
+    
+    urban_keywords = ["urban", "building", "built-up", "settlement", "infrastructure", "runway", "port", "highway", "solar", "facility", "dock"]
+    urban_score = 35 if any(k in text for k in urban_keywords) else 15
+    
+    water_keywords = ["water", "river", "lake", "ocean", "sea", "canal", "harbor", "basin", "reservoir", "coastal"]
+    water_score = 25 if any(k in text for k in water_keywords) else 10
+    
+    soil_score = max(5, 100 - (veg_score + urban_score + water_score))
+    
+    total = veg_score + urban_score + water_score + soil_score
     return {
-        "Vegetation / Agriculture": round((veg / total) * 100, 1),
-        "Urban / Built-up Fabric": round((urban / total) * 100, 1),
-        "Water Bodies": round((water / total) * 100, 1),
-        "Bare Soil / Open Ground": round((soil / total) * 100, 1)
+        "Vegetation / Agriculture": round((veg_score / total) * 100, 1),
+        "Urban / Built-up Fabric": round((urban_score / total) * 100, 1),
+        "Water Bodies": round((water_score / total) * 100, 1),
+        "Bare Soil / Open Ground": round((soil_score / total) * 100, 1)
     }
 
-# ==================== DUAL PROVIDER ROUTER ====================
-
-def call_gemini_provider(images, prompt):
-    """Primary Provider: Google Gemini Direct API"""
-    key = os.getenv("GEMINI_API_KEY", "").strip()
-    if not key:
-        raise Exception("Gemini API Key not set.")
+def construct_agentic_prompt(task: str, query: str, num_images: int, composite_mode: str, coordinates: str, metadata_list: list) -> str:
+    """Builds the remote-sensing system prompt."""
+    coord_info = f"\n- Ground Target Coordinates: {coordinates}" if coordinates else ""
+    meta_info = f"\n- Channel Metadata: {metadata_list}" if metadata_list else ""
     
-    client = genai.Client(api_key=key)
-    models = ["gemini-2.5-flash", "gemini-2.0-flash"]
-    
-    for m in models:
-        try:
-            resp = client.models.generate_content(
-                model=m,
-                contents=[*images, prompt]
-            )
-            if resp and resp.text:
-                return resp.text, f"Google Gemini ({m})"
-        except Exception as ex:
-            if "429" in str(ex) or "RESOURCE_EXHAUSTED" in str(ex):
-                continue
-            raise ex
-    raise Exception("Gemini Quota Exhausted.")
-
-def call_openrouter_provider(images, prompt):
-    """Secondary Fallback Provider: OpenRouter Multimodal Free Models"""
-    key = os.getenv("OPENROUTER_API_KEY", "").strip()
-    if not key:
-        raise Exception("OpenRouter API Key not set.")
-    
-    # Convert PIL Images to base64 Data URLs
-    image_payloads = []
-    for img in images:
-        buf = io.BytesIO()
-        img.save(buf, format="JPEG")
-        b64 = base64.b64encode(buf.getvalue()).decode("utf-8")
-        image_payloads.append({
-            "type": "image_url",
-            "image_url": {"url": f"data:image/jpeg;base64,{b64}"}
-        })
-    
-    free_models = [
-        "google/gemma-4-31b-it:free",
-        "meta-llama/llama-3.2-11b-vision-instruct:free",
-        "qwen/qwen-2-vl-72b-instruct:free"
-    ]
-    
-    headers = {
-        "Authorization": f"Bearer {key}",
-        "Content-Type": "application/json",
-        "HTTP-Referer": "https://satquery-ai-synova.onrender.com",
-        "X-Title": "SatQuery AI"
-    }
-
-    for m in free_models:
-        try:
-            payload = {
-                "model": m,
-                "messages": [
-                    {
-                        "role": "user",
-                        "content": [
-                            {"type": "text", "text": prompt},
-                            *image_payloads
-                        ]
-                    }
-                ]
-            }
-            res = requests.post("https://openrouter.ai/api/v1/chat/completions", headers=headers, json=payload, timeout=40)
-            if res.status_code == 200:
-                data = res.json()
-                if "choices" in data and len(data["choices"]) > 0:
-                    return data["choices"][0]["message"]["content"], f"OpenRouter Free ({m})"
-        except Exception:
-            continue
-            
-    raise Exception("OpenRouter Fallback Exhausted.")
-
-def resilient_multimodal_pipeline(images, prompt):
-    """Auto-switches from Gemini -> OpenRouter instantly on failure."""
-    # Attempt 1: Gemini Primary
-    try:
-        return call_gemini_provider(images, prompt)
-    except Exception as g_err:
-        print(f"[FAILOVER TRIGGERED] Gemini failed ({g_err}). Switching to OpenRouter...")
-
-    # Attempt 2: OpenRouter Secondary Fallback
-    try:
-        return call_openrouter_provider(images, prompt)
-    except Exception as o_err:
-        print(f"[FAILOVER FAILED] OpenRouter also failed ({o_err}).")
-
-    raise Exception("All AI providers (Gemini & OpenRouter) exhausted. Please verify API keys.")
-
-# ==================== FLASK ROUTES ====================
+    return (
+        f"You are SatQuery AI, an expert agentic remote-sensing geospatial intelligence system.\n"
+        f"You are conducting precision multimodal analysis on {num_images} multi-spectral/radar satellite observation(s).\n\n"
+        f"MISSION CONTEXT & SENSOR RIG:\n"
+        f"- Target Pipeline Execution: {task}\n"
+        f"- Active Radiometric Composite: {composite_mode}\n"
+        f"- Benchmark Constellation Calibration: {BEN_METADATA['s1_name']}\n"
+        f"- Reference Dataset Alignment: {BEN_METADATA['patch_id']}{coord_info}{meta_info}\n\n"
+        f"OPERATIONAL TASK QUERY:\n"
+        f"\"{query}\"\n\n"
+        f"ANALYTICAL & REPORTING REQUIREMENTS:\n"
+        f"1. Structure your output clearly using standard Markdown headers.\n"
+        f"2. Explicitly separate observed optical/radar features from inferred interpretations.\n"
+        f"3. Estimate spatial dimensions, building/vessel density, and structural integrity where visible.\n"
+        f"4. If grounding, segmenting, or locating objects, output bounding boxes at the very end formatted strictly as:\n"
+        f"```json\n"
+        f"[\n"
+        f'  {{"box_2d": [ymin, xmin, ymax, xmax], "label": "Detected Feature Name"}}\n'
+        f"]\n"
+        f"```\n"
+        f"(Coordinates normalized on an integer scale of 0 to 1000: [ymin, xmin, ymax, xmax]).\n\n"
+        f"MANDATORY REPORT STRUCTURE:\n"
+        f"### Scene Summary\n"
+        f"### Key Observed Features\n"
+        f"### Spatial Distribution & Interpretation\n"
+        f"### Assessment Confidence"
+    )
 
 @app.route("/", methods=["GET", "POST"])
 def home():
@@ -201,6 +156,7 @@ def home():
             loaded_pil_images = []
             metadata_list = []
 
+            # Ingestion Option A: Live coordinate tile fetching
             if use_coord_fetch and coordinates:
                 try:
                     lat_str, lon_str = [c.strip() for c in coordinates.split(",")]
@@ -209,12 +165,13 @@ def home():
                     metadata_list.append(meta)
 
                     buf = io.BytesIO()
-                    fetched_img.save(buf, format="JPEG")
+                    fetched_img.save(buf, format="JPEG", quality=90)
                     b64 = base64.b64encode(buf.getvalue()).decode("utf-8")
                     image_uris.append(f"data:image/jpeg;base64,{b64}")
                 except Exception as ex:
-                    analysis_text = f"Tile fetch failed: {str(ex)}"
+                    analysis_text = f"Tile ingestion failed at specified coordinates: {str(ex)}"
 
+            # Ingestion Option B: Direct image upload
             if not loaded_pil_images:
                 for f in [file_1, file_2]:
                     if f and f.filename != "":
@@ -223,54 +180,44 @@ def home():
                         metadata_list.append(meta)
 
                         buf = io.BytesIO()
-                        pil_img.save(buf, format="JPEG")
+                        pil_img.save(buf, format="JPEG", quality=90)
                         b64 = base64.b64encode(buf.getvalue()).decode("utf-8")
                         image_uris.append(f"data:image/jpeg;base64,{b64}")
 
             if loaded_pil_images:
                 num_images = len(loaded_pil_images)
                 task = route_task(user_question, num_images)
-                coord_context = f"\n- Target Geographic Coordinates: {coordinates}" if coordinates else ""
-
-                system_prompt = (
-                    f"You are SatQuery AI, an expert agentic remote-sensing assistant analyzing {num_images} satellite image(s).\n\n"
-                    f"Assigned Specialist Pipeline: {task}\n"
-                    f"Spectral Mode: {composite_mode}\n"
-                    f"Dataset Context (BigEarthNet Alignment):\n"
-                    f"- Sentinel-1 Reference: {s1_name}\n"
-                    f"- Reference Patch ID: {patch_id}{coord_context}\n"
-                    f"- Input Image Metadata: {metadata_list}\n\n"
-                    f"User Query:\n\"{user_question}\"\n\n"
-                    "Formatting Instructions:\n"
-                    "1. Provide a clean, structured natural language explanation using standard section headers.\n"
-                    "2. Ground all claims in observable spectral and spatial features.\n"
-                    "3. Differentiate clearly between OBSERVED facts and INFERRED interpretations.\n"
-                    "4. If grounding/localizing features, provide bounding boxes strictly at the end in this format:\n"
-                    "```json\n"
-                    '[{"box_2d": [ymin, xmin, ymax, xmax], "label": "Feature Name"}]\n'
-                    "```\n"
-                    "(Coordinates scaled 0 to 1000).\n\n"
-                    "Structure your output cleanly under these exact headers:\n"
-                    "### Scene Summary\n"
-                    "### Key Observed Features\n"
-                    "### Spatial Distribution & Interpretation\n"
-                    "### Assessment Confidence"
+                
+                system_prompt = construct_agentic_prompt(
+                    task=task,
+                    query=user_question,
+                    num_images=num_images,
+                    composite_mode=composite_mode,
+                    coordinates=coordinates,
+                    metadata_list=metadata_list
                 )
 
-                # Call Hybrid Failover Pipeline
-                raw_text, active_provider = resilient_multimodal_pipeline(loaded_pil_images, system_prompt)
+                genai_client = get_genai_client()
+                
+                # Direct Google Gemini Multimodal Inference
+                response = genai_client.models.generate_content(
+                    model="gemini-2.5-flash",
+                    contents=[*loaded_pil_images, system_prompt]
+                )
+
+                raw_text = response.text if response else "No response generated by model."
                 clean_text, detected_boxes = extract_boxes_from_response(raw_text)
                 analysis_text = clean_text
 
                 evidence_img = None
                 if detected_boxes:
                     evidence_img = draw_bounding_boxes(loaded_pil_images[0], detected_boxes)
-                elif task == "BITEMPORAL_CHANGE_ANALYSIS" and num_images >= 2:
+                elif task in ["BITEMPORAL_CHANGE_ANALYSIS", "CROSS_MODAL_OPTICAL_SAR_FUSION"] and num_images >= 2:
                     evidence_img = generate_change_diff_map(loaded_pil_images[0], loaded_pil_images[1])
 
                 if evidence_img:
                     buf_ev = io.BytesIO()
-                    evidence_img.save(buf_ev, format="JPEG")
+                    evidence_img.save(buf_ev, format="JPEG", quality=90)
                     b64_ev = base64.b64encode(buf_ev.getvalue()).decode("utf-8")
                     evidence_uri = f"data:image/jpeg;base64,{b64_ev}"
 
@@ -291,7 +238,7 @@ def home():
 
                 execution_trace = {
                     "timestamp": datetime.datetime.utcnow().isoformat() + "Z",
-                    "active_provider": active_provider,
+                    "model": "gemini-2.5-flash",
                     "task": task,
                     "num_inputs": num_images,
                     "composite_mode": composite_mode,
@@ -308,7 +255,8 @@ def home():
                     "query": user_question,
                     "analysis": analysis_text,
                     "trace": execution_trace,
-                    "lulc": lulc_data
+                    "lulc": lulc_data,
+                    "geojson": LAST_GEOJSON
                 }
             else:
                 analysis_text = "Please upload an image or select a coordinate preset to fetch live imagery."
@@ -332,6 +280,7 @@ def home():
 
 @app.route("/download-report")
 def download_report():
+    """Exports full auditable tactical analysis report as JSON."""
     global LAST_REPORT
     if not LAST_REPORT:
         return "No analysis available to download.", 400
@@ -344,6 +293,7 @@ def download_report():
 
 @app.route("/download-geojson")
 def download_geojson():
+    """Exports grounded object detections projected into GIS GeoJSON standard format."""
     global LAST_GEOJSON
     if not LAST_GEOJSON:
         return "No GeoJSON data available to download.", 400
