@@ -21,7 +21,7 @@ load_dotenv()
 
 app = Flask(__name__)
 
-# Active official Gemini Vision model endpoint
+# Active official Gemini Vision model endpoint for new AI Studio projects
 ACTIVE_VISION_MODEL = "gemini-3.6-flash"
 
 BEN_METADATA = {
