@@ -42,13 +42,13 @@
             overflow-x: hidden;
         }
 
-        /* ================== 🎬 CINEMATIC SATELLITE LAUNCH OVERLAY (EXTENDED 7s) ================== */
+        /* ================== 🎬 GUARANTEED 7-SECOND SATELLITE LAUNCH OVERLAY ================== */
         #launchSequenceOverlay {
             position: fixed;
             top: 0; left: 0; width: 100vw; height: 100vh;
             background: #01040a;
-            z-index: 999999;
-            display: flex;
+            z-index: 9999999;
+            display: flex !important;
             flex-direction: column;
             justify-content: center;
             align-items: center;
@@ -56,9 +56,9 @@
             overflow: hidden;
         }
         #launchSequenceOverlay.fade-out {
-            opacity: 0;
-            transform: scale(1.18);
-            pointer-events: none;
+            opacity: 0 !important;
+            transform: scale(1.2) !important;
+            pointer-events: none !important;
         }
 
         #warpCanvas {
@@ -69,27 +69,28 @@
 
         .cinematic-hud {
             position: relative;
-            z-index: 5;
+            z-index: 10;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 22px;
+            gap: 24px;
             text-align: center;
         }
 
-        /* Spacecraft Container */
+        /* Spacecraft / Rocket Animation Container */
         .spacecraft-box {
             position: relative;
-            width: 160px; height: 160px;
+            width: 170px; height: 170px;
             display: flex;
             align-items: center;
             justify-content: center;
         }
 
         .rocket-icon {
-            font-size: 64px;
+            font-size: 70px;
             filter: drop-shadow(0 0 35px var(--accent-cyan));
-            animation: rocketThrust 0.12s infinite alternate, ascendFlight 6.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+            animation: rocketThrust 0.1s infinite alternate, ascendFlight 6.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+            display: inline-block;
         }
 
         .lens-portal {
@@ -107,11 +108,11 @@
         }
 
         @keyframes ascendFlight {
-            0% { transform: scale(0.6) translateY(140px) rotate(-45deg); opacity: 0; }
+            0% { transform: scale(0.6) translateY(150px) rotate(-45deg); opacity: 0; }
             15% { transform: scale(0.9) translateY(40px) rotate(-45deg); opacity: 1; }
             45% { transform: scale(1.2) translateY(-10px) rotate(-45deg); }
             70% { transform: scale(1.6) translateY(-40px) rotate(-45deg); opacity: 1; }
-            100% { transform: scale(5.5) translateY(-300px) rotate(-45deg); opacity: 0; }
+            100% { transform: scale(5.5) translateY(-320px) rotate(-45deg); opacity: 0; }
         }
 
         @keyframes portalZoom {
@@ -163,7 +164,7 @@
         .btn-skip-intro {
             position: absolute;
             bottom: 30px; right: 40px;
-            z-index: 10;
+            z-index: 20;
             background: rgba(4, 9, 20, 0.85);
             border: 1px solid var(--border-color);
             color: var(--accent-cyan);
@@ -716,7 +717,7 @@
 </head>
 <body>
 
-    <!-- ================== 🎬 EXTENDED 7-SECOND SATELLITE LAUNCH OVERLAY ================== -->
+    <!-- ================== 🎬 7-SECOND SATELLITE LAUNCH OVERLAY ================== -->
     <div id="launchSequenceOverlay">
         <canvas id="warpCanvas"></canvas>
         
@@ -977,7 +978,7 @@
     <!-- Leaflet JS Map Script -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-        /* 🚀 Extended 7.0-Second Hyperspace Warp Launch Sequence Engine */
+        /* 🚀 IMMEDIATE SELF-EXECUTING 7-SECOND LAUNCH ENGINE */
         var warpCanvas = document.getElementById('warpCanvas');
         var warpCtx = warpCanvas.getContext('2d');
         var warpStars = [];
@@ -986,8 +987,8 @@
 
         function initWarpStars() {
             warpStars = [];
-            warpCanvas.width = window.innerWidth || document.documentElement.clientWidth;
-            warpCanvas.height = window.innerHeight || document.documentElement.clientHeight;
+            warpCanvas.width = window.innerWidth || document.documentElement.clientWidth || 1920;
+            warpCanvas.height = window.innerHeight || document.documentElement.clientHeight || 1080;
             for (var i = 0; i < 300; i++) {
                 warpStars.push({
                     x: (Math.random() - 0.5) * warpCanvas.width * 2,
@@ -1009,7 +1010,7 @@
 
             for (var i = 0; i < warpStars.length; i++) {
                 var s = warpStars[i];
-                s.z -= 11; /* Controlled cinematic warp speed */
+                s.z -= 11;
                 if (s.z <= 0) s.z = warpCanvas.width;
 
                 var k = 250 / s.z;
@@ -1033,19 +1034,21 @@
         function startLaunchSequence() {
             warpRunning = true;
             var overlay = document.getElementById('launchSequenceOverlay');
-            overlay.style.display = 'flex';
-            overlay.classList.remove('fade-out');
+            if (overlay) {
+                overlay.style.display = 'flex';
+                overlay.classList.remove('fade-out');
+            }
             drawWarp();
 
             /* STAGE 1: Ignition */
-            document.getElementById('launchStatusMsg').innerText = "STAGE 1: LAUNCH PAD IGNITION & ASCENT...";
-            document.getElementById('launchSubMsg').innerText = "CARTOSAT / SENTINEL SENSOR ARRAY CALIBRATION";
+            var msg = document.getElementById('launchStatusMsg');
+            var sub = document.getElementById('launchSubMsg');
+            if (msg) msg.innerText = "STAGE 1: LAUNCH PAD IGNITION & ASCENT...";
+            if (sub) sub.innerText = "CARTOSAT / SENTINEL SENSOR ARRAY CALIBRATION";
             playSciFiBeep(520, 'sawtooth', 0.2);
 
             /* STAGE 2: Fairing Separation (1.8s) */
             introTimers.push(setTimeout(function() {
-                var msg = document.getElementById('launchStatusMsg');
-                var sub = document.getElementById('launchSubMsg');
                 if (msg) msg.innerText = "STAGE 2: FAIRING SEPARATION & STRATOSPHERE ESCAPE...";
                 if (sub) sub.innerText = "ACCELERATING TO ESCAPE VELOCITY (7.8 KM/S)";
                 playSciFiBeep(880, 'sine', 0.15);
@@ -1053,8 +1056,6 @@
 
             /* STAGE 3: Orbital Insertion (3.6s) */
             introTimers.push(setTimeout(function() {
-                var msg = document.getElementById('launchStatusMsg');
-                var sub = document.getElementById('launchSubMsg');
                 if (msg) msg.innerText = "STAGE 3: ORBITAL INSERTION & SOLAR ARRAYS UNFURLED...";
                 if (sub) sub.innerText = "LOCKING 786 KM SUN-SYNCHRONOUS ORBIT (SSO)";
                 playSciFiBeep(1100, 'triangle', 0.2);
@@ -1062,8 +1063,6 @@
 
             /* STAGE 4: Entering Payload Sensor (5.2s) */
             introTimers.push(setTimeout(function() {
-                var msg = document.getElementById('launchStatusMsg');
-                var sub = document.getElementById('launchSubMsg');
                 if (msg) msg.innerText = "STAGE 4: ENTERING MULTISPECTRAL SENSOR PAYLOAD...";
                 if (sub) sub.innerText = "ACTIVATING GEMINI 3.6 FLASH VISION-LANGUAGE NEURAL MATRIX";
                 playSciFiBeep(1400, 'sine', 0.25);
@@ -1104,10 +1103,8 @@
             startLaunchSequence();
         }
 
-        // Run instantly on first load
-        window.addEventListener('load', function() {
-            startLaunchSequence();
-        });
+        /* DIRECT IMMEDIATE INVOCATION WITHOUT ANY WRAPPER DELAY */
+        startLaunchSequence();
 
         /* 🌌 Header Background Starfield */
         document.addEventListener('DOMContentLoaded', function() {
