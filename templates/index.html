@@ -8,19 +8,21 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <!-- Chart.js for LULC Analytics -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- Google Font Inter -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <!-- Google Font Inter & Space Grotesk -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-base: #060913;
-            --bg-card: rgba(15, 23, 42, 0.75);
-            --bg-card-hover: rgba(30, 41, 59, 0.8);
-            --border-color: rgba(51, 65, 85, 0.6);
+            --bg-base: #030712;
+            --bg-card: rgba(15, 23, 42, 0.72);
+            --bg-card-hover: rgba(30, 41, 59, 0.85);
+            --border-color: rgba(56, 189, 248, 0.18);
+            --border-glow: rgba(56, 189, 248, 0.4);
             --accent-primary: #38bdf8;
-            --accent-glow: rgba(56, 189, 248, 0.25);
+            --accent-glow: rgba(56, 189, 248, 0.28);
             --accent-success: #10b981;
             --accent-danger: #ef4444;
-            --accent-purple: #818cf8;
+            --accent-purple: #a855f7;
+            --accent-amber: #f59e0b;
             --text-main: #f8fafc;
             --text-muted: #94a3b8;
         }
@@ -31,105 +33,142 @@
             background-color: var(--bg-base);
             color: var(--text-main);
             min-height: 100vh;
-            padding: 24px;
-            background-image: radial-gradient(circle at 10% 20%, rgba(56, 189, 248, 0.04) 0%, transparent 40%),
-                              radial-gradient(circle at 90% 80%, rgba(129, 140, 248, 0.04) 0%, transparent 40%);
+            padding: 20px;
+            background-image: 
+                radial-gradient(circle at 15% 15%, rgba(56, 189, 248, 0.07) 0%, transparent 45%),
+                radial-gradient(circle at 85% 85%, rgba(168, 85, 247, 0.07) 0%, transparent 45%),
+                linear-gradient(to right, rgba(255,255,255,0.01) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255,255,255,0.01) 1px, transparent 1px);
+            background-size: 100% 100%, 100% 100%, 40px 40px, 40px 40px;
         }
 
-        .container { max-width: 1440px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
+        .container { max-width: 1480px; margin: 0 auto; display: flex; flex-direction: column; gap: 18px; }
 
+        /* Top Bar Navigation */
         .topbar {
             display: flex;
             justify-content: space-between;
             align-items: center;
             background: var(--bg-card);
-            backdrop-filter: blur(12px);
+            backdrop-filter: blur(16px);
             border: 1px solid var(--border-color);
-            padding: 16px 24px;
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+            padding: 14px 24px;
+            border-radius: 14px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+            transition: all 0.3s ease;
         }
-        .logo-area { display: flex; align-items: center; gap: 12px; }
+        .topbar:hover { border-color: var(--border-glow); }
+        .logo-area { display: flex; align-items: center; gap: 14px; }
         .logo-badge {
-            background: linear-gradient(135deg, #0284c7, #6366f1);
+            background: linear-gradient(135deg, #0284c7, #8b5cf6);
             color: white;
+            font-family: 'Space Grotesk', sans-serif;
             font-weight: 700;
-            padding: 6px 12px;
-            border-radius: 8px;
-            font-size: 14px;
-            letter-spacing: 0.5px;
-            box-shadow: 0 0 15px var(--accent-glow);
+            padding: 8px 14px;
+            border-radius: 10px;
+            font-size: 15px;
+            letter-spacing: 0.8px;
+            box-shadow: 0 0 20px var(--accent-glow);
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
-        .title-text h1 { font-size: 20px; font-weight: 700; letter-spacing: -0.5px; }
+        .title-text h1 { font-family: 'Space Grotesk', sans-serif; font-size: 20px; font-weight: 700; letter-spacing: -0.3px; }
         .title-text p { font-size: 12px; color: var(--text-muted); }
 
         .meta-pills { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
         .pill {
-            background: rgba(2, 6, 23, 0.8);
+            background: rgba(2, 6, 23, 0.85);
             border: 1px solid var(--border-color);
             color: var(--accent-primary);
             padding: 5px 12px;
             border-radius: 20px;
-            font-size: 12px;
+            font-size: 11.5px;
             font-family: 'JetBrains Mono', monospace;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
         }
-        .pill.purple { border-color: var(--accent-purple); color: var(--accent-purple); }
-        .pill.green { border-color: var(--accent-success); color: var(--accent-success); }
+        .pill.purple { border-color: rgba(168, 85, 247, 0.4); color: #c084fc; }
+        .pill.green { border-color: rgba(16, 185, 129, 0.4); color: #34d399; }
+        .pulse-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent-success); animation: radar-pulse 1.8s infinite; }
+        @keyframes radar-pulse { 0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); } 70% { box-shadow: 0 0 0 7px rgba(16, 185, 129, 0); } 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); } }
 
+        /* Workspace Grid */
         .workspace {
             display: grid;
-            grid-template-columns: 460px 1fr;
-            gap: 20px;
+            grid-template-columns: 480px 1fr;
+            gap: 18px;
         }
-        @media (max-width: 1080px) { .workspace { grid-template-columns: 1fr; } }
+        @media (max-width: 1120px) { .workspace { grid-template-columns: 1fr; } }
 
         .card {
             background: var(--bg-card);
-            backdrop-filter: blur(12px);
+            backdrop-filter: blur(16px);
             border: 1px solid var(--border-color);
-            border-radius: 12px;
+            border-radius: 14px;
             padding: 20px;
             display: flex;
             flex-direction: column;
-            gap: 16px;
+            gap: 15px;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.35);
         }
         .card-title {
-            font-size: 14px;
-            font-weight: 600;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 13.5px;
+            font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.6px;
             color: var(--accent-primary);
             display: flex;
             align-items: center;
-            gap: 8px;
+            justify-content: space-between;
             border-bottom: 1px solid var(--border-color);
             padding-bottom: 10px;
         }
 
         .form-group { display: flex; flex-direction: column; gap: 6px; }
-        label { font-size: 12px; font-weight: 500; color: var(--text-muted); }
+        label { font-size: 11.5px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.4px; }
 
         .input-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         input[type="file"], select, input[type="text"] {
             width: 100%;
-            background: rgba(2, 6, 23, 0.9);
+            background: rgba(2, 6, 23, 0.85);
             border: 1px solid var(--border-color);
             color: var(--text-main);
             padding: 9px 12px;
             border-radius: 8px;
             font-size: 13px;
             outline: none;
-            transition: all 0.2s;
+            transition: all 0.2s ease;
         }
         input[type="file"] { font-size: 11px; padding: 7px; cursor: pointer; }
         input[type="text"]:focus, select:focus {
             border-color: var(--accent-primary);
-            box-shadow: 0 0 10px var(--accent-glow);
+            box-shadow: 0 0 12px var(--accent-glow);
+        }
+
+        /* Preset Chips */
+        .preset-container { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 2px; }
+        .preset-btn {
+            background: rgba(56, 189, 248, 0.08);
+            border: 1px solid rgba(56, 189, 248, 0.25);
+            color: #bae6fd;
+            font-size: 11px;
+            padding: 4px 9px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .preset-btn:hover {
+            background: var(--accent-primary);
+            color: #020617;
+            font-weight: 600;
         }
 
         .voice-query-group { display: flex; gap: 8px; align-items: center; }
         .btn-mic {
-            background: rgba(56, 189, 248, 0.15);
+            background: rgba(56, 189, 248, 0.12);
             border: 1px solid var(--accent-primary);
             color: var(--accent-primary);
             padding: 9px 14px;
@@ -142,7 +181,7 @@
             transition: all 0.2s;
         }
         .btn-mic.listening {
-            background: rgba(239, 68, 68, 0.2);
+            background: rgba(239, 68, 68, 0.25);
             border-color: var(--accent-danger);
             color: var(--accent-danger);
             animation: pulse 1s infinite;
@@ -151,7 +190,7 @@
 
         #map {
             height: 200px;
-            border-radius: 8px;
+            border-radius: 10px;
             border: 1px solid var(--border-color);
             transition: filter 0.3s ease;
         }
@@ -165,10 +204,10 @@
             gap: 8px;
             font-size: 12px;
             color: var(--accent-primary);
-            background: rgba(56, 189, 248, 0.05);
+            background: rgba(56, 189, 248, 0.06);
             padding: 8px 12px;
-            border-radius: 6px;
-            border: 1px dashed rgba(56, 189, 248, 0.3);
+            border-radius: 8px;
+            border: 1px dashed rgba(56, 189, 248, 0.35);
             cursor: pointer;
         }
         .checkbox-container input { width: auto; cursor: pointer; }
@@ -177,52 +216,56 @@
             background: linear-gradient(135deg, #0284c7, #2563eb);
             color: white;
             border: none;
-            padding: 12px;
-            border-radius: 8px;
+            padding: 13px;
+            border-radius: 10px;
             font-weight: 600;
             font-size: 14px;
+            font-family: 'Space Grotesk', sans-serif;
             cursor: pointer;
-            box-shadow: 0 4px 15px var(--accent-glow);
-            transition: all 0.2s;
+            box-shadow: 0 4px 18px var(--accent-glow);
+            transition: all 0.25s ease;
             display: flex;
             justify-content: center;
             align-items: center;
             gap: 8px;
         }
-        .btn-submit:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(56, 189, 248, 0.4); }
+        .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 6px 24px rgba(56, 189, 248, 0.5); }
 
-        .right-pane { display: flex; flex-direction: column; gap: 20px; }
+        .right-pane { display: flex; flex-direction: column; gap: 18px; }
 
         .media-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 15px;
+            gap: 14px;
         }
         .media-box {
-            background: rgba(2, 6, 23, 0.7);
+            background: rgba(2, 6, 23, 0.75);
             border: 1px solid var(--border-color);
-            border-radius: 8px;
+            border-radius: 10px;
             padding: 10px;
             display: flex;
             flex-direction: column;
             gap: 8px;
+            position: relative;
+            cursor: zoom-in;
+            transition: all 0.2s;
         }
-        .media-box span { font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; }
+        .media-box:hover { border-color: var(--accent-primary); transform: scale(1.01); }
+        .media-box span { font-size: 10.5px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
         .media-box img {
             width: 100%;
             height: 180px;
             object-fit: cover;
             border-radius: 6px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
         }
-        .evidence-border { border-color: var(--accent-danger) !important; }
+        .evidence-border { border-color: var(--accent-danger) !important; box-shadow: 0 0 15px rgba(239, 68, 68, 0.2); }
 
         .comparison-wrapper {
             position: relative;
             width: 100%;
             height: 220px;
             overflow: hidden;
-            border-radius: 8px;
+            border-radius: 10px;
             border: 1px solid var(--border-color);
             margin-top: 5px;
         }
@@ -235,7 +278,7 @@
         .img-overlay {
             width: 50%;
             overflow: hidden;
-            border-right: 2px solid var(--accent-primary);
+            border-right: 3px solid var(--accent-primary);
             z-index: 2;
         }
         .img-overlay img { width: 100%; height: 100%; object-fit: cover; }
@@ -253,35 +296,37 @@
             grid-template-columns: 1fr 280px;
             gap: 15px;
         }
-        @media (max-width: 900px) { .analytics-subgrid { grid-template-columns: 1fr; } }
+        @media (max-width: 950px) { .analytics-subgrid { grid-template-columns: 1fr; } }
 
         .analysis-box {
-            background: rgba(2, 6, 23, 0.85);
+            background: rgba(2, 6, 23, 0.9);
             border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 18px;
-            font-size: 14px;
-            line-height: 1.7;
+            border-radius: 10px;
+            padding: 20px;
+            font-size: 13.5px;
+            line-height: 1.75;
             color: #cbd5e1;
-            white-space: pre-wrap;
-            max-height: 380px;
+            max-height: 400px;
             overflow-y: auto;
         }
-        .analysis-box h3 { color: var(--accent-primary); margin-top: 14px; margin-bottom: 6px; font-size: 15px; }
+        .analysis-box h3 { color: var(--accent-primary); margin-top: 14px; margin-bottom: 6px; font-size: 14px; font-family: 'Space Grotesk', sans-serif; }
+        .analysis-box ul { padding-left: 18px; margin-bottom: 10px; }
+        .analysis-box li { margin-bottom: 4px; }
 
         .chart-box {
-            background: rgba(2, 6, 23, 0.85);
+            background: rgba(2, 6, 23, 0.9);
             border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 14px;
+            border-radius: 10px;
+            padding: 16px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
         }
-        .chart-box h4 { font-size: 12px; color: var(--accent-primary); text-transform: uppercase; margin-bottom: 8px; }
+        .chart-box h4 { font-family: 'Space Grotesk', sans-serif; font-size: 11.5px; color: var(--accent-primary); text-transform: uppercase; margin-bottom: 10px; letter-spacing: 0.5px; }
 
         .bench-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 5px; }
+        @media (max-width: 700px) { .bench-grid { grid-template-columns: repeat(2, 1fr); } }
         .metric-card {
             background: rgba(2, 6, 23, 0.9);
             border: 1px solid var(--border-color);
@@ -291,19 +336,19 @@
             flex-direction: column;
             gap: 2px;
         }
-        .metric-title { font-size: 11px; color: var(--text-muted); text-transform: uppercase; }
-        .metric-val { font-size: 16px; font-weight: 700; color: var(--accent-success); font-family: 'JetBrains Mono', monospace; }
+        .metric-title { font-size: 10.5px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.4px; }
+        .metric-val { font-size: 15px; font-weight: 700; color: var(--accent-success); font-family: 'JetBrains Mono', monospace; }
 
         pre {
             background: #020617;
             color: var(--accent-primary);
             padding: 12px;
             border-radius: 8px;
-            font-size: 12px;
+            font-size: 11.5px;
             font-family: 'JetBrains Mono', monospace;
             border: 1px solid var(--border-color);
             overflow-x: auto;
-            max-height: 140px;
+            max-height: 130px;
         }
 
         .action-bar { display: flex; gap: 8px; align-items: center; }
@@ -311,35 +356,49 @@
             background: var(--accent-success);
             color: white;
             text-decoration: none;
-            padding: 8px 12px;
-            border-radius: 6px;
-            font-size: 12px;
+            padding: 7px 12px;
+            border-radius: 7px;
+            font-size: 11.5px;
             font-weight: 600;
             display: inline-flex;
             align-items: center;
-            gap: 6px;
+            gap: 5px;
             border: none;
             cursor: pointer;
             transition: all 0.2s;
         }
         .btn-action.audio { background: #8b5cf6; }
         .btn-action.geojson { background: #0284c7; }
-        .btn-action:hover { opacity: 0.9; }
+        .btn-action:hover { opacity: 0.9; transform: translateY(-1px); }
+
+        /* Lightbox Image Modal */
+        #lightboxModal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(3, 7, 18, 0.92);
+            backdrop-filter: blur(10px);
+            z-index: 10000;
+            justify-content: center;
+            align-items: center;
+            cursor: zoom-out;
+        }
+        #lightboxImg { max-width: 90%; max-height: 85%; border-radius: 10px; border: 2px solid var(--accent-primary); box-shadow: 0 0 30px var(--accent-glow); }
 
         #loader {
             display: none;
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(6, 9, 19, 0.85);
-            backdrop-filter: blur(8px);
+            background: rgba(3, 7, 18, 0.88);
+            backdrop-filter: blur(10px);
             z-index: 9999;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            gap: 15px;
+            gap: 16px;
         }
         .spinner {
-            width: 46px; height: 46px;
+            width: 50px; height: 50px;
             border: 3px solid rgba(56, 189, 248, 0.2);
             border-top-color: var(--accent-primary);
             border-radius: 50%;
@@ -350,24 +409,29 @@
 </head>
 <body>
 
+    <!-- Lightbox Zoom Modal -->
+    <div id="lightboxModal" onclick="closeLightbox()">
+        <img id="lightboxImg" src="" alt="Zoomed View">
+    </div>
+
     <div id="loader">
         <div class="spinner"></div>
-        <p style="font-size: 14px; color: var(--accent-primary); font-weight: 500;">Executing Multimodal Spatial Analytics...</p>
+        <p style="font-size: 14px; color: var(--accent-primary); font-family: 'Space Grotesk', sans-serif; font-weight: 600; letter-spacing: 0.5px;">Executing Multimodal Spatial Analytics...</p>
     </div>
 
     <div class="container">
         <header class="topbar">
             <div class="logo-area">
-                <div class="logo-badge">SATQUERY AI</div>
+                <div class="logo-badge"><span>🛰️</span> SATQUERY AI</div>
                 <div class="title-text">
                     <h1>Multimodal Geospatial Intelligence</h1>
                     <p>Optical + SAR Radar + LULC Analytics + GIS GeoJSON Export Powered by Gemini 3.6 Flash</p>
                 </div>
             </div>
             <div class="meta-pills">
-                <span class="pill green">🎙️ Voice Enabled</span>
+                <span class="pill green"><span class="pulse-dot"></span> System Live</span>
+                <span class="pill">🎙️ Voice STT/TTS</span>
                 <span class="pill">Sensor: {{ s1_name }}</span>
-                <span class="pill">Patch: {{ patch_id }}</span>
                 <span class="pill purple">Benchmark: RSVQA / CDVQA</span>
             </div>
         </header>
@@ -375,7 +439,9 @@
         <div class="workspace">
             
             <div class="card">
-                <div class="card-title">📡 Data Ingestion & Multimodal Controls</div>
+                <div class="card-title">
+                    <span>📡 Ingestion & Telemetry Controls</span>
+                </div>
                 <form method="POST" enctype="multipart/form-data" onsubmit="showLoader()">
                     
                     <div class="form-group">
@@ -383,12 +449,12 @@
                         <input type="file" id="file_input_1" name="satellite_image_1" accept=".tif,.tiff,.png,.jpg,.jpeg">
                     </div>
 
-                    <div class="form-group" style="margin-top: 10px;">
+                    <div class="form-group" style="margin-top: 6px;">
                         <label for="file_input_2">Secondary Image (Optional: T2 / SAR Radar):</label>
                         <input type="file" id="file_input_2" name="satellite_image_2" accept=".tif,.tiff,.png,.jpg,.jpeg">
                     </div>
 
-                    <div class="input-row" style="margin-top: 10px;">
+                    <div class="input-row" style="margin-top: 6px;">
                         <div class="form-group">
                             <label for="composite_mode">Spectral Composite Mode:</label>
                             <select id="composite_mode" name="composite_mode" onchange="changeMapLayer(this.value)">
@@ -400,21 +466,32 @@
                         </div>
                         <div class="form-group">
                             <label for="coordinates">Pin Coordinates (Lat, Lng):</label>
-                            <input type="text" id="coordinates" name="coordinates" placeholder="Click map to pin">
+                            <input type="text" id="coordinates" name="coordinates" placeholder="Click map or preset">
                         </div>
                     </div>
 
-                    <div style="margin-top: 10px;">
+                    <!-- Fast Target Presets -->
+                    <div class="form-group" style="margin-top: 2px;">
+                        <label>Target Coordinate Presets:</label>
+                        <div class="preset-container">
+                            <button type="button" class="preset-btn" onclick="setPreset(28.5562, 77.1000, 'Delhi IGI Airport')">✈️ Delhi IGI Airport</button>
+                            <button type="button" class="preset-btn" onclick="setPreset(18.9438, 72.8354, 'Mumbai Port')">🚢 Mumbai Port</button>
+                            <button type="button" class="preset-btn" onclick="setPreset(25.3176, 82.9739, 'Varanasi Ghats')">🏛️ Varanasi Riverfront</button>
+                            <button type="button" class="preset-btn" onclick="setPreset(27.5350, 71.9100, 'Bhadla Solar Park')">☀️ Bhadla Solar Park</button>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 6px;">
                         <div id="map"></div>
                     </div>
 
-                    <label class="checkbox-container" style="margin-top: 10px;">
+                    <label class="checkbox-container" style="margin-top: 6px;">
                         <input type="checkbox" id="use_coord_fetch" name="use_coord_fetch" value="true">
-                        <span>Fetch live satellite tile from pinned coordinates</span>
+                        <span>Fetch live satellite tile from target coordinates</span>
                     </label>
 
-                    <div class="form-group" style="margin-top: 12px;">
-                        <label for="user_question">Query (Text or Voice Mic):</label>
+                    <div class="form-group" style="margin-top: 10px;">
+                        <label for="user_question">Multimodal Query (Text or Microphone):</label>
                         <div class="voice-query-group">
                             <input type="text" id="user_question" name="user_question" placeholder="Ask question or click mic to speak..." required>
                             <button type="button" id="micBtn" class="btn-mic" onclick="toggleVoiceRecognition()" title="Speak your query">
@@ -423,8 +500,8 @@
                         </div>
                     </div>
 
-                    <button type="submit" class="btn-submit" style="margin-top: 14px;">
-                        <span>🚀</span> Run Multimodal Analysis
+                    <button type="submit" class="btn-submit" style="margin-top: 10px;">
+                        <span>⚡</span> Run Multimodal Specialist Analysis
                     </button>
                 </form>
             </div>
@@ -432,10 +509,13 @@
             <div class="right-pane">
                 
                 <div class="card">
-                    <div class="card-title">🖼️ Spectral Imagery & Bi-Temporal Swipe Comparator</div>
+                    <div class="card-title">
+                        <span>🖼️ Spectral Imagery & Spatial Overlays</span>
+                        <span style="font-size: 11px; color: var(--text-muted); font-weight: 400;">Click tile to zoom</span>
+                    </div>
                     
                     {% if uploaded_images and uploaded_images|length >= 2 %}
-                        <span style="font-size: 11px; color: var(--text-muted); text-transform: uppercase;">Swipe Slider (T1 Optical vs T2/SAR):</span>
+                        <span style="font-size: 11px; color: var(--text-muted); text-transform: uppercase;">Swipe Split-Comparator (T1 Optical vs T2/SAR):</span>
                         <div class="comparison-wrapper">
                             <img src="{{ uploaded_images[1] }}" class="comparison-img" alt="T2 Layer">
                             <div class="comparison-img img-overlay" id="swipeOverlay">
@@ -445,26 +525,26 @@
                         </div>
                     {% endif %}
 
-                    <div class="media-grid" style="margin-top: 10px;">
+                    <div class="media-grid" style="margin-top: 8px;">
                         {% if uploaded_images and uploaded_images|length > 0 %}
                             {% for uri in uploaded_images %}
-                                <div class="media-box">
+                                <div class="media-box" onclick="openLightbox('{{ uri }}')">
                                     <span>Input Satellite Tile #{{ loop.index }}</span>
                                     <img src="{{ uri }}" alt="Satellite Layer">
                                 </div>
                             {% endfor %}
                         {% else %}
-                            <div class="media-box">
+                            <div class="media-box" style="cursor: default;">
                                 <span>No Tile Loaded</span>
                                 <div style="height: 180px; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.3); border-radius: 6px; color: var(--text-muted); font-size: 12px;">
-                                    Upload file or click map pin to fetch
+                                    Upload file or select preset to fetch
                                 </div>
                             </div>
                         {% endif %}
 
                         {% if evidence_image %}
-                            <div class="media-box evidence-border">
-                                <span style="color: var(--accent-danger);">Visual Grounding / Change Map Overlay</span>
+                            <div class="media-box evidence-border" onclick="openLightbox('{{ evidence_image }}')">
+                                <span style="color: var(--accent-danger);">Visual Grounding / Change Overlay</span>
                                 <img src="{{ evidence_image }}" alt="Grounding Evidence Overlay">
                             </div>
                         {% endif %}
@@ -473,7 +553,9 @@
 
                 <div class="card">
                     <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">
-                        <div class="card-title" style="border-bottom: none; padding-bottom: 0;">🧠 Agentic Intelligence & LULC Analytics</div>
+                        <div class="card-title" style="border-bottom: none; padding-bottom: 0;">
+                            <span>🧠 Agentic Intelligence & Quantified LULC</span>
+                        </div>
                         <div class="action-bar">
                             <button type="button" class="btn-action audio" onclick="playAudioReport()">
                                 🔊 Voice
@@ -517,7 +599,7 @@
                         </div>
                     {% endif %}
 
-                    <div style="margin-top: 10px;">
+                    <div style="margin-top: 6px;">
                         <span style="font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase;">Auditable Execution Trace:</span>
                         <pre>{{ trace | tojson(indent=2) }}</pre>
                     </div>
@@ -542,6 +624,7 @@
         var topoLayer = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', { maxZoom: 17, attribution: '© OpenTopoMap' });
 
         var map = L.map('map', { center: [20.5937, 78.9629], zoom: 4, layers: [satelliteLayer] });
+        var marker;
 
         function changeMapLayer(mode) {
             map.removeLayer(osmLayer);
@@ -555,7 +638,15 @@
             else { satelliteLayer.addTo(map); }
         }
 
-        var marker;
+        function setPreset(lat, lng, label) {
+            document.getElementById('coordinates').value = lat.toFixed(5) + ", " + lng.toFixed(5);
+            document.getElementById('use_coord_fetch').checked = true;
+            document.getElementById('user_question').value = "Analyze visible infrastructure, land cover, and structural layout for " + label;
+            map.setView([lat, lng], 15);
+            if (marker) { marker.setLatLng([lat, lng]); }
+            else { marker = L.marker([lat, lng]).addTo(map); }
+        }
+
         map.on('click', function(e) {
             var lat = e.latlng.lat.toFixed(5);
             var lng = e.latlng.lng.toFixed(5);
@@ -569,7 +660,16 @@
             document.getElementById('loader').style.display = 'flex';
         }
 
-        /* Swipe Slider */
+        /* Lightbox Image Zoom */
+        function openLightbox(src) {
+            document.getElementById('lightboxImg').src = src;
+            document.getElementById('lightboxModal').style.display = 'flex';
+        }
+        function closeLightbox() {
+            document.getElementById('lightboxModal').style.display = 'none';
+        }
+
+        /* Swipe Split-Comparator */
         function slideComparison(val) {
             var overlay = document.getElementById('swipeOverlay');
             if (overlay) {
@@ -617,7 +717,7 @@
             }
         });
 
-        /* Voice Input */
+        /* Voice Input (Web Speech API) */
         var recognition = null;
         var isListening = false;
         if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
@@ -658,7 +758,7 @@
             document.getElementById('user_question').placeholder = "Ask question or click mic to speak...";
         }
 
-        /* Audio Voice Readout */
+        /* Voice TTS Readout */
         function playAudioReport() {
             var text = document.getElementById('analysisText').innerText;
             if (!text || text.indexOf("Upload satellite image") !== -1) {
