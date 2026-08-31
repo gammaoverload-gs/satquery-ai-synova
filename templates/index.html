@@ -19,7 +19,7 @@
     <style>
         :root {
             --bg-base: #01040a;
-            --bg-card: rgba(6, 12, 26, 0.82);
+            --bg-card: rgba(6, 12, 26, 0.85);
             --border-color: rgba(56, 189, 248, 0.25);
             --border-glow: rgba(0, 240, 255, 0.6);
             --accent-cyan: #00f0ff;
@@ -56,47 +56,72 @@
             opacity: 0.95;
         }
 
-        /* Center Sun with Soft Solar Corona & Rays */
+        /* ☀️ Grand Luminous Solar Core & Cosmic Aura */
         .cosmic-sun-wrapper {
             position: fixed;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 700px;
-            height: 700px;
+            width: 1100px;
+            height: 1100px;
             pointer-events: none;
             z-index: 1;
             display: flex;
             align-items: center;
             justify-content: center;
-            opacity: 0.75;
         }
 
-        .sun-corona {
+        .sun-outer-aura {
             position: absolute;
-            width: 130px;
-            height: 130px;
+            width: 850px;
+            height: 850px;
             border-radius: 50%;
-            background: radial-gradient(circle, #fff7ed 0%, #fed7aa 22%, #fb923c 45%, rgba(234, 88, 12, 0.5) 65%, transparent 80%);
-            box-shadow: 
-                0 0 65px rgba(251, 146, 60, 0.65),
-                0 0 140px rgba(249, 115, 22, 0.35),
-                0 0 240px rgba(234, 88, 12, 0.2);
-            animation: sunPulse 6s ease-in-out infinite alternate;
+            background: radial-gradient(circle, rgba(251, 146, 60, 0.22) 0%, rgba(234, 88, 12, 0.12) 40%, rgba(249, 115, 22, 0.05) 65%, transparent 80%);
+            filter: blur(35px);
+            animation: auraBreathing 8s ease-in-out infinite alternate;
         }
 
         .sun-rays {
             position: absolute;
-            width: 600px;
-            height: 600px;
+            width: 950px;
+            height: 950px;
             border-radius: 50%;
-            background: conic-gradient(from 0deg, transparent 0deg, rgba(251, 146, 60, 0.08) 35deg, transparent 70deg, rgba(249, 115, 22, 0.09) 120deg, transparent 180deg, rgba(251, 146, 60, 0.08) 250deg, transparent 310deg, rgba(249, 115, 22, 0.09) 360deg);
-            animation: rotateSunRays 60s linear infinite;
+            background: conic-gradient(from 0deg, 
+                transparent 0deg, 
+                rgba(255, 215, 0, 0.16) 20deg, 
+                transparent 45deg, 
+                rgba(251, 146, 60, 0.18) 85deg, 
+                transparent 125deg, 
+                rgba(255, 180, 50, 0.15) 170deg, 
+                transparent 215deg, 
+                rgba(251, 146, 60, 0.18) 275deg, 
+                transparent 320deg, 
+                rgba(255, 215, 0, 0.16) 360deg);
+            animation: rotateSunRays 45s linear infinite;
+        }
+
+        .sun-corona {
+            position: absolute;
+            width: 280px;
+            height: 280px;
+            border-radius: 50%;
+            background: radial-gradient(circle, #ffffff 0%, #fffbeb 20%, #fef08a 40%, #f59e0b 65%, #ea580c 85%, transparent 100%);
+            box-shadow: 
+                0 0 70px #ffffff,
+                0 0 130px #f59e0b,
+                0 0 220px rgba(234, 88, 12, 0.85),
+                0 0 380px rgba(249, 115, 22, 0.45);
+            animation: sunPulse 5s ease-in-out infinite alternate;
         }
 
         @keyframes sunPulse {
-            0% { transform: scale(0.95); opacity: 0.65; }
-            100% { transform: scale(1.08); opacity: 0.95; }
+            0% { transform: scale(0.96); opacity: 0.85; filter: brightness(1); }
+            100% { transform: scale(1.08); opacity: 1; filter: brightness(1.25); }
+        }
+
+        @keyframes auraBreathing {
+            0% { transform: scale(0.92); opacity: 0.6; }
+            100% { transform: scale(1.15); opacity: 0.95; }
         }
 
         @keyframes rotateSunRays {
@@ -111,9 +136,9 @@
             width: 140vw;
             height: 140vh;
             background: 
-                radial-gradient(circle at 18% 28%, rgba(0, 240, 255, 0.065) 0%, transparent 45%),
-                radial-gradient(circle at 82% 72%, rgba(176, 38, 255, 0.055) 0%, transparent 50%),
-                radial-gradient(circle at 50% 50%, rgba(249, 115, 22, 0.04) 0%, transparent 60%);
+                radial-gradient(circle at 18% 28%, rgba(0, 240, 255, 0.07) 0%, transparent 45%),
+                radial-gradient(circle at 82% 72%, rgba(176, 38, 255, 0.065) 0%, transparent 50%),
+                radial-gradient(circle at 50% 50%, rgba(249, 115, 22, 0.06) 0%, transparent 60%);
             pointer-events: none;
             z-index: 2;
             animation: nebulaDrift 30s ease-in-out infinite alternate;
@@ -905,11 +930,12 @@
 </head>
 <body>
 
-    <!-- 🌌 Living Ambient Deep Space Canvas with Solar Core -->
+    <!-- 🌌 Living Ambient Deep Space Canvas -->
     <canvas id="globalSpaceCanvas"></canvas>
     
-    <!-- Central Solar Corona Flare -->
+    <!-- ☀️ Bright Central Solar Aura Core -->
     <div class="cosmic-sun-wrapper">
+        <div class="sun-outer-aura"></div>
         <div class="sun-rays"></div>
         <div class="sun-corona"></div>
     </div>
@@ -1193,14 +1219,14 @@
     <!-- Leaflet JS Map Script -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-        /* 🌌 Full-Screen Living Space Wallpaper Engine with Astronauts & Space Shuttle */
+        /* 🌌 Full-Screen Living Space Wallpaper Engine (Enhanced Large Scale Assets) */
         document.addEventListener('DOMContentLoaded', function () {
             var canvas = document.getElementById('globalSpaceCanvas');
             if (!canvas) return;
             var ctx = canvas.getContext('2d');
             var stars = [];
             var meteors = [];
-            var numStars = 140;
+            var numStars = 150;
 
             function resizeCanvas() {
                 canvas.width = window.innerWidth;
@@ -1209,35 +1235,36 @@
             resizeCanvas();
             window.addEventListener('resize', resizeCanvas);
 
-            var starColors = ['#ffffff', '#00f0ff', '#818cf8', '#38bdf8', '#c084fc'];
+            var starColors = ['#ffffff', '#00f0ff', '#818cf8', '#38bdf8', '#c084fc', '#fde047'];
 
             for (var i = 0; i < numStars; i++) {
                 stars.push({
                     x: Math.random() * canvas.width,
                     y: Math.random() * canvas.height,
-                    radius: Math.random() * 1.5 + 0.4,
+                    radius: Math.random() * 1.8 + 0.5,
                     color: starColors[Math.floor(Math.random() * starColors.length)],
-                    alpha: Math.random() * 0.8 + 0.2,
+                    alpha: Math.random() * 0.85 + 0.15,
                     speed: Math.random() * 0.02 + 0.005,
                     delta: Math.random() * Math.PI * 2,
-                    vx: (Math.random() - 0.5) * 0.16,
-                    vy: (Math.random() - 0.5) * 0.16
+                    vx: (Math.random() - 0.5) * 0.15,
+                    vy: (Math.random() - 0.5) * 0.15
                 });
             }
 
-            // Floating Spacewalk Astronauts
+            // 🧑‍🚀 Scaled-Up Detailed Astronauts (2.8x Scale)
             var astronauts = [
-                { x: 120, y: 160, vx: 0.18, vy: 0.08, angle: 0.15, rotSpeed: 0.003, scale: 0.95, tetherAnchorX: 40, tetherAnchorY: 100 },
-                { x: canvas.width - 200, y: canvas.height - 220, vx: -0.15, vy: -0.06, angle: -0.25, rotSpeed: -0.002, scale: 0.85, tetherAnchorX: canvas.width - 90, tetherAnchorY: canvas.height - 120 }
+                { x: 180, y: 220, vx: 0.22, vy: 0.07, angle: 0.2, rotSpeed: 0.0025, scale: 2.2 },
+                { x: canvas.width - 240, y: canvas.height - 280, vx: -0.18, vy: -0.05, angle: -0.3, rotSpeed: -0.002, scale: 2.0 }
             ];
 
-            // Cruising Space Shuttle
+            // 🚀 Scaled-Up Heavy Shuttle Cruiser (2.5x Scale)
             var shuttle = {
-                x: -80,
-                y: canvas.height * 0.32,
-                vx: 0.42,
-                vy: 0.09,
-                angle: Math.atan2(0.09, 0.42)
+                x: -120,
+                y: canvas.height * 0.35,
+                vx: 0.55,
+                vy: 0.11,
+                angle: Math.atan2(0.11, 0.55),
+                scale: 2.5
             };
 
             function drawAstronaut(ast) {
@@ -1246,47 +1273,66 @@
                 ctx.rotate(ast.angle);
                 ctx.scale(ast.scale, ast.scale);
 
-                // Faint Safety Tether Wire
+                // Safety Tether Line
                 ctx.beginPath();
                 ctx.moveTo(-10, 0);
-                ctx.quadraticCurveTo(-45, 30, -90, 50);
-                ctx.strokeStyle = "rgba(0, 240, 255, 0.22)";
-                ctx.lineWidth = 1;
+                ctx.quadraticCurveTo(-45, 25, -90, 45);
+                ctx.strokeStyle = "rgba(0, 240, 255, 0.35)";
+                ctx.lineWidth = 1.2;
                 ctx.stroke();
 
-                // Backpack / Life Support Unit
-                ctx.fillStyle = "#334155";
-                ctx.fillRect(-11, -12, 7, 24);
+                // PLSS Life Support Backpack
+                ctx.fillStyle = "#1e293b";
+                ctx.fillRect(-13, -14, 8, 28);
+                ctx.fillStyle = "#0284c7";
+                ctx.fillRect(-12, -10, 2, 20);
 
-                // Torso / Suit Body
-                ctx.fillStyle = "#e2e8f0";
+                // Main Space Suit Torso
+                ctx.fillStyle = "#f8fafc";
                 ctx.beginPath();
-                ctx.roundRect(-5, -11, 14, 22, 4);
+                ctx.roundRect(-6, -13, 16, 26, 4);
                 ctx.fill();
 
-                // Gold Reflective Helmet Visor
+                // Tactical Chest Control Module
+                ctx.fillStyle = "#0284c7";
+                ctx.fillRect(-2, -6, 8, 10);
+                ctx.fillStyle = "#00ff66";
+                ctx.fillRect(-1, -4, 2, 2);
+                ctx.fillStyle = "#ff0055";
+                ctx.fillRect(2, -4, 2, 2);
+
+                // Helmet Assembly
                 ctx.beginPath();
-                ctx.arc(2, -18, 7.5, 0, Math.PI * 2);
+                ctx.arc(2, -21, 9, 0, Math.PI * 2);
                 ctx.fillStyle = "#f8fafc";
                 ctx.fill();
 
+                // Radiant Gold Foil Visor
                 ctx.beginPath();
-                ctx.arc(4, -18, 4.5, 0, Math.PI * 2);
-                ctx.fillStyle = "#fbbf24";
-                ctx.shadowColor = "#f59e0b";
-                ctx.shadowBlur = 8;
+                ctx.arc(4, -21, 5.5, 0, Math.PI * 2);
+                ctx.fillStyle = "#f59e0b";
+                ctx.shadowColor = "#fbbf24";
+                ctx.shadowBlur = 12;
                 ctx.fill();
                 ctx.shadowBlur = 0;
 
-                // Floating Legs
-                ctx.fillStyle = "#cbd5e1";
-                ctx.fillRect(-4, 11, 4, 12);
-                ctx.fillRect(4, 11, 4, 13);
+                // Segmented Articulated Legs
+                ctx.fillStyle = "#e2e8f0";
+                ctx.fillRect(-5, 13, 5, 14);
+                ctx.fillRect(3, 13, 5, 15);
+                // Boots
+                ctx.fillStyle = "#475569";
+                ctx.fillRect(-6, 27, 6, 4);
+                ctx.fillRect(2, 28, 6, 4);
 
-                // Arms Floating Out
-                ctx.fillStyle = "#cbd5e1";
-                ctx.fillRect(-9, -8, 5, 11);
-                ctx.fillRect(9, -8, 5, 11);
+                // Floating Arms
+                ctx.fillStyle = "#e2e8f0";
+                ctx.fillRect(-11, -10, 6, 13);
+                ctx.fillRect(10, -10, 6, 13);
+                // Gloves
+                ctx.fillStyle = "#0284c7";
+                ctx.fillRect(-11, 3, 6, 3);
+                ctx.fillRect(10, 3, 6, 3);
 
                 ctx.restore();
             }
@@ -1295,62 +1341,73 @@
                 ctx.save();
                 ctx.translate(sh.x, sh.y);
                 ctx.rotate(sh.angle);
+                ctx.scale(sh.scale, sh.scale);
 
-                // Ion Engine Blue Thrust Glow
-                var flameGrad = ctx.createLinearGradient(-35, 0, -8, 0);
+                // Dual Blue Ion-Plasma Thrust Plumes
+                var flameGrad = ctx.createLinearGradient(-40, 0, -10, 0);
                 flameGrad.addColorStop(0, "transparent");
-                flameGrad.addColorStop(0.5, "rgba(0, 240, 255, 0.7)");
-                flameGrad.addColorStop(1, "rgba(255, 255, 255, 0.9)");
+                flameGrad.addColorStop(0.4, "rgba(0, 240, 255, 0.8)");
+                flameGrad.addColorStop(1, "rgba(255, 255, 255, 0.95)");
 
-                ctx.beginPath();
-                ctx.moveTo(-8, -4);
-                ctx.lineTo(-38, 0);
-                ctx.lineTo(-8, 4);
-                ctx.closePath();
                 ctx.fillStyle = flameGrad;
                 ctx.shadowColor = "#00f0ff";
-                ctx.shadowBlur = 12;
+                ctx.shadowBlur = 18;
+
+                // Engine 1
+                ctx.beginPath();
+                ctx.moveTo(-10, -4);
+                ctx.lineTo(-42, -2);
+                ctx.lineTo(-10, 0);
+                ctx.closePath();
+                ctx.fill();
+
+                // Engine 2
+                ctx.beginPath();
+                ctx.moveTo(-10, 0);
+                ctx.lineTo(-42, 2);
+                ctx.lineTo(-10, 4);
+                ctx.closePath();
                 ctx.fill();
                 ctx.shadowBlur = 0;
 
-                // Delta Wings
-                ctx.beginPath();
-                ctx.moveTo(18, 0);
-                ctx.lineTo(-14, -16);
-                ctx.lineTo(-10, -2);
-                ctx.lineTo(-10, 2);
-                ctx.lineTo(-14, 16);
-                ctx.closePath();
-                ctx.fillStyle = "#1e293b";
-                ctx.fill();
-
-                // Fuselage Body
+                // Delta Wings with Black Heat Shields
                 ctx.beginPath();
                 ctx.moveTo(22, 0);
-                ctx.lineTo(8, -6);
-                ctx.lineTo(-16, -5);
-                ctx.lineTo(-16, 5);
-                ctx.lineTo(8, 6);
-                ctx.closePath();
-                ctx.fillStyle = "#f8fafc";
-                ctx.fill();
-
-                // Black Heat Shield Nose Cone & Cabin Glass
-                ctx.beginPath();
-                ctx.moveTo(22, 0);
-                ctx.lineTo(13, -3);
-                ctx.lineTo(13, 3);
+                ctx.lineTo(-15, -18);
+                ctx.lineTo(-10, -3);
+                ctx.lineTo(-10, 3);
+                ctx.lineTo(-15, 18);
                 ctx.closePath();
                 ctx.fillStyle = "#0f172a";
                 ctx.fill();
 
-                // Vertical Stabilizer Fin
+                // Main Fuselage Orbiter
+                ctx.beginPath();
+                ctx.moveTo(26, 0);
+                ctx.lineTo(10, -7);
+                ctx.lineTo(-18, -6);
+                ctx.lineTo(-18, 6);
+                ctx.lineTo(10, 7);
+                ctx.closePath();
+                ctx.fillStyle = "#f8fafc";
+                ctx.fill();
+
+                // Cockpit Windshield Windows
+                ctx.beginPath();
+                ctx.moveTo(26, 0);
+                ctx.lineTo(16, -3.5);
+                ctx.lineTo(16, 3.5);
+                ctx.closePath();
+                ctx.fillStyle = "#0284c7";
+                ctx.fill();
+
+                // Vertical Tail Fin
                 ctx.beginPath();
                 ctx.moveTo(-10, 0);
-                ctx.lineTo(-16, -11);
-                ctx.lineTo(-16, 0);
+                ctx.lineTo(-18, -13);
+                ctx.lineTo(-18, 0);
                 ctx.closePath();
-                ctx.fillStyle = "#e2e8f0";
+                ctx.fillStyle = "#f8fafc";
                 ctx.fill();
 
                 ctx.restore();
@@ -1361,10 +1418,10 @@
                     meteors.push({
                         x: Math.random() * canvas.width * 0.85,
                         y: 0,
-                        len: Math.random() * 110 + 60,
+                        len: Math.random() * 120 + 70,
                         speed: Math.random() * 8 + 6,
                         angle: Math.PI / 4.2,
-                        opacity: 0.9
+                        opacity: 0.95
                     });
                 }
             }
@@ -1401,13 +1458,13 @@
                     if (s.y < 0) s.y = canvas.height;
                     if (s.y > canvas.height) s.y = 0;
 
-                    var dynamicAlpha = Math.abs(Math.sin(s.delta)) * 0.7 + 0.2;
+                    var dynamicAlpha = Math.abs(Math.sin(s.delta)) * 0.75 + 0.25;
                     ctx.beginPath();
                     ctx.arc(s.x, s.y, s.radius, 0, Math.PI * 2);
                     ctx.fillStyle = s.color;
                     ctx.globalAlpha = dynamicAlpha;
-                    if (s.radius > 1.2) {
-                        ctx.shadowBlur = 6;
+                    if (s.radius > 1.3) {
+                        ctx.shadowBlur = 8;
                         ctx.shadowColor = s.color;
                     }
                     ctx.fill();
@@ -1422,10 +1479,10 @@
                     ast.y += ast.vy;
                     ast.angle += ast.rotSpeed;
 
-                    if (ast.x > canvas.width + 100) ast.x = -80;
-                    if (ast.x < -100) ast.x = canvas.width + 60;
-                    if (ast.y > canvas.height + 80) ast.y = -60;
-                    if (ast.y < -80) ast.y = canvas.height + 60;
+                    if (ast.x > canvas.width + 120) ast.x = -100;
+                    if (ast.x < -120) ast.x = canvas.width + 80;
+                    if (ast.y > canvas.height + 100) ast.y = -80;
+                    if (ast.y < -100) ast.y = canvas.height + 80;
 
                     drawAstronaut(ast);
                 }
@@ -1433,9 +1490,9 @@
                 // 4. Space Shuttle Cruiser
                 shuttle.x += shuttle.vx;
                 shuttle.y += shuttle.vy;
-                if (shuttle.x > canvas.width + 120) {
-                    shuttle.x = -90;
-                    shuttle.y = Math.random() * (canvas.height * 0.7) + 50;
+                if (shuttle.x > canvas.width + 160) {
+                    shuttle.x = -130;
+                    shuttle.y = Math.random() * (canvas.height * 0.65) + 60;
                 }
                 drawShuttle(shuttle);
 
@@ -1448,14 +1505,14 @@
 
                     var grad = ctx.createLinearGradient(met.x, met.y, x2, y2);
                     grad.addColorStop(0, "rgba(255, 255, 255, " + met.opacity + ")");
-                    grad.addColorStop(0.4, "rgba(0, 240, 255, " + (met.opacity * 0.6) + ")");
+                    grad.addColorStop(0.4, "rgba(251, 146, 60, " + (met.opacity * 0.75) + ")");
                     grad.addColorStop(1, "transparent");
 
                     ctx.beginPath();
                     ctx.moveTo(met.x, met.y);
                     ctx.lineTo(x2, y2);
                     ctx.strokeStyle = grad;
-                    ctx.lineWidth = 1.8;
+                    ctx.lineWidth = 2.2;
                     ctx.stroke();
 
                     met.x += met.speed * Math.cos(met.angle);
