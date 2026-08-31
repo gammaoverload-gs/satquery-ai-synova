@@ -1,6 +1,7 @@
 import os
 import io
 import re
+import time
 import json
 import base64
 import datetime
@@ -28,6 +29,15 @@ BEN_METADATA = {
 
 LAST_REPORT = {}
 LAST_GEOJSON = {}
+
+# Candidate models fallback cascade for quota resiliency
+CANDIDATE_MODELS = [
+    "gemini-2.5-flash",
+    "gemini-2.0-flash",
+    "gemini-1.5-flash",
+    "gemini-1.5-flash-8b",
+    "gemini-2.5-pro"
+]
 
 def route_task(query: str, num_images: int) -> str:
     q = query.lower()
@@ -57,7 +67,6 @@ def extract_boxes_from_response(text: str) -> tuple:
             clean_text = text.replace(json_match.group(0), "").strip()
         except Exception:
             pass
-    # Clean any dangling JSON snippets
     clean_text = re.sub(r"```json.*?```", "", clean_text, flags=re.DOTALL).strip()
     return clean_text, boxes
 
@@ -75,6 +84,33 @@ def estimate_lulc_distribution(analysis_text: str) -> dict:
         "Water Bodies": round((water / total) * 100, 1),
         "Bare Soil / Open Ground": round((soil / total) * 100, 1)
     }
+
+def generate_content_with_resilience(images, prompt):
+    """Executes Gemini multimodal inference with exponential retry and model fallback cascade."""
+    last_exception = None
+    for model_name in CANDIDATE_MODELS:
+        for attempt in range(2):
+            try:
+                response = client.models.generate_content(
+                    model=model_name,
+                    contents=[*images, prompt]
+                )
+                if response and response.text:
+                    return response.text, model_name
+            except Exception as ex:
+                last_exception = ex
+                err_msg = str(ex)
+                if "429" in err_msg or "RESOURCE_EXHAUSTED" in err_msg or "quota" in err_msg.lower():
+                    # If rate limited, pause briefly before next retry/fallback
+                    time.sleep(1.0)
+                    continue
+                else:
+                    # Non-quota error, move to next model
+                    break
+
+    raise Exception(
+        f"Gemini API Quota Exhausted across all models. Please replace GEMINI_API_KEY in Render Environment Variables. [Details: {str(last_exception)}]"
+    )
 
 @app.route("/", methods=["GET", "POST"])
 def home():
@@ -101,7 +137,7 @@ def home():
             loaded_pil_images = []
             metadata_list = []
 
-            # 1. Option A: Fetch automated satellite tile from coordinates
+            # Option A: Automated tile fetch via target coordinates
             if use_coord_fetch and coordinates:
                 try:
                     lat_str, lon_str = [c.strip() for c in coordinates.split(",")]
@@ -116,7 +152,7 @@ def home():
                 except Exception as ex:
                     analysis_text = f"Tile fetch failed: {str(ex)}"
 
-            # 2. Option B: Local file uploads
+            # Option B: Local image file uploads
             if not loaded_pil_images:
                 for f in [file_1, file_2]:
                     if f and f.filename != "":
@@ -160,11 +196,8 @@ def home():
                     "### Assessment Confidence"
                 )
 
-                response = client.models.generate_content(
-                    model="gemini-3.6-flash",
-                    contents=[*loaded_pil_images, system_prompt]
-                )
-                raw_text = response.text
+                # Resilient Multimodal Inference with Cascade Fallback
+                raw_text, active_model = generate_content_with_resilience(loaded_pil_images, system_prompt)
                 clean_text, detected_boxes = extract_boxes_from_response(raw_text)
                 analysis_text = clean_text
 
@@ -197,6 +230,7 @@ def home():
 
                 execution_trace = {
                     "timestamp": datetime.datetime.utcnow().isoformat() + "Z",
+                    "active_model": active_model,
                     "task": task,
                     "num_inputs": num_images,
                     "composite_mode": composite_mode,
