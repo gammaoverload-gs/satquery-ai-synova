@@ -137,7 +137,7 @@
         /* ================== MAIN APP WRAPPER ================== */
         .container { max-width: 1580px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px; position: relative; z-index: 10; }
 
-        /* ================== COMMAND HEADER WITH 3D EARTH ================== */
+        /* ================== COMMAND HEADER WITH REAL NASA EARTH ================== */
         .hero-topbar {
             position: relative;
             background: linear-gradient(135deg, rgba(2, 7, 22, 0.92) 0%, rgba(6, 19, 45, 0.85) 40%, rgba(10, 6, 36, 0.92) 100%);
@@ -170,7 +170,7 @@
         .btn-replay-launch { background: rgba(0, 240, 255, 0.1); border: 1px solid var(--accent-cyan); color: var(--accent-cyan); padding: 4px 8px; border-radius: 4px; font-size: 10px; font-family: 'JetBrains Mono', monospace; cursor: pointer; transition: all 0.2s; }
         .btn-replay-launch:hover { background: var(--accent-cyan); color: #010409; font-weight: 700; }
 
-        /* ================== 🌍 AUTHENTIC BLUE MARBLE EARTH & ORBIT-LOCKED SATELLITE ================== */
+        /* ================== 🌍 PHOTOREALISTIC NASA EARTH & CIRCLE-LOCKED SATELLITE ================== */
         .hero-orbit-graphic {
             position: relative; z-index: 3; width: 160px; height: 160px;
             display: flex; align-items: center; justify-content: center;
@@ -190,7 +190,7 @@
             pointer-events: none;
         }
 
-        /* Satellite Attitude: Track locked with self-stabilizing micro-wobble */
+        /* Satellite Attitude: Track-locked with natural space roll/pitch */
         .sat-unit {
             position: absolute; top: -11px; left: 50%;
             transform: translateX(-50%); font-size: 19px;
@@ -209,37 +209,38 @@
             100% { transform: translateX(-50%) rotate(14deg) scale(0.98); }
         }
 
-        /* Natural NASA-Grade Earth Core */
+        /* 🌍 REAL NASA-TEXTURED ROTATING EARTH CORE */
         .earth-core {
             width: 74px; height: 74px; border-radius: 50%;
             position: relative; overflow: hidden;
-            background-color: #0d3b66; /* Deep Blue Oceans */
-            /* Realistic Continents: Sandy coastlines, rich olive & forest green terrain */
-            background-image: 
-                radial-gradient(ellipse at 25% 35%, #2d6a4f 0%, #1b4332 30%, transparent 65%),
-                radial-gradient(ellipse at 70% 65%, #386641 0%, #2b4c34 35%, transparent 60%),
-                radial-gradient(circle at 45% 75%, #606c38 0%, #283618 30%, transparent 55%),
-                radial-gradient(ellipse at 80% 25%, #2a9d8f 0%, #1b4332 25%, transparent 50%),
-                radial-gradient(circle at 15% 80%, #d4a373 0%, #606c38 20%, transparent 45%);
-            background-size: 200% 100%;
+            background: url('https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Land_ocean_ice_2048.jpg/1024px-Land_ocean_ice_2048.jpg') repeat-x;
+            background-size: 210% 100%;
             box-shadow: 
-                inset -16px -16px 24px rgba(0, 0, 0, 0.95), /* Planetary Night Shadow */
-                inset 5px 5px 12px rgba(255, 255, 255, 0.4),  /* Sun Specular Rim */
-                0 0 35px rgba(56, 189, 248, 0.7);            /* Atmosphere Haze */
-            animation: rotateEarthTexture 20s linear infinite;
+                inset -18px -18px 25px rgba(0, 0, 0, 0.95),
+                inset 4px 4px 10px rgba(255, 255, 255, 0.35),
+                0 0 25px rgba(56, 189, 248, 0.7);
+            animation: rotateTrueEarth 22s linear infinite;
         }
 
-        /* Swirling Cloud Overlays */
+        /* Moving Real Cloud Atmospheric Overlays */
         .earth-core::after {
             content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle at 30% 40%, rgba(255,255,255,0.65) 0%, transparent 25%),
-                        radial-gradient(circle at 75% 55%, rgba(255,255,255,0.55) 0%, transparent 30%);
-            background-size: 160% 100%; mix-blend-mode: screen;
-            animation: rotateClouds 12s linear infinite;
+            border-radius: 50%;
+            background: url('https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/Earth_clouds_2048.png/1024px-Earth_clouds_2048.png') repeat-x;
+            background-size: 210% 100%; mix-blend-mode: screen; opacity: 0.65;
+            animation: rotateCloudsLayer 15s linear infinite;
+            pointer-events: none;
         }
 
-        @keyframes rotateEarthTexture { from { background-position: 0% 0; } to { background-position: 200% 0; } }
-        @keyframes rotateClouds { from { background-position: 200% 0; } to { background-position: 0% 0; } }
+        @keyframes rotateTrueEarth {
+            0% { background-position: 0 0; }
+            100% { background-position: -210% 0; }
+        }
+
+        @keyframes rotateCloudsLayer {
+            0% { background-position: 0 0; }
+            100% { background-position: -210% 0; }
+        }
 
         /* ================== FEATURE 5: TELEMETRY STATUS TICKER ================== */
         .tactical-ticker-bar {
@@ -545,7 +546,7 @@
 
     <div class="container">
         
-        <!-- Header with 3D Earth Globe & Free-moving Satellite -->
+        <!-- Header with 3D NASA Earth Globe & Orbit-locked Satellite -->
         <header class="hero-topbar">
             <canvas id="spaceCanvas"></canvas>
             <div class="hero-content">
@@ -571,7 +572,7 @@
                 </div>
             </div>
 
-            <!-- Orbit Graphic: Rotating 3D Continents & Floating Satellite -->
+            <!-- Orbit Graphic: NASA Texture Earth & Circle-locked Satellite -->
             <div class="hero-orbit-graphic">
                 <div class="orbit-ring-visual"></div>
                 <div class="satellite-orbiter">
@@ -1486,9 +1487,9 @@
                 for (var i = 0; i < stars.length; i++) {
                     for (var j = i + 1; j < stars.length; j++) {
                         var dx = stars[i].x - stars[j].x; var dy = stars[i].y - stars[j].y; var dist = Math.sqrt(dx * dx + dy * dy);
-                        if (dist < 90) {
+                        if (dist < 80) {
                             ctx.beginPath(); ctx.moveTo(stars[i].x, stars[i].y); ctx.lineTo(stars[j].x, stars[j].y);
-                            ctx.strokeStyle = "rgba(0, 240, 255, " + (0.08 - dist / 90 * 0.08) + ")"; ctx.lineWidth = 0.5; ctx.stroke();
+                            ctx.strokeStyle = "rgba(0, 240, 255, " + (0.08 - dist / 80 * 0.08) + ")"; ctx.lineWidth = 0.5; ctx.stroke();
                         }
                     }
                 }
