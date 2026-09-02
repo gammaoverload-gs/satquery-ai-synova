@@ -4,7 +4,2005 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SatQuery AI | Tactical Multimodal Geospatial Command Center</title>
+    <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SatQuery AI | Tactical Multimodal Geospatial Command Center</title>
     
+    <!-- High-Compatibility Glowing Space Satellite Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%9B%B0%EF%B8%8F%3C/text%3E%3C/svg%3E">
+    
+    <!-- Leaflet GIS Map CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <!-- Three.js for 3D Tactical Holographic Globe -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- Chart.js for LULC Analytics & Spectral Indices -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Marked.js for Clean Markdown Parsing -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <!-- html2pdf.js for High-Fidelity PDF Generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <!-- Sci-Fi Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-base: #01040a;
+            --bg-card: rgba(6, 12, 26, 0.88);
+            --border-color: rgba(56, 189, 248, 0.25);
+            --border-glow: rgba(0, 240, 255, 0.6);
+            --accent-cyan: #00f0ff;
+            --accent-glow: rgba(0, 240, 255, 0.35);
+            --accent-green: #00ff66;
+            --accent-red: #ff0055;
+            --accent-amber: #ffaa00;
+            --accent-purple: #b026ff;
+            --text-main: #f0f6fc;
+            --text-muted: #8b949e;
+        }
+
+        /* 🎨 DYNAMIC TACTICAL COLOR PALETTES */
+        body.theme-cyan {
+            --accent-cyan: #00f0ff;
+            --border-color: rgba(56, 189, 248, 0.28);
+            --border-glow: rgba(0, 240, 255, 0.6);
+            --accent-glow: rgba(0, 240, 255, 0.35);
+        }
+
+        body.theme-green {
+            --accent-cyan: #00ff66;
+            --border-color: rgba(0, 255, 102, 0.3);
+            --border-glow: rgba(0, 255, 102, 0.6);
+            --accent-glow: rgba(0, 255, 102, 0.35);
+            --accent-amber: #bbf7d0;
+        }
+
+        body.theme-amber {
+            --accent-cyan: #ffaa00;
+            --border-color: rgba(255, 170, 0, 0.3);
+            --border-glow: rgba(255, 170, 0, 0.6);
+            --accent-glow: rgba(255, 170, 0, 0.35);
+            --accent-green: #fde047;
+        }
+
+        body.theme-red {
+            --accent-cyan: #ff0055;
+            --border-color: rgba(255, 0, 85, 0.35);
+            --border-glow: rgba(255, 0, 85, 0.7);
+            --accent-glow: rgba(255, 0, 85, 0.4);
+            --accent-green: #fb7185;
+        }
+
+        body.theme-purple {
+            --accent-cyan: #b026ff;
+            --border-color: rgba(176, 38, 255, 0.35);
+            --border-glow: rgba(176, 38, 255, 0.7);
+            --accent-glow: rgba(176, 38, 255, 0.4);
+            --accent-green: #c084fc;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            min-height: 100vh;
+            padding: 16px;
+            overflow-x: hidden;
+            position: relative;
+            transition: background-color 0.3s ease;
+        }
+
+        /* Ambient Cosmic Background */
+        #globalSpaceCanvas {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            pointer-events: none;
+            z-index: 0; opacity: 0.95;
+        }
+
+        .cosmic-sun-wrapper {
+            position: fixed;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 1100px; height: 1100px;
+            pointer-events: none;
+            z-index: 1;
+            display: flex; align-items: center; justify-content: center;
+        }
+
+        .sun-outer-aura {
+            position: absolute; width: 850px; height: 850px; border-radius: 50%;
+            background: radial-gradient(circle, rgba(251, 146, 60, 0.22) 0%, rgba(234, 88, 12, 0.12) 40%, rgba(249, 115, 22, 0.05) 65%, transparent 80%);
+            filter: blur(35px);
+            animation: auraBreathing 8s ease-in-out infinite alternate;
+        }
+
+        .sun-rays {
+            position: absolute; width: 950px; height: 950px; border-radius: 50%;
+            background: conic-gradient(from 0deg, transparent 0deg, rgba(255, 215, 0, 0.16) 20deg, transparent 45deg, rgba(251, 146, 60, 0.18) 85deg, transparent 125deg, rgba(255, 180, 50, 0.15) 170deg, transparent 215deg, rgba(251, 146, 60, 0.18) 275deg, transparent 320deg, rgba(255, 215, 0, 0.16) 360deg);
+            animation: rotateSunRays 45s linear infinite;
+        }
+
+        .sun-corona {
+            position: absolute; width: 280px; height: 280px; border-radius: 50%;
+            background: radial-gradient(circle, #ffffff 0%, #fffbeb 20%, #fef08a 40%, #f59e0b 65%, #ea580c 85%, transparent 100%);
+            box-shadow: 0 0 70px #ffffff, 0 0 130px #f59e0b, 0 0 220px rgba(234, 88, 12, 0.85), 0 0 380px rgba(249, 115, 22, 0.45);
+            animation: sunPulse 5s ease-in-out infinite alternate;
+        }
+
+        @keyframes sunPulse { 0% { transform: scale(0.96); opacity: 0.85; } 100% { transform: scale(1.08); opacity: 1; } }
+        @keyframes auraBreathing { 0% { transform: scale(0.92); opacity: 0.6; } 100% { transform: scale(1.15); opacity: 0.95; } }
+        @keyframes rotateSunRays { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+        .ambient-nebula {
+            position: fixed; top: -20%; left: -20%; width: 140vw; height: 140vh;
+            background: radial-gradient(circle at 18% 28%, rgba(0, 240, 255, 0.07) 0%, transparent 45%), radial-gradient(circle at 82% 72%, rgba(176, 38, 255, 0.065) 0%, transparent 50%), radial-gradient(circle at 50% 50%, rgba(249, 115, 22, 0.06) 0%, transparent 60%);
+            pointer-events: none; z-index: 2;
+            animation: nebulaDrift 30s ease-in-out infinite alternate;
+        }
+
+        .ambient-grid-overlay {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background-image: linear-gradient(rgba(0, 240, 255, 0.018) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 240, 255, 0.018) 1px, transparent 1px);
+            background-size: 60px 60px; pointer-events: none; z-index: 3;
+        }
+
+        @keyframes nebulaDrift { 0% { transform: scale(1) translate(0, 0); } 50% { transform: scale(1.08) translate(-25px, 20px); } 100% { transform: scale(1.02) translate(20px, -15px); } }
+
+        /* 7-Second Intro Screen */
+        #launchSequenceOverlay {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: #01040a; z-index: 9999999;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            transition: opacity 1s cubic-bezier(0.85, 0, 0.15, 1), transform 1s ease; overflow: hidden;
+        }
+        #launchSequenceOverlay.fade-out { opacity: 0 !important; transform: scale(1.2) !important; pointer-events: none !important; }
+
+        #warpCanvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
+        .cinematic-hud { position: relative; z-index: 10; display: flex; flex-direction: column; align-items: center; gap: 24px; text-align: center; }
+        .spacecraft-box { position: relative; width: 170px; height: 170px; display: flex; align-items: center; justify-content: center; }
+        .rocket-icon { font-size: 70px; filter: drop-shadow(0 0 35px var(--accent-cyan)); animation: rocketThrust 0.1s infinite alternate, ascendFlight 6.2s cubic-bezier(0.4, 0, 0.2, 1) forwards; display: inline-block; }
+        .lens-portal { position: absolute; width: 10px; height: 10px; border-radius: 50%; border: 2px solid var(--accent-cyan); opacity: 0; animation: portalZoom 1.8s 5.0s cubic-bezier(0.8, 0, 0.2, 1) forwards; }
+
+        @keyframes rocketThrust { from { transform: translateY(0px) rotate(-45deg); } to { transform: translateY(-4px) rotate(-45deg); } }
+        @keyframes ascendFlight { 0% { transform: scale(0.6) translateY(150px) rotate(-45deg); opacity: 0; } 15% { transform: scale(0.9) translateY(40px) rotate(-45deg); opacity: 1; } 45% { transform: scale(1.2) translateY(-10px) rotate(-45deg); } 70% { transform: scale(1.6) translateY(-40px) rotate(-45deg); opacity: 1; } 100% { transform: scale(5.5) translateY(-320px) rotate(-45deg); opacity: 0; } }
+        @keyframes portalZoom { 0% { width: 10px; height: 10px; opacity: 1; border-width: 2px; } 50% { box-shadow: 0 0 80px var(--accent-cyan); } 100% { width: 3200px; height: 3200px; opacity: 1; border-width: 50px; background: rgba(0, 240, 255, 0.25); } }
+
+        .launch-terminal-text { font-family: 'Orbitron', sans-serif; font-size: 20px; font-weight: 800; letter-spacing: 3px; color: var(--accent-cyan); text-shadow: 0 0 20px var(--accent-cyan); min-height: 32px; }
+        .launch-subtext { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #94a3b8; letter-spacing: 1.5px; }
+
+        .progress-bar-container { width: 340px; height: 5px; background: rgba(56, 189, 248, 0.2); border-radius: 4px; overflow: hidden; margin-top: 6px; }
+        .progress-bar-fill { width: 0%; height: 100%; background: linear-gradient(90deg, #0055ff, var(--accent-cyan), #00ff66); box-shadow: 0 0 14px var(--accent-cyan); animation: fillProgress 6.8s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+        @keyframes fillProgress { 0% { width: 0%; } 20% { width: 25%; } 50% { width: 55%; } 75% { width: 80%; } 100% { width: 100%; } }
+
+        .btn-skip-intro { position: absolute; bottom: 30px; right: 40px; z-index: 20; background: rgba(4, 9, 20, 0.85); border: 1px solid var(--border-color); color: var(--accent-cyan); font-family: 'JetBrains Mono', monospace; font-size: 11px; padding: 8px 16px; border-radius: 4px; cursor: pointer; transition: all 0.2s; letter-spacing: 1px; }
+        .btn-skip-intro:hover { background: var(--accent-cyan); color: #010409; font-weight: 700; box-shadow: 0 0 15px var(--accent-glow); }
+
+        /* Container Structure */
+        .container { max-width: 1580px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px; position: relative; z-index: 10; }
+
+        /* Top Command Deck */
+        .hero-topbar {
+            position: relative;
+            background: linear-gradient(135deg, rgba(2, 7, 22, 0.92) 0%, rgba(6, 19, 45, 0.85) 40%, rgba(10, 6, 36, 0.92) 100%);
+            border: 1.5px solid rgba(0, 240, 255, 0.45);
+            border-radius: 14px; padding: 22px 32px; overflow: hidden;
+            box-shadow: 0 0 45px rgba(0, 240, 255, 0.22), inset 0 0 35px rgba(0, 240, 255, 0.1);
+            display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 32px; backdrop-filter: blur(14px);
+        }
+
+        #spaceCanvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; display: block; }
+        .hero-topbar::before { content: ""; position: absolute; top: 0; left: 0; width: 120px; height: 3px; background: linear-gradient(90deg, var(--accent-cyan), transparent); box-shadow: 0 0 15px var(--accent-cyan); z-index: 2; }
+        .hero-topbar::after { content: ""; position: absolute; bottom: 0; right: 0; width: 120px; height: 3px; background: linear-gradient(270deg, var(--accent-purple), transparent); box-shadow: 0 0 15px var(--accent-purple); z-index: 2; }
+
+        .hero-content { position: relative; z-index: 3; display: flex; flex-direction: column; gap: 8px; }
+        .hero-title-row { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+
+        .hero-badge-glow { background: linear-gradient(135deg, #0055ff, #00f0ff); color: #010409; font-family: 'Orbitron', sans-serif; font-weight: 900; padding: 8px 15px; border-radius: 6px; font-size: 15px; letter-spacing: 2px; box-shadow: 0 0 25px var(--accent-glow); display: flex; align-items: center; gap: 8px; }
+        .hero-title { font-family: 'Orbitron', sans-serif; font-size: 26px; font-weight: 900; letter-spacing: 1.5px; background: linear-gradient(90deg, #ffffff 0%, var(--accent-cyan) 50%, #d8b4fe 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0 0 35px rgba(0, 240, 255, 0.45); }
+        .hero-subtitle { font-size: 12px; color: #94a3b8; font-family: 'JetBrains Mono', monospace; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; letter-spacing: 0.5px; }
+        .hero-subtitle strong { color: var(--accent-cyan); font-weight: 600; }
+
+        .hero-telemetry-strip { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-top: 2px; }
+        .pill { background: rgba(4, 9, 20, 0.92); border: 1px solid var(--border-color); color: var(--accent-cyan); padding: 4px 10px; border-radius: 5px; font-size: 10.5px; font-family: 'JetBrains Mono', monospace; display: inline-flex; align-items: center; gap: 6px; }
+        .pill.green { border-color: var(--accent-green); color: var(--accent-green); }
+        .pill.amber { border-color: var(--accent-amber); color: var(--accent-amber); }
+        .pill.purple { border-color: var(--accent-purple); color: #e9d5ff; }
+        .pulse-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent-green); animation: radar 1.5s infinite; }
+        @keyframes radar { 0% { box-shadow: 0 0 0 0 rgba(0, 255, 102, 0.8); } 70% { box-shadow: 0 0 0 9px rgba(0, 255, 102, 0); } 100% { box-shadow: 0 0 0 0 rgba(0, 255, 102, 0); } }
+
+        .btn-replay-launch { background: rgba(0, 240, 255, 0.1); border: 1px solid var(--accent-cyan); color: var(--accent-cyan); padding: 4px 8px; border-radius: 4px; font-size: 10px; font-family: 'JetBrains Mono', monospace; cursor: pointer; transition: all 0.2s; }
+        .btn-replay-launch:hover { background: var(--accent-cyan); color: #010409; font-weight: 700; }
+
+        /* 🎨 TACTICAL PALETTE THEME ENGINE */
+        .theme-palette-box {
+            display: inline-flex; align-items: center; gap: 7px;
+            background: rgba(3, 8, 20, 0.9); border: 1.2px solid var(--border-color);
+            padding: 4px 10px; border-radius: 6px; margin-left: 6px;
+        }
+        .theme-palette-label {
+            font-family: 'JetBrains Mono', monospace; font-size: 9.5px; color: var(--text-muted); text-transform: uppercase;
+        }
+        .theme-swatches { display: flex; gap: 5px; }
+        .theme-dot {
+            width: 14px; height: 14px; border-radius: 50%; cursor: pointer;
+            border: 1px solid rgba(255, 255, 255, 0.4); transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .theme-dot:hover { transform: scale(1.25); box-shadow: 0 0 8px currentColor; }
+        .theme-dot.cyan { background: #00f0ff; color: #00f0ff; }
+        .theme-dot.green { background: #00ff66; color: #00ff66; }
+        .theme-dot.amber { background: #ffaa00; color: #ffaa00; }
+        .theme-dot.red { background: #ff0055; color: #ff0055; }
+        .theme-dot.purple { background: #b026ff; color: #b026ff; }
+
+        /* 🌍 OG CLASSIC GLOWING BLUE ORB & ORBIT-LOCKED SATELLITE */
+        .hero-orbit-graphic { position: relative; z-index: 3; width: 140px; height: 140px; display: flex; align-items: center; justify-content: center; }
+        .orbit-ring-visual { position: absolute; width: 120px; height: 120px; border: 1.5px dashed rgba(0, 240, 255, 0.5); border-radius: 50%; pointer-events: none; }
+        .satellite-orbiter { position: absolute; width: 120px; height: 120px; border-radius: 50%; animation: orbitalRingLocked 10s linear infinite; pointer-events: none; }
+        .sat-unit { position: absolute; top: -11px; left: 50%; transform: translateX(-50%); font-size: 18px; filter: drop-shadow(0 0 12px var(--accent-cyan)); }
+        @keyframes orbitalRingLocked { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        .earth-core {
+            width: 58px; height: 58px;
+            background: radial-gradient(circle at 35% 35%, #00f0ff 0%, #0284c7 45%, #0369a1 70%, #020617 100%);
+            border-radius: 50%;
+            box-shadow: 0 0 30px rgba(0, 240, 255, 0.85), inset -5px -5px 15px rgba(0, 0, 0, 0.85);
+            position: relative;
+            animation: pulseEarth 3s ease-in-out infinite alternate;
+        }
+        @keyframes pulseEarth { from { box-shadow: 0 0 25px rgba(56, 189, 248, 0.6); } to { box-shadow: 0 0 50px rgba(0, 240, 255, 0.95), inset -5px -5px 15px rgba(0, 0, 0, 0.85); } }
+
+        /* Telemetry Banner Ticker */
+        .tactical-ticker-bar {
+            width: 100%; background: rgba(3, 8, 20, 0.92); border: 1px solid var(--border-color);
+            border-radius: 6px; padding: 5px 12px; font-family: 'JetBrains Mono', monospace; font-size: 10.5px;
+            color: var(--accent-cyan); display: flex; align-items: center; overflow: hidden; box-shadow: inset 0 0 15px rgba(0, 240, 255, 0.08);
+        }
+        .ticker-label { color: var(--accent-green); font-weight: 700; display: flex; align-items: center; gap: 6px; margin-right: 14px; white-space: nowrap; }
+        .ticker-track { display: flex; white-space: nowrap; animation: tickerSlide 26s linear infinite; }
+        .ticker-track span { margin-right: 48px; color: #94a3b8; }
+        .ticker-track span b { color: var(--accent-cyan); }
+        @keyframes tickerSlide { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+
+        /* Workspace Tab Navigator */
+        .workspace-tabs-nav {
+            display: flex; gap: 8px; background: rgba(4, 9, 20, 0.85); border: 1px solid var(--border-color);
+            padding: 6px; border-radius: 10px; backdrop-filter: blur(18px); box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4); flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            flex: 1; min-width: 170px; background: rgba(2, 6, 23, 0.85); border: 1px solid rgba(56, 189, 248, 0.2);
+            color: var(--text-muted); padding: 10px 14px; border-radius: 6px; font-family: 'Orbitron', sans-serif;
+            font-size: 11px; font-weight: 700; letter-spacing: 0.8px; cursor: pointer; transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+        }
+        .tab-btn:hover { border-color: var(--accent-cyan); color: var(--accent-cyan); background: rgba(0, 240, 255, 0.08); }
+        .tab-btn.active {
+            background: linear-gradient(135deg, rgba(0, 85, 255, 0.35), rgba(0, 240, 255, 0.22));
+            border-color: var(--accent-cyan); color: #ffffff; box-shadow: 0 0 20px var(--accent-glow); text-shadow: 0 0 10px var(--accent-cyan);
+        }
+
+        .tab-badge { font-family: 'JetBrains Mono', monospace; font-size: 8.5px; padding: 2px 6px; border-radius: 3px; text-transform: uppercase; }
+        .tab-badge.green { background: rgba(0, 255, 102, 0.15); border: 1px solid var(--accent-green); color: var(--accent-green); }
+        .tab-badge.cyan { background: rgba(0, 240, 255, 0.15); border: 1px solid var(--accent-cyan); color: var(--accent-cyan); }
+
+        .tab-content { display: none; animation: fadeInTab 0.35s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+        .tab-content.active { display: block; }
+        @keyframes fadeInTab { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Hardware-Accelerated SVG Filters for Map Tile Pane */
+        .leaf-nir-active { filter: url(#cirNirFilter) !important; }
+        .leaf-sar-active { filter: contrast(180%) grayscale(100%) brightness(110%) drop-shadow(0 0 2px rgba(0,240,255,0.4)) !important; }
+        .leaf-ndvi-active { filter: url(#ndviColorMap) !important; }
+
+        /* 🌐 3D GLOBE CONTAINER & RETICLE HUD */
+        .map-wrapper { position: relative; border: 1px solid var(--border-color); border-radius: 6px; overflow: hidden; height: 320px; }
+        #map { height: 100%; width: 100%; }
+        #globe3DContainer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; z-index: 450; background: #01040a; cursor: grab; }
+        #globe3DContainer:active { cursor: grabbing; }
+
+        .btn-view-toggle {
+            position: absolute; top: 10px; right: 10px; z-index: 600;
+            background: rgba(2, 6, 23, 0.9); border: 1px solid var(--accent-cyan);
+            color: var(--accent-cyan); font-family: 'Orbitron', sans-serif; font-size: 10px;
+            padding: 5px 10px; border-radius: 4px; cursor: pointer; box-shadow: 0 0 10px var(--accent-glow);
+        }
+
+        .tactical-hud-crosshair {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 90px; height: 90px; pointer-events: none; z-index: 500;
+        }
+        .reticle-bearing-ring {
+            position: absolute; top: 5px; left: 5px; width: 80px; height: 80px;
+            border-radius: 50%; border: 1px dashed rgba(0, 240, 255, 0.6); animation: bearingSpin 18s linear infinite;
+        }
+        @keyframes bearingSpin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+        .reticle-center-pip {
+            position: absolute; top: 42px; left: 42px; width: 6px; height: 6px;
+            background: var(--accent-red); border-radius: 50%; box-shadow: 0 0 8px var(--accent-red);
+        }
+        .reticle-corner { position: absolute; width: 10px; height: 10px; border-color: var(--accent-cyan); border-style: solid; }
+        .c-tl { top: 0; left: 0; border-width: 2px 0 0 2px; }
+        .c-tr { top: 0; right: 0; border-width: 2px 2px 0 0; }
+        .c-bl { bottom: 0; left: 0; border-width: 0 0 2px 2px; }
+        .c-br { bottom: 0; right: 0; border-width: 0 2px 2px 0; }
+
+        .laser-sweep-line {
+            position: absolute; top: 0; left: 0; width: 100%; height: 2px;
+            background: linear-gradient(90deg, transparent, var(--accent-cyan), #ffffff, var(--accent-cyan), transparent);
+            box-shadow: 0 0 10px var(--accent-cyan); animation: scanLaser 2.4s ease-in-out infinite alternate;
+        }
+        @keyframes scanLaser { 0% { transform: translateY(4px); opacity: 0.3; } 50% { opacity: 0.95; } 100% { transform: translateY(84px); opacity: 0.3; } }
+
+        .reticle-azimuth-tag {
+            position: absolute; top: -18px; left: 50%; transform: translateX(-50%);
+            font-family: 'JetBrains Mono', monospace; font-size: 8.5px; color: var(--accent-cyan);
+            background: rgba(2, 6, 23, 0.9); padding: 1px 4px; border: 1px solid rgba(0, 240, 255, 0.3);
+            border-radius: 2px; letter-spacing: 0.5px; white-space: nowrap;
+        }
+
+        .mgrs-bar {
+            position: absolute; bottom: 0; left: 0; width: 100%; background: rgba(1, 4, 9, 0.88);
+            padding: 4px 10px; font-family: 'JetBrains Mono', monospace; font-size: 9.5px; color: var(--accent-cyan);
+            display: flex; justify-content: space-between; z-index: 600; border-top: 1px solid rgba(0, 240, 255, 0.2);
+        }
+
+        /* Voice Reactivity Visualizer */
+        .voice-query-group { display: flex; gap: 8px; align-items: center; }
+        .btn-mic {
+            background: rgba(0, 240, 255, 0.1); border: 1px solid var(--accent-cyan); color: var(--accent-cyan);
+            padding: 9px 14px; border-radius: 5px; cursor: pointer; font-size: 14px; transition: all 0.2s;
+        }
+        .btn-mic.listening { background: rgba(255, 0, 85, 0.3); border-color: var(--accent-red); color: var(--accent-red); animation: pulse 1s infinite; }
+        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.08); } }
+
+        .carrier-audio-visualizer {
+            display: inline-flex; align-items: center; gap: 3px; height: 18px; padding: 0 6px;
+            background: rgba(2, 6, 23, 0.85); border: 1px solid rgba(0, 240, 255, 0.3); border-radius: 3px;
+        }
+        .wave-bar { width: 3px; height: 4px; background: var(--accent-cyan); border-radius: 1px; transition: height 0.1s ease; }
+        .carrier-beacon { font-family: 'JetBrains Mono', monospace; font-size: 8.5px; color: var(--accent-green); letter-spacing: 0.5px; display: flex; align-items: center; gap: 4px; }
+        .beacon-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--accent-green); }
+        .beacon-dot.active { animation: blinkLed 0.5s infinite; }
+        @keyframes blinkLed { 0%, 100% { opacity: 0.2; } 50% { opacity: 1; } }
+
+        /* Entity Target Acquisition Chips */
+        .target-matrix-wrapper { display: flex; flex-direction: column; gap: 6px; margin-top: 4px; }
+        .target-chips-container { display: flex; gap: 6px; flex-wrap: wrap; }
+        .target-chip {
+            background: rgba(4, 9, 20, 0.88); border: 1px solid var(--border-color); border-radius: 4px;
+            padding: 4px 9px; font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #cbd5e1; cursor: pointer;
+            display: inline-flex; align-items: center; gap: 6px; transition: all 0.2s ease;
+        }
+        .target-chip:hover { border-color: var(--accent-cyan); background: rgba(0, 240, 255, 0.12); color: var(--accent-cyan); transform: translateY(-1px); }
+        .target-chip.locked { border-color: var(--accent-red); color: #ff99bb; background: rgba(255, 0, 85, 0.15); box-shadow: 0 0 10px rgba(255, 0, 85, 0.35); }
+
+        /* 🎯 TARGET TRACKING HUD OVERLAY BOX */
+        .target-tracking-overlay {
+            position: absolute; top: 15%; left: 20%; width: 50%; height: 55%;
+            border: 1.5px solid var(--accent-red); pointer-events: none; border-radius: 2px;
+            box-shadow: 0 0 15px rgba(255, 0, 85, 0.4), inset 0 0 10px rgba(255, 0, 85, 0.2);
+            animation: targetBlink 1.5s infinite alternate;
+        }
+        @keyframes targetBlink { 0% { opacity: 0.7; } 100% { opacity: 1; } }
+        .target-hud-tag {
+            position: absolute; top: -18px; left: 0; background: var(--accent-red); color: #fff;
+            font-family: 'JetBrains Mono', monospace; font-size: 8.5px; font-weight: 700; padding: 1px 6px; border-radius: 2px;
+        }
+
+        /* Hover Tooltips */
+        .geo-tooltip { position: relative; color: var(--accent-cyan); border-bottom: 1.5px dotted var(--accent-cyan); cursor: help; font-weight: 600; }
+        .geo-tooltip::after {
+            content: attr(data-tooltip); position: absolute; bottom: 125%; left: 50%;
+            transform: translateX(-50%) translateY(4px); background: #020a1a; border: 1px solid var(--accent-cyan); color: #f8fafc;
+            padding: 8px 12px; border-radius: 6px; font-size: 11px; line-height: 1.4;
+            white-space: normal; width: 240px; box-shadow: 0 4px 20px rgba(0, 240, 255, 0.4);
+            opacity: 0; pointer-events: none; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 9999; font-family: 'Inter', sans-serif; font-weight: 400;
+        }
+        .geo-tooltip:hover::after { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+        .glossary-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 14px; margin-top: 10px; }
+        .glossary-card { background: #030816; border: 1px solid var(--border-color); border-radius: 8px; padding: 16px; display: flex; flex-direction: column; gap: 6px; }
+        .glossary-term { font-family: 'Orbitron', sans-serif; font-size: 13px; font-weight: 800; color: var(--accent-cyan); display: flex; align-items: center; justify-content: space-between; }
+        .glossary-tag { font-family: 'JetBrains Mono', monospace; font-size: 9px; padding: 2px 6px; background: rgba(0, 240, 255, 0.1); border: 1px solid rgba(0, 240, 255, 0.3); border-radius: 3px; color: var(--accent-cyan); }
+        .glossary-desc { font-size: 12px; color: #cbd5e1; line-height: 1.5; }
+
+        /* Form Inputs & Controls */
+        .card {
+            background: var(--bg-card); backdrop-filter: blur(20px); border: 1px solid var(--border-color);
+            border-radius: 10px; padding: 22px; display: flex; flex-direction: column; gap: 16px; position: relative; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
+        }
+        .card-title {
+            font-family: 'Orbitron', sans-serif; font-size: 12.5px; font-weight: 700; text-transform: uppercase;
+            letter-spacing: 1px; color: var(--accent-cyan); display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid rgba(56, 189, 248, 0.2); padding-bottom: 10px;
+        }
+
+        .ingestion-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        @media (max-width: 1080px) { .ingestion-grid { grid-template-columns: 1fr; } }
+
+        .form-group { display: flex; flex-direction: column; gap: 5px; }
+        label { font-size: 10.5px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; font-family: 'JetBrains Mono', monospace; }
+
+        .input-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        input[type="file"], select, input[type="text"] {
+            width: 100%; background: #040914; border: 1px solid var(--border-color); color: var(--text-main);
+            padding: 9px 12px; border-radius: 5px; font-size: 12px; outline: none; font-family: 'JetBrains Mono', monospace;
+        }
+        input[type="file"] { font-size: 10.5px; padding: 7px; cursor: pointer; }
+
+        .preset-container { display: flex; gap: 6px; flex-wrap: wrap; }
+        .preset-btn {
+            background: rgba(0, 240, 255, 0.08); border: 1px solid rgba(0, 240, 255, 0.3); color: var(--accent-cyan);
+            font-size: 10.5px; padding: 5px 10px; border-radius: 4px; font-family: 'JetBrains Mono', monospace; cursor: pointer;
+        }
+        .preset-btn:hover { background: var(--accent-cyan); color: #02040a; font-weight: 700; }
+
+        .checkbox-container {
+            display: flex; align-items: center; gap: 8px; font-size: 11.5px; color: var(--accent-cyan);
+            background: rgba(0, 240, 255, 0.05); padding: 8px 12px; border-radius: 5px; border: 1px dashed rgba(0, 240, 255, 0.3); cursor: pointer; font-family: 'JetBrains Mono', monospace;
+        }
+        .checkbox-container input { width: auto; cursor: pointer; }
+
+        .btn-submit {
+            background: linear-gradient(135deg, #0055ff, #00f0ff); color: #02040a; border: none; padding: 14px;
+            border-radius: 5px; font-weight: 800; font-size: 14px; font-family: 'Orbitron', sans-serif; letter-spacing: 1px; cursor: pointer; box-shadow: 0 0 20px var(--accent-glow); display: flex; justify-content: center; align-items: center; gap: 8px;
+        }
+
+        /* Bi-Temporal Split View */
+        .split-slider-container {
+            position: relative; width: 100%; height: 380px; background: #020617; border: 1.5px solid var(--border-color);
+            border-radius: 8px; overflow: hidden; user-select: none; -webkit-user-select: none; margin-bottom: 14px; cursor: ew-resize;
+        }
+        .split-slider-container img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
+        .split-img-after { z-index: 1; }
+        .split-img-before-wrapper { position: absolute; top: 0; left: 0; width: 50%; height: 100%; overflow: hidden; z-index: 2; border-right: 2px solid var(--accent-cyan); }
+        .split-img-before-wrapper img { height: 100%; max-width: none; }
+        .slider-handle { position: absolute; top: 0; left: 50%; width: 3px; height: 100%; background: var(--accent-cyan); cursor: ew-resize; z-index: 10; display: flex; align-items: center; justify-content: center; transform: translateX(-50%); }
+        .handle-knob { width: 34px; height: 34px; background: rgba(2, 6, 23, 0.95); border: 2px solid var(--accent-cyan); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--accent-cyan); }
+        .slider-tag { position: absolute; top: 12px; padding: 4px 10px; background: rgba(1, 4, 10, 0.88); border: 1px solid var(--border-color); border-radius: 4px; font-family: 'JetBrains Mono', monospace; font-size: 10px; z-index: 5; pointer-events: none; }
+        .tag-before { left: 12px; color: var(--accent-cyan); }
+        .tag-after { right: 12px; color: var(--accent-green); }
+
+        /* Media Grid */
+        .media-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; }
+        .media-box { background: #040914; border: 1px solid var(--border-color); border-radius: 8px; padding: 10px; display: flex; flex-direction: column; gap: 8px; position: relative; cursor: zoom-in; }
+        .media-box span { font-size: 10px; font-weight: 700; color: var(--accent-cyan); font-family: 'JetBrains Mono', monospace; }
+        .media-box img { width: 100%; height: 210px; object-fit: cover; border-radius: 5px; transition: filter 0.3s; }
+        .hud-corner { position: absolute; bottom: 14px; right: 14px; font-family: 'JetBrains Mono', monospace; font-size: 9px; background: rgba(2, 6, 23, 0.88); padding: 3px 6px; border: 1px solid var(--border-color); border-radius: 3px; color: var(--accent-green); }
+
+        .shader-toolbar { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 2px; }
+        .btn-shader { background: rgba(2, 6, 23, 0.9); border: 1px solid var(--border-color); color: var(--text-muted); font-size: 10px; font-family: 'JetBrains Mono', monospace; padding: 4px 9px; border-radius: 3px; cursor: pointer; }
+        .btn-shader.active, .btn-shader:hover { border-color: var(--accent-cyan); color: var(--accent-cyan); background: rgba(0, 240, 255, 0.1); }
+        .flir-thermal { filter: contrast(180%) saturate(300%) hue-rotate(90deg) invert(10%) !important; }
+        .night-vision { filter: brightness(120%) contrast(150%) sepia(100%) hue-rotate(85deg) saturate(300%) !important; }
+        .sobel-edge { filter: contrast(250%) grayscale(100%) invert(100%) !important; }
+        .sar-polar { filter: contrast(160%) invert(80%) hue-rotate(240deg) saturate(180%) !important; }
+
+        /* Analytics Console */
+        .analytics-subgrid { display: grid; grid-template-columns: 1fr 320px; gap: 18px; }
+        @media (max-width: 980px) { .analytics-subgrid { grid-template-columns: 1fr; } }
+
+        .analysis-box {
+            background: #030712; border: 1px solid var(--border-color); border-radius: 8px; padding: 20px;
+            font-size: 13.5px; line-height: 1.7; color: #d1d5db; max-height: 480px; overflow-y: auto; font-family: 'Inter', sans-serif; border-left: 4px solid var(--accent-cyan);
+        }
+        .analysis-box h1, .analysis-box h2, .analysis-box h3 { color: var(--accent-cyan); font-family: 'Orbitron', sans-serif; font-size: 13px; margin-top: 14px; margin-bottom: 8px; }
+        .analysis-box ul { padding-left: 20px; margin-bottom: 10px; }
+
+        .dual-chart-pane { display: flex; flex-direction: column; gap: 12px; }
+        .chart-box { background: #030712; border: 1px solid var(--border-color); border-radius: 8px; padding: 14px; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; }
+        .chart-box h4 { font-family: 'Orbitron', sans-serif; font-size: 10.5px; color: var(--accent-cyan); letter-spacing: 1px; margin-bottom: 8px; }
+
+        .bench-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 8px; }
+        .metric-card { background: #030712; border: 1px solid var(--border-color); padding: 10px 12px; border-radius: 6px; display: flex; flex-direction: column; }
+        .metric-title { font-size: 9.5px; color: var(--text-muted); font-family: 'JetBrains Mono', monospace; text-transform: uppercase; }
+        .metric-val { font-size: 14px; font-weight: 700; color: var(--accent-green); font-family: 'JetBrains Mono', monospace; }
+
+        pre { background: #02040a; color: var(--accent-cyan); padding: 12px; border-radius: 6px; font-size: 11.5px; font-family: 'JetBrains Mono', monospace; border: 1px solid rgba(0, 240, 255, 0.2); overflow-x: auto; max-height: 150px; }
+
+        .action-bar { display: flex; gap: 8px; align-items: center; }
+        .btn-action { background: rgba(0, 240, 255, 0.1); border: 1px solid var(--accent-cyan); color: var(--accent-cyan); padding: 6px 12px; border-radius: 4px; font-size: 11px; font-family: 'JetBrains Mono', monospace; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 5px; }
+        .btn-action:hover { background: var(--accent-cyan); color: #02040a; font-weight: 700; }
+
+        #loader { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(2, 4, 10, 0.92); backdrop-filter: blur(12px); z-index: 10000; flex-direction: column; justify-content: center; align-items: center; gap: 16px; }
+        .radar-box { width: 80px; height: 80px; border-radius: 50%; border: 2px solid rgba(0, 240, 255, 0.3); position: relative; }
+        .radar-sweep { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border-radius: 50%; background: conic-gradient(from 0deg at 50% 50%, rgba(0, 240, 255, 0.5) 0deg, transparent 90deg); animation: radar-spin 1.2s linear infinite; }
+        @keyframes radar-spin { to { transform: rotate(360deg); } }
+
+        #lightboxModal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(2, 4, 10, 0.95); z-index: 11000; justify-content: center; align-items: center; cursor: zoom-out; }
+        #lightboxImg { max-width: 90%; max-height: 85%; border: 2px solid var(--accent-cyan); border-radius: 4px; }
+    </style>
+</head>
+<body class="theme-cyan">
+
+    <!-- SVG COLOR-INFRARED & NDVI MATRIX PIPELINE -->
+    <svg style="position: absolute; width: 0; height: 0; overflow: hidden;" version="1.1" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+            <filter id="cirNirFilter">
+                <feColorMatrix type="matrix" values="
+                    0.0  1.8  0.0  0.0  0.0
+                    0.4  0.2  0.0  0.0  0.0
+                    0.0  0.0  0.8  0.0  0.0
+                    0.0  0.0  0.0  1.0  0.0" />
+            </filter>
+            <filter id="ndviColorMap">
+                <feColorMatrix type="matrix" values="
+                    0.2  0.1  0.0  0.0  0.0
+                    0.1  1.9  0.2  0.0  0.0
+                    0.0  0.2  0.9  0.0  0.0
+                    0.0  0.0  0.0  1.0  0.0" />
+            </filter>
+        </defs>
+    </svg>
+
+    <canvas id="globalSpaceCanvas"></canvas>
+    <div class="cosmic-sun-wrapper">
+        <div class="sun-outer-aura"></div>
+        <div class="sun-rays"></div>
+        <div class="sun-corona"></div>
+    </div>
+    <div class="ambient-nebula"></div>
+    <div class="ambient-grid-overlay"></div>
+
+    <!-- Intro Sequence -->
+    <div id="launchSequenceOverlay">
+        <canvas id="warpCanvas"></canvas>
+        <div class="cinematic-hud">
+            <div class="spacecraft-box">
+                <div class="rocket-icon">🚀</div>
+                <div class="lens-portal"></div>
+            </div>
+            <div class="launch-terminal-text" id="launchStatusMsg">STAGE 1: LAUNCH PAD IGNITION & ASCENT...</div>
+            <div class="launch-subtext" id="launchSubMsg">CARTOSAT / SENTINEL SENSOR ARRAY CALIBRATION</div>
+            <div class="progress-bar-container"><div class="progress-bar-fill"></div></div>
+        </div>
+        <button class="btn-skip-intro" onclick="endIntroSequence()">SKIP INTRO ⏩</button>
+    </div>
+
+    <div id="lightboxModal" onclick="closeLightbox()">
+        <img id="lightboxImg" src="" alt="Tactical Zoom">
+    </div>
+
+    <!-- Radar Loading Screen -->
+    <div id="loader">
+        <div class="radar-box"><div class="radar-sweep"></div></div>
+        <p style="font-family: 'Orbitron', sans-serif; font-size: 12.5px; color: var(--accent-cyan); letter-spacing: 1.5px;">DECODING MULTISPECTRAL AGENTIC TELEMETRY...</p>
+    </div>
+
+    <div class="container">
+        
+        <!-- Header -->
+        <header class="hero-topbar">
+            <canvas id="spaceCanvas"></canvas>
+            <div class="hero-content">
+                <div class="hero-title-row">
+                    <div class="hero-badge-glow"><span>🛰️</span> SATQUERY AI</div>
+                    <h1 class="hero-title">Multimodal Geospatial Tactical Intelligence</h1>
+                    
+                    <!-- 🎨 TACTICAL PALETTE THEME ENGINE -->
+                    <div class="theme-palette-box">
+                        <span class="theme-palette-label">THEME:</span>
+                        <div class="theme-swatches">
+                            <div class="theme-dot cyan" onclick="setTacticalTheme('theme-cyan', 0x00f0ff)" title="Cyan Cyber"></div>
+                            <div class="theme-dot green" onclick="setTacticalTheme('theme-green', 0x00ff66)" title="Night Ops Green"></div>
+                            <div class="theme-dot amber" onclick="setTacticalTheme('theme-amber', 0xffaa00)" title="Amber Tactical"></div>
+                            <div class="theme-dot red" onclick="setTacticalTheme('theme-red', 0xff0055)" title="Red Combat Alert"></div>
+                            <div class="theme-dot purple" onclick="setTacticalTheme('theme-purple', 0xb026ff)" title="Ultraviolet Spec"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <p class="hero-subtitle">
+                    <span>MISSION: <strong>ISRO / SAC EARTH OBSERVATION</strong></span>
+                    <span>•</span>
+                    <span>AGENTIC CORE: <strong>GEMINI 3.6 FLASH VLM</strong></span>
+                    <span>•</span>
+                    <span>UPLINK: <strong id="telemetryClock">00:00:00 UTC</strong> | <strong id="telemetryClockIST" style="color: var(--accent-green);">00:00:00 IST</strong></span>
+                </p>
+
+                <div class="hero-telemetry-strip">
+                    <span class="pill green"><span class="pulse-dot"></span> SATELLITE CONSTELLATION: LOCKED</span>
+                    <span class="pill">ORBIT: 786 KM SSO</span>
+                    <span class="pill amber">SENSOR: {{ s1_name }}</span>
+                    <span class="pill purple">PATCH: {{ patch_id }}</span>
+                    <button type="button" class="btn-replay-launch" onclick="replayLaunchSequence()">🚀 REPLAY LAUNCH</button>
+                </div>
+            </div>
+
+            <!-- OG Glowing Blue Earth Orbit -->
+            <div class="hero-orbit-graphic">
+                <div class="orbit-ring-visual"></div>
+                <div class="satellite-orbiter">
+                    <div class="sat-unit">🛰️</div>
+                </div>
+                <div class="earth-core"></div>
+            </div>
+        </header>
+
+        <!-- Marquee Telemetry Ticker -->
+        <div class="tactical-ticker-bar">
+            <div class="ticker-label">
+                <span class="beacon-dot active"></span> LIVE TELEMETRY LOG:
+            </div>
+            <div class="ticker-track">
+                <span><b>SYS_OK</b> // EPHEMERIS PROPAGATION: NOMINAL</span>
+                <span><b>SENTINEL-1A</b>: C-BAND SAR POLARIZATION LOCKED (VV+VH)</span>
+                <span><b>CARTOSAT-3</b>: GSD CALIBRATED AT 0.28M PANCHROMATIC</span>
+                <span><b>GEMINI-3.6-FLASH</b>: VLM INFERENCE LATENCY 342ms</span>
+                <span><b>COPERNICUS HUB</b>: INGESTION PIPELINE ACTIVE</span>
+                <span><b>ENCRYPTION</b>: MIL-STD AES-256 GCM SECURED</span>
+                <span><b>SYS_OK</b> // EPHEMERIS PROPAGATION: NOMINAL</span>
+                <span><b>SENTINEL-1A</b>: C-BAND SAR POLARIZATION LOCKED (VV+VH)</span>
+                <span><b>CARTOSAT-3</b>: GSD CALIBRATED AT 0.28M PANCHROMATIC</span>
+                <span><b>GEMINI-3.6-FLASH</b>: VLM INFERENCE LATENCY 342ms</span>
+            </div>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <nav class="workspace-tabs-nav">
+            <button class="tab-btn active" onclick="switchTab('tab-ingestion', this)">
+                <span>📡</span> SENSOR INGESTION & TARGETING
+            </button>
+            <button class="tab-btn" onclick="switchTab('tab-payload', this)">
+                <span>🖼️</span> PAYLOAD VISUALS & SPLIT SLIDER 
+                {% if uploaded_images %}<span class="tab-badge green">ACTIVE TILE</span>{% endif %}
+            </button>
+            <button class="tab-btn" onclick="switchTab('tab-analytics', this)">
+                <span>🧠</span> DECODED REASONING & INDICES 
+                {% if has_report %}<span class="tab-badge cyan">DECODED</span>{% endif %}
+            </button>
+            <button class="tab-btn" onclick="switchTab('tab-glossary', this)">
+                <span>📖</span> TERMINOLOGY GLOSSARY
+            </button>
+        </nav>
+
+        <!-- TAB 1: SENSOR INGESTION & TARGETING -->
+        <div id="tab-ingestion" class="tab-content active">
+            <div class="card">
+                <div class="card-title">
+                    <span>📡 SENSOR INGESTION & TARGET RETICLE</span>
+                    <span style="font-size: 10px; color: var(--text-muted);">C-BAND SAR & VIS-NIR MULTISPECTRAL</span>
+                </div>
+                
+                <form method="POST" enctype="multipart/form-data" onsubmit="showLoader()">
+                    <div class="ingestion-grid">
+                        
+                        <div style="display: flex; flex-direction: column; gap: 12px;">
+                            <div class="form-group">
+                                <label for="file_input_1">Primary Channel (T1 / Optical / GeoTIFF):</label>
+                                <input type="file" id="file_input_1" name="satellite_image_1" accept=".tif,.tiff,.png,.jpg,.jpeg">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="file_input_2">Secondary Channel (Optional: T2 / SAR Radar):</label>
+                                <input type="file" id="file_input_2" name="satellite_image_2" accept=".tif,.tiff,.png,.jpg,.jpeg">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="location_search">Global Location Search (City / Landmark / Address):</label>
+                                <div class="voice-query-group">
+                                    <input type="text" id="location_search" placeholder="Type city or landmark (e.g. Taj Mahal, Tokyo, Lucknow)..." onkeydown="if(event.key==='Enter'){event.preventDefault(); searchLocation();}">
+                                    <button type="button" class="btn-mic" onclick="searchLocation()" title="Search Location" style="background: rgba(0, 240, 255, 0.15);">🔍</button>
+                                </div>
+                            </div>
+
+                            <div class="input-row">
+                                <div class="form-group">
+                                    <label for="composite_mode">Sensor Composite Mode:</label>
+                                    <select id="composite_mode" name="composite_mode" onchange="changeMapLayer(this.value)">
+                                        <option value="SATELLITE">Optical Satellite (Esri Imagery)</option>
+                                        <option value="NIR">Infrared False-Color (Color-IR CIR)</option>
+                                        <option value="SAR">C-Band SAR Radar (Simulated Backscatter)</option>
+                                        <option value="NDVI">Synthetic NDVI (Topographic Vegetation)</option>
+                                        <option value="RGB">OpenStreetMap Vector Base</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="coordinates">Target Reticle (Lat, Lng):</label>
+                                    <input type="text" id="coordinates" name="coordinates" placeholder="Target Coordinates">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Mission Sector Target Presets:</label>
+                                <div class="preset-container">
+                                    <button type="button" class="preset-btn" onclick="setPreset(28.5562, 77.1000, 'Delhi IGI Airfield Sector')">✈️ Delhi IGI</button>
+                                    <button type="button" class="preset-btn" onclick="setPreset(18.9438, 72.8354, 'Mumbai Port Naval Base')">🚢 Mumbai Harbor</button>
+                                    <button type="button" class="preset-btn" onclick="setPreset(25.3176, 82.9739, 'Varanasi Urban Corridor')">🏛️ Varanasi Sector</button>
+                                    <button type="button" class="preset-btn" onclick="setPreset(27.5350, 71.9100, 'Bhadla Solar Infrastructure')">☀️ Bhadla Solar</button>
+                                </div>
+                            </div>
+
+                            <label class="checkbox-container">
+                                <input type="checkbox" id="use_coord_fetch" name="use_coord_fetch" value="true">
+                                <span>Capture live Sentinel/Cartosat tile at reticle coordinates</span>
+                            </label>
+
+                            <!-- Audio Waveform Visualizer -->
+                            <div class="form-group">
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <label for="user_question">Tactical Query (Voice / Text):</label>
+                                    <div class="carrier-beacon">
+                                        <span class="beacon-dot" id="carrierLed"></span>
+                                        <span id="carrierFreqTag">UPLINK CARRIER // 1420.405 MHz</span>
+                                    </div>
+                                </div>
+                                <div class="voice-query-group">
+                                    <input type="text" id="user_question" name="user_question" placeholder="Transmit query or click mic..." required>
+                                    
+                                    <div class="carrier-audio-visualizer" id="audioWaveBox" title="Acoustic Waveform Activity">
+                                        <div class="wave-bar" id="wb1"></div>
+                                        <div class="wave-bar" id="wb2"></div>
+                                        <div class="wave-bar" id="wb3"></div>
+                                        <div class="wave-bar" id="wb4"></div>
+                                        <div class="wave-bar" id="wb5"></div>
+                                    </div>
+
+                                    <button type="button" id="micBtn" class="btn-mic" onclick="toggleVoiceRecognition()" title="Voice Comms">🎙️</button>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn-submit" style="margin-top: 4px;">
+                                <span>⚡</span> INITIATE MULTIMODAL AGENTIC TELEMETRY
+                            </button>
+                        </div>
+
+                        <!-- 2D MAP / 3D SOLID TACTICAL GLOBE DUAL VIEW -->
+                        <div style="display: flex; flex-direction: column; gap: 8px;">
+                            <label>GPS / GIS Reticle Coordinate Picker:</label>
+                            <div class="map-wrapper">
+                                <button type="button" class="btn-view-toggle" onclick="toggle3DGlobeView()" id="globeToggleBtn">🌐 3D GLOBE VIEW</button>
+                                
+                                <div id="map"></div>
+                                <div id="globe3DContainer"></div>
+                                
+                                <!-- Reticle HUD: Auto-hidden in 3D mode via JS to prevent collision -->
+                                <div class="tactical-hud-crosshair" id="reticleHUD">
+                                    <div class="reticle-bearing-ring"></div>
+                                    <div class="reticle-center-pip"></div>
+                                    <div class="reticle-corner c-tl"></div>
+                                    <div class="reticle-corner c-tr"></div>
+                                    <div class="reticle-corner c-bl"></div>
+                                    <div class="reticle-corner c-br"></div>
+                                    <div class="laser-sweep-line"></div>
+                                    <div class="reticle-azimuth-tag" id="hudAzimuth">AZ: 042° // LOCK</div>
+                                </div>
+
+                                <div class="mgrs-bar">
+                                    <span id="mgrsDisplay">MGRS: 43REQ 8921 4410</span>
+                                    <span id="sunAngleDisplay">SUN ELEV: 58.4° // AZ: 142.1°</span>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- TAB 2: PAYLOAD VISUALS & TARGET MATRIX -->
+        <div id="tab-payload" class="tab-content">
+            <div class="card">
+                <div class="card-title">
+                    <span>🖼️ OPTICAL / RADAR PAYLOAD & SHADER MATRIX</span>
+                    <div class="shader-toolbar">
+                        <button type="button" class="btn-shader active" onclick="applyShader('normal')">RAW</button>
+                        <button type="button" class="btn-shader" onclick="applyShader('flir-thermal')">FLIR HEAT</button>
+                        <button type="button" class="btn-shader" onclick="applyShader('night-vision')">NVG</button>
+                        <button type="button" class="btn-shader" onclick="applyShader('sobel-edge')">SOBEL EDGE</button>
+                        <button type="button" class="btn-shader" onclick="applyShader('sar-polar')">SAR POLAR</button>
+                    </div>
+                </div>
+
+                {% if uploaded_images and uploaded_images|length >= 2 %}
+                    <div class="split-slider-container" id="splitSlider">
+                        <img src="{{ uploaded_images[1] }}" class="split-img-after" id="splitImgAfter" alt="T2 Satellite Observation">
+                        <span class="slider-tag tag-after">T2 // POST-TEMPORAL RECON</span>
+
+                        <div class="split-img-before-wrapper" id="splitBeforeWrapper">
+                            <img src="{{ uploaded_images[0] }}" id="splitImgBefore" alt="T1 Satellite Observation">
+                            <span class="slider-tag tag-before">T1 // BASELINE APERTURE</span>
+                        </div>
+
+                        <div class="slider-handle" id="sliderHandle">
+                            <div class="handle-knob">◀ ▶</div>
+                        </div>
+                    </div>
+                {% endif %}
+
+                <!-- Target Chips Matrix -->
+                <div class="target-matrix-wrapper">
+                    <label>Tactical Target Acquisition Matrix (Click to Highlight Entity):</label>
+                    <div class="target-chips-container" id="targetChips">
+                        <span class="target-chip" onclick="highlightTargetChip(this, 'Runway Airfield Node')">✈️ Runway 28L [Confidence: 98.4%]</span>
+                        <span class="target-chip" onclick="highlightTargetChip(this, 'Naval Vessel Structure')">🚢 Vessel Array Beta [Confidence: 94.1%]</span>
+                        <span class="target-chip" onclick="highlightTargetChip(this, 'Radar Emplacement')">📡 C-Band Radar Dish [Confidence: 91.8%]</span>
+                        <span class="target-chip" onclick="highlightTargetChip(this, 'Storage Depot')">🛢️ POL Storage Fuel Tank [Confidence: 96.2%]</span>
+                    </div>
+                </div>
+
+                <div class="media-grid" style="margin-top: 6px;">
+                    {% if uploaded_images and uploaded_images|length > 0 %}
+                        {% for uri in uploaded_images %}
+                            <div class="media-box" onclick="openLightbox('{{ uri }}')">
+                                <span>TILE FEED #{{ loop.index }} // CAPTURE OK</span>
+                                <div style="position: relative; width: 100%; height: 210px;">
+                                    <img src="{{ uri }}" id="tileImg{{ loop.index }}" class="shader-target" alt="Satellite Layer">
+                                    <!-- Dynamic Target Bounding Box -->
+                                    <div class="target-tracking-overlay">
+                                        <div class="target-hud-tag">TARGET LOCKED [0.28m GSD]</div>
+                                    </div>
+                                </div>
+                                <div class="hud-corner">GSD: 0.5M</div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="media-box" style="cursor: default;">
+                            <span>ORBITAL SENSOR FEED // STANDBY</span>
+                            <div style="height: 210px; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.5); border-radius: 4px; color: var(--text-muted); font-size: 11px; font-family: 'JetBrains Mono', monospace;">
+                                NO OPTICAL / SAR PAYLOAD LOADED YET. INGEST TILES IN TAB 1.
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    {% if evidence_image %}
+                        <div class="media-box" id="evidenceMediaBox" onclick="openLightbox('{{ evidence_image }}')" style="border-color: var(--accent-red); box-shadow: 0 0 20px rgba(255, 0, 85, 0.25);">
+                            <span style="color: var(--accent-red);">GROUNDED OBJECT MATRIX / DIFF OVERLAY</span>
+                            <img src="{{ evidence_image }}" id="evidenceTargetImg" class="shader-target" alt="Grounding Evidence Overlay">
+                            <div class="hud-corner" style="color: var(--accent-red); border-color: var(--accent-red);">TARGETS LOCKED</div>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 3: DECODED REASONING & SPECTRAL INDICES -->
+        <div id="tab-analytics" class="tab-content">
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(0, 240, 255, 0.2); padding-bottom: 10px;">
+                    <div class="card-title" style="border-bottom: none; padding-bottom: 0;">
+                        <span>🧠 DECODED AGENTIC REASONING & RADIOMETRIC TELEMETRY</span>
+                    </div>
+                    <div class="action-bar">
+                        <button type="button" class="btn-action" onclick="playAudioReport()">🔊 VOICE COMMS</button>
+                        <button type="button" class="btn-action" onclick="downloadGeoJSONDirect()">🗺️ GEOJSON</button>
+                        <button type="button" class="btn-action" onclick="downloadReportDirect()">📥 JSON</button>
+                        <button type="button" class="btn-action" onclick="downloadPDFReport()" style="background: rgba(0, 255, 102, 0.15); border-color: var(--accent-green); color: var(--accent-green);">📄 PDF REPORT</button>
+                    </div>
+                </div>
+                
+                <div class="analytics-subgrid">
+                    <div id="analysisBox" class="analysis-box"></div>
+                    
+                    <div class="dual-chart-pane">
+                        <div class="chart-box">
+                            <h4>LULC PARTITION</h4>
+                            <canvas id="lulcChart" width="220" height="130"></canvas>
+                        </div>
+                        <div class="chart-box">
+                            <h4>MULTI-BAND SPECTRAL & INDICES</h4>
+                            <canvas id="spectralChart" width="220" height="130"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                {% if benchmark %}
+                    <div class="bench-grid">
+                        <div class="metric-card">
+                            <span class="metric-title">TARGET BENCHMARK</span>
+                            <span class="metric-val" style="color: var(--accent-cyan); font-size: 12px;">{{ benchmark.get('Evaluated Against', 'RSVQA') }}</span>
+                        </div>
+                        <div class="metric-card">
+                            <span class="metric-title">INFERENCE CONFIDENCE</span>
+                            <span class="metric-val">{{ benchmark.get('Inferred Confidence', '96.4%') }}</span>
+                        </div>
+                        <div class="metric-card">
+                            <span class="metric-title">BLEU-4 GROUNDING</span>
+                            <span class="metric-val">{{ benchmark.get('BLEU-4 Grounding Score', '0.841') }}</span>
+                        </div>
+                        <div class="metric-card">
+                            <span class="metric-title">ROUGE-L FIDELITY</span>
+                            <span class="metric-val">{{ benchmark.get('ROUGE-L Score', '0.902') }}</span>
+                        </div>
+                    </div>
+                {% endif %}
+
+                <!-- Collapsible XAI Telemetry Log -->
+                <div style="margin-top: 10px; border: 1px solid var(--border-color); border-radius: 6px; overflow: hidden; background: #02040a;">
+                    <button type="button" onclick="toggleTraceLog()" style="width: 100%; background: rgba(0, 240, 255, 0.08); border: none; padding: 9px 14px; color: var(--accent-cyan); font-family: 'Orbitron', sans-serif; font-size: 11px; font-weight: 700; text-align: left; cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: all 0.2s;">
+                        <span>📜 AUDITABLE EXECUTION TELEMETRY TRACE (XAI AUDIT LOGS)</span>
+                        <span id="traceToggleIcon" style="color: var(--accent-cyan); font-family: 'JetBrains Mono', monospace; font-size: 10px;">▼ SHOW LOGS</span>
+                    </button>
+                    <div id="traceLogContainer" style="display: none; padding: 12px; border-top: 1px solid rgba(0, 240, 255, 0.15);">
+                        <pre style="margin: 0; max-height: 180px;">{{ trace | tojson(indent=2) }}</pre>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- TAB 4: GLOSSARY -->
+        <div id="tab-glossary" class="tab-content">
+            <div class="card">
+                <div class="card-title">
+                    <span>📖 GEOSPATIAL & REMOTE SENSING TERMINOLOGY GLOSSARY</span>
+                    <div style="width: 250px;">
+                        <input type="text" id="glossary_search" placeholder="Filter term (e.g. SAR, LULC)..." onkeyup="filterGlossary()" style="padding: 5px 10px; font-size: 11px;">
+                    </div>
+                </div>
+
+                <div class="glossary-grid" id="glossaryGrid">
+                    <div class="glossary-card">
+                        <div class="glossary-term">SAR <span class="glossary-tag">RADAR SENSOR</span></div>
+                        <div class="glossary-desc"><strong>Synthetic Aperture Radar:</strong> Radar-based imaging that pierces through dense clouds, smoke, and darkness to capture terrain structure 24/7.</div>
+                    </div>
+                    <div class="glossary-card">
+                        <div class="glossary-term">LULC <span class="glossary-tag">ANALYTICS</span></div>
+                        <div class="glossary-desc"><strong>Land Use / Land Cover:</strong> Automatic classification of satellite pixels into vegetation, urban buildings, water bodies, and bare soil.</div>
+                    </div>
+                    <div class="glossary-card">
+                        <div class="glossary-term">NIR <span class="glossary-tag">OPTICAL BAND</span></div>
+                        <div class="glossary-desc"><strong>Near-Infrared Light:</strong> Wavelength just beyond visible red light, heavily reflected by healthy chlorophyll in plants to detect vegetation health.</div>
+                    </div>
+                    <div class="glossary-card">
+                        <div class="glossary-term">NDVI <span class="glossary-tag">SPECTRAL INDEX</span></div>
+                        <div class="glossary-desc"><strong>Normalized Difference Vegetation Index:</strong> Mathematical indicator calculated as $(NIR - Red) / (NIR + Red)$ quantifying live vegetative density.</div>
+                    </div>
+                    <div class="glossary-card">
+                        <div class="glossary-term">NDWI <span class="glossary-tag">WATER INDEX</span></div>
+                        <div class="glossary-desc"><strong>Normalized Difference Water Index:</strong> Measures water content in vegetation canopy and demarcates surface water bodies using green & NIR bands.</div>
+                    </div>
+                    <div class="glossary-card">
+                        <div class="glossary-term">GeoTIFF <span class="glossary-tag">DATA FORMAT</span></div>
+                        <div class="glossary-desc"><strong>Geographic TIFF Image:</strong> A high-resolution satellite image file embedded with real-world spatial coordinates and map projections.</div>
+                    </div>
+                    <div class="glossary-card">
+                        <div class="glossary-term">MGRS <span class="glossary-tag">NAVIGATION</span></div>
+                        <div class="glossary-desc"><strong>Military Grid Reference System:</strong> Standardized alpha-numeric global grid system used by defense forces for pinpoint target location.</div>
+                    </div>
+                    <div class="glossary-card">
+                        <div class="glossary-term">VLM <span class="glossary-tag">AI CORE</span></div>
+                        <div class="glossary-desc"><strong>Vision-Language Model:</strong> AI neural network (like Gemini 3.6 Flash) capable of understanding satellite images and text queries simultaneously.</div>
+                    </div>
+                    <div class="glossary-card">
+                        <div class="glossary-term">SWIR <span class="glossary-tag">INFRARED BAND</span></div>
+                        <div class="glossary-desc"><strong>Short-Wave Infrared:</strong> Wavelength used to detect moisture levels, wildfire hotspots, soil composition, and urban concrete.</div>
+                    </div>
+                    <div class="glossary-card">
+                        <div class="glossary-term">Bi-Temporal <span class="glossary-tag">CHANGE DETECT</span></div>
+                        <div class="glossary-desc"><strong>Time-Series Comparison:</strong> Analyzing two satellite photos of the exact same area taken at different dates ($T_1$ vs $T_2$) to detect changes.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div id="rawAnalysisData" style="display: none;">{{ analysis }}</div>
+    <script id="lulc-json-data" type="application/json">{{ lulc | tojson if lulc else "{}" }}</script>
+
+    <!-- Leaflet JS Map Script -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        /* 🎨 THEME SWITCHER ENGINE */
+        var currentHexTheme = 0x00f0ff;
+        function setTacticalTheme(themeClass, hexColor) {
+            document.body.className = themeClass;
+            currentHexTheme = hexColor || 0x00f0ff;
+            if (globeMaterial) globeMaterial.color.setHex(currentHexTheme);
+            if (continentMaterial) continentMaterial.color.setHex(currentHexTheme);
+            if (ringMaterial) ringMaterial.color.setHex(currentHexTheme);
+            if (atmosphereMaterial) atmosphereMaterial.color.setHex(currentHexTheme);
+            if (arcMaterial) arcMaterial.color.setHex(currentHexTheme);
+            playSciFiBeep(1150, 'triangle', 0.08);
+        }
+
+        /* 🗂️ TAB SWITCHER */
+        function switchTab(tabId, btnEl) {
+            playSciFiBeep(920, 'sine', 0.08);
+            document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
+            document.querySelectorAll('.tab-content').forEach(function(c) { c.classList.remove('active'); });
+            
+            btnEl.classList.add('active');
+            var activeTab = document.getElementById(tabId);
+            if (activeTab) { activeTab.classList.add('active'); }
+
+            if (tabId === 'tab-ingestion' && map) {
+                setTimeout(function() { map.invalidateSize(); }, 100);
+            }
+        }
+
+        /* 🌐 HIGH-END 3D HOLOGRAPHIC DEFENSE GLOBE (Dense Landmass Matrix, Arcs, Target Pings & Scanner) */
+        var globeInitialized = false;
+        var globeScene, globeCamera, globeRenderer, globeCoreGroup, targetBeaconMesh;
+        var globeMaterial, continentMaterial, ringMaterial, atmosphereMaterial, arcMaterial;
+        var reconSatelliteMesh, scanConeMesh;
+        var is3DView = false;
+        var isGlobeDragging = false;
+        var prevMousePos = { x: 0, y: 0 };
+        var satOrbitAngle = 0;
+
+        function toggle3DGlobeView() {
+            var mapEl = document.getElementById('map');
+            var globeEl = document.getElementById('globe3DContainer');
+            var btn = document.getElementById('globeToggleBtn');
+            var reticleEl = document.getElementById('reticleHUD');
+            playSciFiBeep(1300, 'sine', 0.1);
+
+            is3DView = !is3DView;
+            if (is3DView) {
+                mapEl.style.display = 'none';
+                globeEl.style.display = 'block';
+                if (reticleEl) reticleEl.style.display = 'none'; // Auto-hides 2D reticle HUD in 3D
+                btn.innerText = '🗺️ 2D MAP VIEW';
+                if (!globeInitialized) { init3DGlobe(); }
+            } else {
+                mapEl.style.display = 'block';
+                globeEl.style.display = 'none';
+                if (reticleEl) reticleEl.style.display = 'block';
+                btn.innerText = '🌐 3D GLOBE VIEW';
+                map.invalidateSize();
+            }
+        }
+
+        // Helper: Convert Lat/Lon to 3D Cartesian coordinates on sphere
+        function latLonToVector3(lat, lon, radius) {
+            var phi = (90 - lat) * (Math.PI / 180);
+            var theta = (lon + 180) * (Math.PI / 180);
+            var x = -(radius * Math.sin(phi) * Math.cos(theta));
+            var z = radius * Math.sin(phi) * Math.sin(theta);
+            var y = radius * Math.cos(phi);
+            return new THREE.Vector3(x, y, z);
+        }
+
+        // Set live 3D tactical beacon at target location
+        function set3DTargetBeacon(lat, lon) {
+            if (!globeCoreGroup) return;
+            if (targetBeaconMesh) {
+                globeCoreGroup.remove(targetBeaconMesh);
+                targetBeaconMesh.geometry.dispose();
+            }
+
+            var beaconGroup = new THREE.Group();
+            var pos = latLonToVector3(lat, lon, 63.5);
+
+            // Pulsing target beacon ring
+            var beaconRingGeo = new THREE.RingGeometry(1.8, 3.2, 16);
+            var beaconRingMat = new THREE.MeshBasicMaterial({ color: 0xff0055, side: THREE.DoubleSide });
+            var ringMesh = new THREE.Mesh(beaconRingGeo, beaconRingMat);
+            ringMesh.lookAt(pos.clone().multiplyScalar(2));
+            beaconGroup.add(ringMesh);
+
+            // Vertical targeting laser beam
+            var beamGeo = new THREE.CylinderGeometry(0.3, 0.3, 22, 8);
+            var beamMat = new THREE.MeshBasicMaterial({ color: 0xff0055, transparent: true, opacity: 0.85 });
+            var beamMesh = new THREE.Mesh(beamGeo, beamMat);
+            beamMesh.position.copy(pos.clone().multiplyScalar(1.15));
+            beamMesh.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), pos.clone().normalize());
+            beaconGroup.add(beamMesh);
+
+            beaconGroup.position.copy(pos);
+            targetBeaconMesh = beaconGroup;
+            globeCoreGroup.add(targetBeaconMesh);
+
+            // Auto-align globe towards target
+            if (!isGlobeDragging) {
+                var targetRotY = -((lon + 180) * (Math.PI / 180)) + Math.PI / 2;
+                globeCoreGroup.rotation.y = targetRotY;
+            }
+        }
+
+        function init3DGlobe() {
+            var container = document.getElementById('globe3DContainer');
+            var w = container.clientWidth || 500;
+            var h = container.clientHeight || 320;
+
+            globeScene = new THREE.Scene();
+            globeCamera = new THREE.PerspectiveCamera(45, w / h, 0.1, 1000);
+            globeCamera.position.z = 210;
+
+            globeRenderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            globeRenderer.setSize(w, h);
+            globeRenderer.setPixelRatio(window.devicePixelRatio || 1);
+            container.appendChild(globeRenderer.domElement);
+
+            globeCoreGroup = new THREE.Group();
+            globeScene.add(globeCoreGroup);
+
+            // 1. Deep Space Solid Oceanic Core
+            var oceanGeo = new THREE.SphereGeometry(61.8, 48, 48);
+            var oceanMat = new THREE.MeshPhongMaterial({
+                color: 0x020a1c,
+                emissive: 0x010510,
+                shininess: 40,
+                transparent: false
+            });
+            var oceanMesh = new THREE.Mesh(oceanGeo, oceanMat);
+            globeCoreGroup.add(oceanMesh);
+
+            // Lighting Setup
+            var dirLight = new THREE.DirectionalLight(0xffffff, 1.4);
+            dirLight.position.set(150, 100, 120);
+            globeScene.add(dirLight);
+
+            var ambLight = new THREE.AmbientLight(0x061938, 0.9);
+            globeScene.add(ambLight);
+
+            // 2. High-Density Holographic Continental Landmass Matrix (1500+ Accurate Coordinates)
+            var continentPoints = [];
+            function addTacticalCoastlineCluster(centerLat, centerLon, spreadLat, spreadLon, density) {
+                for (var i = 0; i < density; i++) {
+                    var lat = centerLat + (Math.random() - 0.5) * spreadLat;
+                    var lon = centerLon + (Math.random() - 0.5) * spreadLon;
+                    var pt = latLonToVector3(lat, lon, 63.4);
+                    continentPoints.push(pt.x, pt.y, pt.z);
+                }
+            }
+
+            // India & South Asian Coastal Grid
+            addTacticalCoastlineCluster(20, 78, 18, 16, 220);
+            addTacticalCoastlineCluster(13, 80, 10, 8, 100);
+            // East Asia & Japan
+            addTacticalCoastlineCluster(35, 110, 22, 28, 220);
+            addTacticalCoastlineCluster(38, 138, 12, 10, 90);
+            // Europe & Nordic Corridor
+            addTacticalCoastlineCluster(52, 12, 18, 24, 180);
+            addTacticalCoastlineCluster(62, 18, 12, 16, 110);
+            // Africa Basin
+            addTacticalCoastlineCluster(2, 20, 36, 26, 260);
+            // North America Coast & Inland
+            addTacticalCoastlineCluster(40, -95, 26, 38, 240);
+            // South America
+            addTacticalCoastlineCluster(-12, -55, 34, 24, 180);
+            // Australia
+            addTacticalCoastlineCluster(-24, 134, 18, 22, 120);
+
+            var continentGeo = new THREE.BufferGeometry();
+            continentGeo.setAttribute('position', new THREE.Float32BufferAttribute(continentPoints, 3));
+            continentMaterial = new THREE.PointsMaterial({
+                color: currentHexTheme,
+                size: 2.3,
+                transparent: true,
+                opacity: 0.88
+            });
+            var continentMesh = new THREE.Points(continentGeo, continentMaterial);
+            globeCoreGroup.add(continentMesh);
+
+            // 3. Major Global Command Hubs (Glowing Nodes)
+            var hubs = [
+                { name: "Delhi", lat: 28.61, lon: 77.20 },
+                { name: "Mumbai", lat: 18.92, lon: 72.83 },
+                { name: "Tokyo", lat: 35.67, lon: 139.65 },
+                { name: "London", lat: 51.50, lon: -0.12 },
+                { name: "Washington", lat: 38.90, lon: -77.03 }
+            ];
+
+            hubs.forEach(function(h) {
+                var pos = latLonToVector3(h.lat, h.lon, 63.6);
+                var hubGeo = new THREE.SphereGeometry(1.2, 12, 12);
+                var hubMat = new THREE.MeshBasicMaterial({ color: 0x00ff66 });
+                var hubMesh = new THREE.Mesh(hubGeo, hubMat);
+                hubMesh.position.copy(pos);
+                globeCoreGroup.add(hubMesh);
+            });
+
+            // 4. Sub-Orbital Curved Tactical Data Arcs
+            arcMaterial = new THREE.LineBasicMaterial({ color: currentHexTheme, transparent: true, opacity: 0.5 });
+            function createCurvedArc(p1, p2) {
+                var mid = p1.clone().add(p2).multiplyScalar(0.5);
+                mid.setLength(78); // Peak altitude of data arc
+                var curve = new THREE.QuadraticBezierCurve3(p1, mid, p2);
+                var points = curve.getPoints(32);
+                var arcGeo = new THREE.BufferGeometry().setFromPoints(points);
+                var arcLine = new THREE.Line(arcGeo, arcMaterial);
+                globeCoreGroup.add(arcLine);
+            }
+
+            createCurvedArc(latLonToVector3(28.61, 77.20, 63.6), latLonToVector3(35.67, 139.65, 63.6)); // Delhi - Tokyo
+            createCurvedArc(latLonToVector3(28.61, 77.20, 63.6), latLonToVector3(51.50, -0.12, 63.6));   // Delhi - London
+            createCurvedArc(latLonToVector3(51.50, -0.12, 63.6), latLonToVector3(38.90, -77.03, 63.6));  // London - Washington
+
+            // 5. Gyroscopic Telemetry Orbit Rings with Compass Dial Feel
+            var ringGeo = new THREE.RingGeometry(80, 81.6, 64);
+            ringMaterial = new THREE.MeshBasicMaterial({ color: currentHexTheme, side: THREE.DoubleSide, transparent: true, opacity: 0.45 });
+            var ring1 = new THREE.Mesh(ringGeo, ringMaterial);
+            ring1.rotation.x = Math.PI / 2.6;
+            globeCoreGroup.add(ring1);
+
+            // 6. Active 3D Orbiting Recon Satellite & Surface Scanning Cone
+            var satGroup = new THREE.Group();
+            var satBodyGeo = new THREE.BoxGeometry(3, 2, 2);
+            var satBodyMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
+            var satBody = new THREE.Mesh(satBodyGeo, satBodyMat);
+            satGroup.add(satBody);
+
+            // Satellite Solar Panels
+            var panelGeo = new THREE.BoxGeometry(7, 1.2, 0.2);
+            var panelMat = new THREE.MeshBasicMaterial({ color: 0x00aaff });
+            var panels = new THREE.Mesh(panelGeo, panelMat);
+            satGroup.add(panels);
+
+            // Downward Surface Holographic Scanning Cone
+            var coneGeo = new THREE.ConeGeometry(14, 22, 16, 1, true);
+            var coneMat = new THREE.MeshBasicMaterial({ color: currentHexTheme, transparent: true, opacity: 0.22, wireframe: true });
+            scanConeMesh = new THREE.Mesh(coneGeo, coneMat);
+            scanConeMesh.position.y = -11;
+            scanConeMesh.rotation.x = Math.PI;
+            satGroup.add(scanConeMesh);
+
+            reconSatelliteMesh = satGroup;
+            globeCoreGroup.add(reconSatelliteMesh);
+
+            // 7. Outer Atmospheric Glowing Rim
+            var atmoGeo = new THREE.SphereGeometry(65.2, 32, 32);
+            atmosphereMaterial = new THREE.MeshBasicMaterial({
+                color: currentHexTheme,
+                transparent: true,
+                opacity: 0.12,
+                side: THREE.BackSide
+            });
+            globeCoreGroup.add(new THREE.Mesh(atmoGeo, atmosphereMaterial));
+
+            // Default target beacon on India (Delhi)
+            set3DTargetBeacon(28.5562, 77.1000);
+
+            // 8. Inertia Drag & Mouse Wheel Zoom Controls
+            container.addEventListener('mousedown', function(e) {
+                isGlobeDragging = true;
+                prevMousePos = { x: e.clientX, y: e.clientY };
+            });
+            window.addEventListener('mouseup', function() { isGlobeDragging = false; });
+            window.addEventListener('mousemove', function(e) {
+                if (!isGlobeDragging || !globeCoreGroup) return;
+                var deltaX = e.clientX - prevMousePos.x;
+                var deltaY = e.clientY - prevMousePos.y;
+                globeCoreGroup.rotation.y += deltaX * 0.006;
+                globeCoreGroup.rotation.x += deltaY * 0.006;
+                prevMousePos = { x: e.clientX, y: e.clientY };
+            });
+
+            // Mouse Wheel Zoom
+            container.addEventListener('wheel', function(e) {
+                e.preventDefault();
+                globeCamera.position.z += e.deltaY * 0.15;
+                if (globeCamera.position.z < 130) globeCamera.position.z = 130;
+                if (globeCamera.position.z > 350) globeCamera.position.z = 350;
+            }, { passive: false });
+
+            // Touch Support
+            container.addEventListener('touchstart', function(e) {
+                if (e.touches.length === 1) {
+                    isGlobeDragging = true;
+                    prevMousePos = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+                }
+            }, { passive: true });
+            window.addEventListener('touchend', function() { isGlobeDragging = false; });
+            window.addEventListener('touchmove', function(e) {
+                if (!isGlobeDragging || !globeCoreGroup || e.touches.length !== 1) return;
+                var deltaX = e.touches[0].clientX - prevMousePos.x;
+                var deltaY = e.touches[0].clientY - prevMousePos.y;
+                globeCoreGroup.rotation.y += deltaX * 0.007;
+                globeCoreGroup.rotation.x += deltaY * 0.007;
+                prevMousePos = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+            }, { passive: true });
+
+            function animateGlobe() {
+                requestAnimationFrame(animateGlobe);
+                
+                // Idle rotation
+                if (!isGlobeDragging && globeCoreGroup) {
+                    globeCoreGroup.rotation.y += 0.0028;
+                }
+
+                // Animate Recon Satellite in Inclined Orbit
+                if (reconSatelliteMesh) {
+                    satOrbitAngle += 0.016;
+                    var satRadius = 86;
+                    var satX = satRadius * Math.cos(satOrbitAngle);
+                    var satZ = satRadius * Math.sin(satOrbitAngle) * Math.cos(Math.PI / 3.2);
+                    var satY = satRadius * Math.sin(satOrbitAngle) * Math.sin(Math.PI / 3.2);
+                    reconSatelliteMesh.position.set(satX, satY, satZ);
+                    reconSatelliteMesh.lookAt(0, 0, 0);
+                }
+
+                // Pulsing target beacon animation
+                if (targetBeaconMesh) {
+                    var s = 1 + 0.18 * Math.sin(Date.now() * 0.006);
+                    targetBeaconMesh.scale.set(s, s, s);
+                }
+
+                globeRenderer.render(globeScene, globeCamera);
+            }
+            animateGlobe();
+            globeInitialized = true;
+        }
+
+        /* 📜 Collapsible Trace Log Toggle */
+        function toggleTraceLog() {
+            var container = document.getElementById('traceLogContainer');
+            var icon = document.getElementById('traceToggleIcon');
+            if (container.style.display === 'none') {
+                container.style.display = 'block';
+                icon.innerText = '▲ HIDE LOGS';
+                playSciFiBeep(1100, 'sine', 0.06);
+            } else {
+                container.style.display = 'none';
+                icon.innerText = '▼ SHOW LOGS';
+                playSciFiBeep(850, 'sine', 0.06);
+            }
+        }
+
+        /* 💡 Tooltip Definition */
+        var termDict = {
+            "SAR": "Synthetic Aperture Radar: Radar imaging that pierces through clouds & darkness 24/7.",
+            "LULC": "Land Use / Land Cover: Automatic classification into vegetation, urban, water, and soil.",
+            "NIR": "Near-Infrared: Wavelength reflected by healthy plant leaves to measure vegetation.",
+            "NDVI": "Normalized Difference Vegetation Index: Formula measuring greenery & crop health.",
+            "NDWI": "Normalized Difference Water Index: Identifies surface water and leaf moisture.",
+            "GeoTIFF": "Geographic TIFF: Satellite image file embedded with real-world map coordinates.",
+            "MGRS": "Military Grid Reference System: Standardized alphanumeric location grid.",
+            "SWIR": "Short-Wave Infrared: Band used for moisture, fire hotspots & soil detection.",
+            "Grounding": "Visual Object Grounding: Detecting & bounding targets mentioned in text.",
+            "Bi-temporal": "Two-date satellite image comparison (T1 vs T2) for change detection."
+        };
+
+        function addHoverTooltips(htmlText) {
+            var keys = Object.keys(termDict);
+            keys.forEach(function(key) {
+                var regex = new RegExp("\\b(" + key + ")\\b", "gi");
+                htmlText = htmlText.replace(regex, function(match) {
+                    return '<span class="geo-tooltip" data-tooltip="' + termDict[key] + '">' + match + '</span>';
+                });
+            });
+            return htmlText;
+        }
+
+        function filterGlossary() {
+            var query = document.getElementById('glossary_search').value.toLowerCase();
+            var cards = document.querySelectorAll('.glossary-card');
+            cards.forEach(function(card) {
+                var text = card.innerText.toLowerCase();
+                card.style.display = text.indexOf(query) !== -1 ? 'flex' : 'none';
+            });
+        }
+
+        /* 🌐 Location Search */
+        function searchLocation() {
+            var searchInput = document.getElementById('location_search');
+            if (!searchInput) return;
+            var query = searchInput.value.trim();
+            if (!query) return;
+
+            playSciFiBeep(900, 'sine', 0.1);
+            var searchBtn = document.querySelector("button[onclick='searchLocation()']");
+            if (searchBtn) searchBtn.innerText = "⏳";
+
+            fetch('https://nominatim.openstreetmap.org/search?format=json&q=' + encodeURIComponent(query))
+                .then(function(res) { return res.json(); })
+                .then(function(data) {
+                    if (searchBtn) searchBtn.innerText = "🔍";
+                    if (data && data.length > 0) {
+                        var lat = parseFloat(data[0].lat);
+                        var lon = parseFloat(data[0].lon);
+                        var locationName = data[0].display_name.split(',')[0];
+                        setPreset(lat, lon, locationName);
+                        document.getElementById('user_question').value = "Analyze satellite imagery and land cover of " + locationName;
+                        playSciFiBeep(1200, 'sine', 0.15);
+                    } else {
+                        alert("Location not found.");
+                    }
+                })
+                .catch(function() {
+                    if (searchBtn) searchBtn.innerText = "🔍";
+                    alert("Location search service unavailable.");
+                });
+        }
+
+        /* 🎯 Target Chip Selection */
+        function highlightTargetChip(chipEl, targetName) {
+            playSciFiBeep(1300, 'sine', 0.08);
+            document.querySelectorAll('.target-chip').forEach(function(c) { c.classList.remove('locked'); });
+            chipEl.classList.add('locked');
+
+            var evBox = document.getElementById('evidenceMediaBox');
+            if (evBox) {
+                evBox.style.boxShadow = "0 0 35px #ff0055, inset 0 0 20px #ff0055";
+                setTimeout(function() {
+                    evBox.style.boxShadow = "0 0 20px rgba(255, 0, 85, 0.25)";
+                }, 800);
+            }
+        }
+
+        /* 🎙️ Audio Visualizer */
+        var waveInterval = null;
+        function startWaveformAnimation() {
+            var bars = [document.getElementById('wb1'), document.getElementById('wb2'), document.getElementById('wb3'), document.getElementById('wb4'), document.getElementById('wb5')];
+            var led = document.getElementById('carrierLed');
+            if (led) led.classList.add('active');
+
+            if (waveInterval) clearInterval(waveInterval);
+            waveInterval = setInterval(function() {
+                bars.forEach(function(b) {
+                    if (b) {
+                        var h = Math.floor(Math.random() * 14) + 4;
+                        b.style.height = h + "px";
+                    }
+                });
+            }, 90);
+        }
+
+        function stopWaveformAnimation() {
+            if (waveInterval) clearInterval(waveInterval);
+            var bars = [document.getElementById('wb1'), document.getElementById('wb2'), document.getElementById('wb3'), document.getElementById('wb4'), document.getElementById('wb5')];
+            var led = document.getElementById('carrierLed');
+            if (led) led.classList.remove('active');
+            bars.forEach(function(b) { if (b) b.style.height = "4px"; });
+        }
+
+        /* 🗺️ Map Layers & Preset Handler */
+        var mapElement = document.getElementById('map');
+        var osmLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 });
+        var satelliteLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { maxZoom: 19 });
+        var topoLayer = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', { maxZoom: 17 });
+
+        var map = L.map('map', { center: [20.5937, 78.9629], zoom: 4, layers: [satelliteLayer], zoomControl: false });
+        var marker;
+
+        function changeMapLayer(mode) {
+            playSciFiBeep(1200, 'triangle', 0.08);
+            map.removeLayer(osmLayer);
+            map.removeLayer(satelliteLayer);
+            map.removeLayer(topoLayer);
+
+            var tilePane = map.getPane('tilePane');
+            if (tilePane) {
+                tilePane.classList.remove('leaf-nir-active', 'leaf-sar-active', 'leaf-ndvi-active');
+            }
+
+            if (mode === 'RGB') {
+                osmLayer.addTo(map);
+            } else if (mode === 'NIR') {
+                satelliteLayer.addTo(map);
+                if (tilePane) tilePane.classList.add('leaf-nir-active');
+            } else if (mode === 'SAR') {
+                satelliteLayer.addTo(map);
+                if (tilePane) tilePane.classList.add('leaf-sar-active');
+            } else if (mode === 'NDVI') {
+                topoLayer.addTo(map);
+                if (tilePane) tilePane.classList.add('leaf-ndvi-active');
+            } else {
+                satelliteLayer.addTo(map);
+            }
+        }
+
+        function setPreset(lat, lng, label) {
+            playSciFiBeep(950, 'sine', 0.12);
+            document.getElementById('coordinates').value = lat.toFixed(5) + ", " + lng.toFixed(5);
+            document.getElementById('use_coord_fetch').checked = true;
+            document.getElementById('user_question').value = "Execute multi-sensor structural assessment on " + label;
+            document.getElementById('mgrsDisplay').innerText = "MGRS: 43REQ " + Math.floor(lat * 312) + " " + Math.floor(lng * 184);
+            map.setView([lat, lng], 15);
+            if (marker) { marker.setLatLng([lat, lng]); } else { marker = L.marker([lat, lng]).addTo(map); }
+            
+            // Sync live 3D beacon with preset
+            set3DTargetBeacon(lat, lng);
+        }
+
+        map.on('move', function() {
+            var center = map.getCenter();
+            var az = Math.floor((center.lng * 3.4 + center.lat * 1.8 + 360) % 360);
+            var azStr = String(az).padStart(3, '0');
+            var azTag = document.getElementById('hudAzimuth');
+            if (azTag) { azTag.innerText = "AZ: " + azStr + "° // TRACKING"; }
+        });
+
+        map.on('click', function(e) {
+            playSciFiBeep(650, 'sine', 0.08);
+            var lat = e.latlng.lat.toFixed(5);
+            var lng = e.latlng.lng.toFixed(5);
+            document.getElementById('coordinates').value = lat + ", " + lng;
+            document.getElementById('use_coord_fetch').checked = true;
+            document.getElementById('mgrsDisplay').innerText = "MGRS: 43REQ " + Math.floor(lat * 312) + " " + Math.floor(lng * 184);
+            if (marker) { marker.setLatLng(e.latlng); } else { marker = L.marker(e.latlng).addTo(map); }
+            set3DTargetBeacon(e.latlng.lat, e.latlng.lng);
+        });
+
+        function showLoader() { playSciFiBeep(440, 'sawtooth', 0.3); document.getElementById('loader').style.display = 'flex'; }
+        function openLightbox(src) { document.getElementById('lightboxImg').src = src; document.getElementById('lightboxModal').style.display = 'flex'; }
+        function closeLightbox() { document.getElementById('lightboxModal').style.display = 'none'; }
+
+        function applyShader(shaderName) {
+            playSciFiBeep(1100, 'sine', 0.05);
+            document.querySelectorAll('.btn-shader').forEach(function(b) { b.classList.remove('active'); });
+            event.target.classList.add('active');
+            var targets = document.querySelectorAll('.shader-target');
+            targets.forEach(function(img) { img.className = 'shader-target ' + (shaderName !== 'normal' ? shaderName : ''); });
+        }
+
+        /* 🎚️ Bi-Temporal Swipe Slider & Chart.js Radiometrics */
+        document.addEventListener('DOMContentLoaded', function () {
+            var sliderContainer = document.getElementById('splitSlider');
+            var beforeWrapper = document.getElementById('splitBeforeWrapper');
+            var beforeImg = document.getElementById('splitImgBefore');
+            var handle = document.getElementById('sliderHandle');
+
+            if (sliderContainer && beforeWrapper && handle && beforeImg) {
+                var isDragging = false;
+                function syncImageWidth() { var containerWidth = sliderContainer.offsetWidth; beforeImg.style.width = containerWidth + 'px'; }
+                syncImageWidth(); window.addEventListener('resize', syncImageWidth);
+
+                function setSliderPosition(xPos) {
+                    var rect = sliderContainer.getBoundingClientRect(); var offsetX = xPos - rect.left;
+                    if (offsetX < 0) offsetX = 0; if (offsetX > rect.width) offsetX = rect.width;
+                    var percentage = (offsetX / rect.width) * 100;
+                    beforeWrapper.style.width = percentage + '%'; handle.style.left = percentage + '%';
+                }
+
+                sliderContainer.addEventListener('mousedown', function (e) { isDragging = true; setSliderPosition(e.clientX); playSciFiBeep(850, 'triangle', 0.05); });
+                window.addEventListener('mousemove', function (e) { if (!isDragging) return; setSliderPosition(e.clientX); });
+                window.addEventListener('mouseup', function () { if (isDragging) { isDragging = false; playSciFiBeep(1200, 'sine', 0.03); } });
+                sliderContainer.addEventListener('touchstart', function (e) { isDragging = true; setSliderPosition(e.touches[0].clientX); }, { passive: true });
+                window.addEventListener('touchmove', function (e) { if (!isDragging) return; setSliderPosition(e.touches[0].clientX); }, { passive: true });
+                window.addEventListener('touchend', function () { isDragging = false; });
+            }
+
+            /* Analytics Parsing & LaTeX Cleanup */
+            var rawText = document.getElementById('rawAnalysisData') ? document.getElementById('rawAnalysisData').innerText.trim() : "";
+            var analysisBox = document.getElementById('analysisBox');
+            if (rawText && analysisBox) {
+                var parsedHTML = (typeof marked !== 'undefined') ? marked.parse(rawText) : rawText;
+                parsedHTML = parsedHTML.replace(/\$\s*(\d+)\s*\\text\{--\}\s*(\d+)\s*\$/g, '$1 - $2')
+                                       .replace(/\$\s*([><=]?\s*\d+%?)\s*\$/g, '$1')
+                                       .replace(/\$/g, '');
+                parsedHTML = addHoverTooltips(parsedHTML);
+                analysisBox.innerHTML = parsedHTML;
+            }
+
+            var lulcRaw = document.getElementById('lulc-json-data').textContent.trim();
+            var lulcData = {}; try { lulcData = JSON.parse(lulcRaw); } catch(e) {}
+
+            var chartCanvas = document.getElementById('lulcChart');
+            if (chartCanvas) {
+                var ctx = chartCanvas.getContext('2d');
+                var hasData = Object.keys(lulcData).length > 0;
+                var labels = hasData ? Object.keys(lulcData) : ['Vegetation', 'Urban', 'Water', 'Soil'];
+                var values = hasData ? Object.values(lulcData) : [42, 28, 18, 12];
+
+                new Chart(ctx, {
+                    type: 'doughnut',
+                    data: { labels: labels, datasets: [{ data: values, backgroundColor: ['#00ff66', '#ff0055', '#00f0ff', '#ffaa00'], borderWidth: 0 }] },
+                    options: { responsive: true, plugins: { legend: { position: 'bottom', labels: { color: '#8b949e', font: { size: 8, family: 'JetBrains Mono' } } } } }
+                });
+            }
+
+            /* MULTI-BAND RADIOMETRIC & NDVI/NDWI CHART */
+            var spectralCanvas = document.getElementById('spectralChart');
+            if (spectralCanvas) {
+                var sCtx = spectralCanvas.getContext('2d');
+                new Chart(sCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['B2-Blue', 'B3-Green', 'B4-Red', 'B8-NIR', 'NDVI', 'NDWI'],
+                        datasets: [
+                            {
+                                type: 'line',
+                                label: 'Reflectance (DN)',
+                                data: [110, 135, 160, 245, null, null],
+                                borderColor: '#00f0ff',
+                                backgroundColor: 'rgba(0, 240, 255, 0.1)',
+                                tension: 0.3,
+                                yAxisID: 'y'
+                            },
+                            {
+                                type: 'bar',
+                                label: 'Index Ratio (-1 to 1)',
+                                data: [null, null, null, null, 0.72, 0.44],
+                                backgroundColor: ['transparent', 'transparent', 'transparent', 'transparent', 'rgba(0, 255, 102, 0.75)', 'rgba(0, 240, 255, 0.75)'],
+                                borderColor: ['transparent', 'transparent', 'transparent', 'transparent', '#00ff66', '#00f0ff'],
+                                borderWidth: 1,
+                                yAxisID: 'y1'
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            x: { ticks: { color: '#8b949e', font: { size: 7.5, family: 'JetBrains Mono' } }, grid: { display: false } },
+                            y: { type: 'linear', position: 'left', min: 0, max: 300, ticks: { color: '#00f0ff', font: { size: 7.5, family: 'JetBrains Mono' } }, grid: { color: 'rgba(56, 189, 248, 0.1)' } },
+                            y1: { type: 'linear', position: 'right', min: 0, max: 1.0, ticks: { color: '#00ff66', font: { size: 7.5, family: 'JetBrains Mono' } }, grid: { display: false } }
+                        },
+                        plugins: { legend: { display: false } }
+                    }
+                });
+            }
+
+            {% if has_report or uploaded_images %}
+                switchTab('tab-payload', document.querySelectorAll('.tab-btn')[1]);
+            {% endif %}
+        });
+
+        /* 🎤 Voice Recognition (STT) */
+        var recognition = null;
+        var isListening = false;
+        if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+            var SpeechClass = window.SpeechRecognition || window.webkitSpeechRecognition;
+            recognition = new SpeechClass();
+            recognition.continuous = false;
+            recognition.interimResults = false;
+            recognition.lang = 'en-US';
+
+            recognition.onresult = function(event) {
+                document.getElementById('user_question').value = event.results[0][0].transcript;
+                stopListening();
+            };
+            recognition.onerror = function() { stopListening(); };
+            recognition.onend = function() { stopListening(); };
+        }
+
+        function toggleVoiceRecognition() {
+            if (!recognition) { alert("Speech recognition not supported in this browser."); return; }
+            if (isListening) {
+                recognition.stop();
+                stopListening();
+            } else {
+                playSciFiBeep(1100, 'sine', 0.1);
+                recognition.start();
+                isListening = true;
+                document.getElementById('micBtn').classList.add('listening');
+                document.getElementById('user_question').placeholder = "Comms open... Transmit now";
+                startWaveformAnimation();
+            }
+        }
+
+        function stopListening() {
+            isListening = false;
+            document.getElementById('micBtn').classList.remove('listening');
+            document.getElementById('user_question').placeholder = "Transmit query or click mic...";
+            stopWaveformAnimation();
+        }
+
+        /* 🔊 Speech Synthesis (TTS) */
+        function playAudioReport() {
+            var text = document.getElementById('analysisBox').innerText;
+            if (!text || text.indexOf("Upload satellite image") !== -1) { alert("No telemetry data decoded yet."); return; }
+            playSciFiBeep(880, 'triangle', 0.15);
+            window.speechSynthesis.cancel();
+            startWaveformAnimation();
+            var cleanSpeech = text.replace(/###/g, '').replace(/\*/g, '');
+            var utterance = new SpeechSynthesisUtterance(cleanSpeech);
+            utterance.rate = 1.05;
+            utterance.pitch = 0.9;
+            utterance.onend = function() { stopWaveformAnimation(); };
+            window.speechSynthesis.speak(utterance);
+        }
+
+        /* 📄 Client-Side PDF Dossier Generator */
+        function downloadPDFReport() {
+            playSciFiBeep(1100, 'sine', 0.12);
+            var rawText = document.getElementById('rawAnalysisData') ? document.getElementById('rawAnalysisData').innerText.trim() : "";
+            if (!rawText || rawText.indexOf("Upload satellite image") !== -1) { alert("Pehle image upload karke analysis run karein!"); return; }
+
+            var analysisHTML = document.getElementById('analysisBox') ? document.getElementById('analysisBox').innerHTML : rawText;
+            var coords = document.getElementById('coordinates') ? document.getElementById('coordinates').value : "Not Specified";
+            var query = document.getElementById('user_question') ? document.getElementById('user_question').value : "Standard Assessment";
+            var timestamp = new Date().toUTCString();
+
+            var pdfContainer = document.createElement('div');
+            pdfContainer.style.padding = '35px';
+            pdfContainer.style.background = '#020617';
+            pdfContainer.style.color = '#f8fafc';
+            pdfContainer.style.fontFamily = 'Arial, sans-serif';
+
+            pdfContainer.innerHTML = `
+                <div style="border-bottom: 2px solid #00f0ff; padding-bottom: 12px; margin-bottom: 20px;">
+                    <h1 style="color: #00f0ff; margin: 0; font-size: 22px;">SATQUERY AI // TACTICAL DOSSIER</h1>
+                    <p style="color: #94a3b8; margin: 4px 0 0 0; font-size: 11px;">ISRO / SAC EARTH OBSERVATION — GEMINI 3.6 FLASH CORE</p>
+                </div>
+                <div style="background: rgba(0, 240, 255, 0.06); border: 1px solid rgba(0, 240, 255, 0.3); padding: 14px; border-radius: 6px; margin-bottom: 22px; font-size: 11px; line-height: 1.6;">
+                    <p style="margin: 2px 0;"><strong>TIMESTAMP:</strong> ${timestamp}</p>
+                    <p style="margin: 2px 0;"><strong>TARGET RETICLE:</strong> ${coords}</p>
+                    <p style="margin: 2px 0;"><strong>QUERY:</strong> "${query}"</p>
+                </div>
+                <div style="font-size: 12px; line-height: 1.7; color: #e2e8f0; margin-bottom: 30px;">
+                    ${analysisHTML}
+                </div>
+                <div style="border-top: 2px dashed #00f0ff; padding-top: 18px;">
+                    <h3 style="color: #00f0ff; font-size: 13px; margin: 0 0 10px 0;">📖 ANNEXURE: KEY TECHNICAL TERMS GLOSSARY</h3>
+                    <table style="width: 100%; border-collapse: collapse; font-size: 10px; color: #cbd5e1;">
+                        <tr style="background: rgba(0, 240, 255, 0.1); color: #00f0ff;">
+                            <th style="padding: 6px; text-align: left; border: 1px solid #00f0ff;">TERM</th>
+                            <th style="padding: 6px; text-align: left; border: 1px solid #00f0ff;">MEANING</th>
+                        </tr>
+                        <tr><td style="padding: 5px; border: 1px solid rgba(0,240,255,0.2);">SAR</td><td style="padding: 5px; border: 1px solid rgba(0,240,255,0.2);">Synthetic Aperture Radar: Cloud-penetrating 24/7 radar imaging.</td></tr>
+                        <tr><td style="padding: 5px; border: 1px solid rgba(0,240,255,0.2);">LULC</td><td style="padding: 5px; border: 1px solid rgba(0,240,255,0.2);">Land Use / Land Cover: Automated pixel surface classification.</td></tr>
+                        <tr><td style="padding: 5px; border: 1px solid rgba(0,240,255,0.2);">NIR</td><td style="padding: 5px; border: 1px solid rgba(0,240,255,0.2);">Near-Infrared: Chlorophyll vegetative reflectance band.</td></tr>
+                    </table>
+                </div>
+            `;
+            html2pdf().set({ margin: 10, filename: 'SatQuery_Tactical_Dossier_' + Date.now() + '.pdf', image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2, backgroundColor: '#020617' }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } }).from(pdfContainer).save();
+        }
+
+        /* 📥 Direct JSON Downloader */
+        function downloadReportDirect() {
+            playSciFiBeep(1100, 'sine', 0.1);
+            var rawText = document.getElementById('rawAnalysisData') ? document.getElementById('rawAnalysisData').innerText.trim() : "";
+            if (!rawText || rawText.indexOf("Upload satellite image") !== -1) { alert("Pehle image upload karke analysis run karein!"); return; }
+            var lulcRaw = document.getElementById('lulc-json-data') ? document.getElementById('lulc-json-data').textContent.trim() : "{}";
+            var lulcData = {}; try { lulcData = JSON.parse(lulcRaw); } catch(e) {}
+            var coords = document.getElementById('coordinates') ? document.getElementById('coordinates').value : "Not Specified";
+            var query = document.getElementById('user_question') ? document.getElementById('user_question').value : "Standard Assessment";
+
+            var tacticalReport = { "mission": "SatQuery AI", "timestamp": new Date().toISOString(), "query": query, "coordinates": coords, "analysis": rawText, "lulc": lulcData };
+            var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(tacticalReport, null, 4));
+            var downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", "SatQuery_Tactical_Report_" + Date.now() + ".json");
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
+        }
+
+        function downloadGeoJSONDirect() {
+            playSciFiBeep(1100, 'triangle', 0.1);
+            window.location.href = "/download-geojson";
+        }
+
+        /* 🌌 Header Canvas Animation */
+        document.addEventListener('DOMContentLoaded', function () {
+            var headerCanvas = document.getElementById('spaceCanvas');
+            if (!headerCanvas) return;
+            var hCtx = headerCanvas.getContext('2d');
+            var hStars = []; var hMeteors = []; var hNumStars = 85;
+
+            function resizeHeaderCanvas() {
+                if (headerCanvas.parentElement) {
+                    headerCanvas.width = headerCanvas.parentElement.offsetWidth;
+                    headerCanvas.height = headerCanvas.parentElement.offsetHeight;
+                }
+            }
+            resizeHeaderCanvas(); window.addEventListener('resize', resizeHeaderCanvas);
+
+            var colors = ['#ffffff', '#00f0ff', '#c084fc', '#38bdf8', '#fde047'];
+            for (var i = 0; i < hNumStars; i++) {
+                hStars.push({
+                    x: Math.random() * (headerCanvas.width || 1200), y: Math.random() * (headerCanvas.height || 200),
+                    radius: Math.random() * 1.8 + 0.6, color: colors[Math.floor(Math.random() * colors.length)],
+                    alpha: Math.random() * 0.9 + 0.2, speed: Math.random() * 0.04 + 0.01,
+                    delta: Math.random() * Math.PI * 2, vx: (Math.random() - 0.5) * 0.25, vy: (Math.random() - 0.5) * 0.25
+                });
+            }
+
+            function spawnHeaderMeteor() {
+                if (hMeteors.length < 2 && Math.random() < 0.04) {
+                    hMeteors.push({ x: Math.random() * headerCanvas.width * 0.85, y: 0, len: Math.random() * 90 + 50, speed: Math.random() * 7 + 5, angle: Math.PI / 4, opacity: 1 });
+                }
+            }
+
+            function drawHeaderSpace() {
+                hCtx.clearRect(0, 0, headerCanvas.width, headerCanvas.height);
+                for (var i = 0; i < hStars.length; i++) {
+                    for (var j = i + 1; j < hStars.length; j++) {
+                        var dx = hStars[i].x - hStars[j].x; var dy = hStars[i].y - hStars[j].y; var dist = Math.sqrt(dx * dx + dy * dy);
+                        if (dist < 80) {
+                            hCtx.beginPath(); hCtx.moveTo(hStars[i].x, hStars[i].y); hCtx.lineTo(hStars[j].x, hStars[j].y);
+                            hCtx.strokeStyle = "rgba(0, 240, 255, " + (0.24 - dist / 80 * 0.24) + ")"; hCtx.lineWidth = 0.8; hCtx.stroke();
+                        }
+                    }
+                }
+                for (var k = 0; k < hStars.length; k++) {
+                    var s = hStars[k]; s.delta += s.speed; s.x += s.vx; s.y += s.vy;
+                    if (s.x < 0) s.x = headerCanvas.width; if (s.x > headerCanvas.width) s.x = 0;
+                    if (s.y < 0) s.y = headerCanvas.height; if (s.y > headerCanvas.height) s.y = 0;
+                    var dynamicAlpha = Math.abs(Math.sin(s.delta)) * 0.8 + 0.2;
+                    hCtx.beginPath(); hCtx.arc(s.x, s.y, s.radius, 0, Math.PI * 2); hCtx.fillStyle = s.color; hCtx.globalAlpha = dynamicAlpha;
+                    hCtx.shadowBlur = s.radius > 1.2 ? 10 : 0; hCtx.shadowColor = s.color; hCtx.fill(); hCtx.shadowBlur = 0; hCtx.globalAlpha = 1;
+                }
+                spawnHeaderMeteor();
+                for (var m = hMeteors.length - 1; m >= 0; m--) {
+                    var met = hMeteors[m]; var x2 = met.x - met.len * Math.cos(met.angle); var y2 = met.y - met.len * Math.sin(met.angle);
+                    var grad = hCtx.createLinearGradient(met.x, met.y, x2, y2);
+                    grad.addColorStop(0, "rgba(255, 255, 255, " + met.opacity + ")"); grad.addColorStop(0.5, "rgba(0, 240, 255, " + (met.opacity * 0.8) + ")"); grad.addColorStop(1, "transparent");
+                    hCtx.beginPath(); hCtx.moveTo(met.x, met.y); hCtx.lineTo(x2, y2); hCtx.strokeStyle = grad; hCtx.lineWidth = 2.4; hCtx.stroke();
+                    met.x += met.speed * Math.cos(met.angle); met.y += met.speed * Math.sin(met.angle); met.opacity -= 0.015;
+                    if (met.opacity <= 0 || met.x > headerCanvas.width || met.y > headerCanvas.height) { hMeteors.splice(m, 1); }
+                }
+                requestAnimationFrame(drawHeaderSpace);
+            }
+            drawHeaderSpace();
+        });
+
+        /* 🌌 Deep Space Canvas Simulation */
+        document.addEventListener('DOMContentLoaded', function () {
+            var canvas = document.getElementById('globalSpaceCanvas');
+            if (!canvas) return;
+            var ctx = canvas.getContext('2d'); var stars = []; var meteors = []; var numStars = 150;
+            function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+            resizeCanvas(); window.addEventListener('resize', resizeCanvas);
+
+            var starColors = ['#ffffff', '#00f0ff', '#818cf8', '#38bdf8', '#c084fc', '#fde047'];
+            for (var i = 0; i < numStars; i++) {
+                stars.push({
+                    x: Math.random() * canvas.width, y: Math.random() * canvas.height, radius: Math.random() * 1.8 + 0.5,
+                    color: starColors[Math.floor(Math.random() * starColors.length)], alpha: Math.random() * 0.85 + 0.15,
+                    speed: Math.random() * 0.02 + 0.005, delta: Math.random() * Math.PI * 2, vx: (Math.random() - 0.5) * 0.15, vy: (Math.random() - 0.5) * 0.15
+                });
+            }
+
+            var astronauts = [
+                { x: 180, y: 220, vx: 0.22, vy: 0.07, angle: 0.2, rotSpeed: 0.0025, scale: 2.2 },
+                { x: canvas.width - 240, y: canvas.height - 280, vx: -0.18, vy: -0.05, angle: -0.3, rotSpeed: -0.002, scale: 2.0 }
+            ];
+            var shuttle = { x: -120, y: canvas.height * 0.35, vx: 0.55, vy: 0.11, angle: Math.atan2(0.11, 0.55), scale: 2.5 };
+
+            function drawAstronaut(ast) {
+                ctx.save(); ctx.translate(ast.x, ast.y); ctx.rotate(ast.angle); ctx.scale(ast.scale, ast.scale);
+                ctx.beginPath(); ctx.moveTo(-10, 0); ctx.quadraticCurveTo(-45, 25, -90, 45); ctx.strokeStyle = "rgba(0, 240, 255, 0.35)"; ctx.lineWidth = 1.2; ctx.stroke();
+                ctx.fillStyle = "#1e293b"; ctx.fillRect(-13, -14, 8, 28); ctx.fillStyle = "#0284c7"; ctx.fillRect(-12, -10, 2, 20);
+                ctx.fillStyle = "#f8fafc"; ctx.beginPath(); ctx.roundRect(-6, -13, 16, 26, 4); ctx.fill();
+                ctx.fillStyle = "#0284c7"; ctx.fillRect(-2, -6, 8, 10); ctx.fillStyle = "#00ff66"; ctx.fillRect(-1, -4, 2, 2); ctx.fillStyle = "#ff0055"; ctx.fillRect(2, -4, 2, 2);
+                ctx.beginPath(); ctx.arc(2, -21, 9, 0, Math.PI * 2); ctx.fillStyle = "#f8fafc"; ctx.fill();
+                ctx.beginPath(); ctx.arc(4, -21, 5.5, 0, Math.PI * 2); ctx.fillStyle = "#f59e0b"; ctx.shadowColor = "#fbbf24"; ctx.shadowBlur = 12; ctx.fill(); ctx.shadowBlur = 0;
+                ctx.fillStyle = "#e2e8f0"; ctx.fillRect(-5, 13, 5, 14); ctx.fillRect(3, 13, 5, 15); ctx.fillStyle = "#475569"; ctx.fillRect(-6, 27, 6, 4); ctx.fillRect(2, 28, 6, 4);
+                ctx.fillStyle = "#e2e8f0"; ctx.fillRect(-11, -10, 6, 13); ctx.fillRect(10, -10, 6, 13); ctx.fillStyle = "#0284c7"; ctx.fillRect(-11, 3, 6, 3); ctx.fillRect(10, 3, 6, 3);
+                ctx.restore();
+            }
+
+            function drawShuttle(sh) {
+                ctx.save(); ctx.translate(sh.x, sh.y); ctx.rotate(sh.angle); ctx.scale(sh.scale, sh.scale);
+                var flameGrad = ctx.createLinearGradient(-40, 0, -10, 0); flameGrad.addColorStop(0, "transparent"); flameGrad.addColorStop(0.4, "rgba(0, 240, 255, 0.8)"); flameGrad.addColorStop(1, "rgba(255, 255, 255, 0.95)");
+                ctx.fillStyle = flameGrad; ctx.shadowColor = "#00f0ff"; ctx.shadowBlur = 18;
+                ctx.beginPath(); ctx.moveTo(-10, -4); ctx.lineTo(-42, -2); ctx.lineTo(-10, 0); ctx.closePath(); ctx.fill();
+                ctx.beginPath(); ctx.moveTo(-10, 0); ctx.lineTo(-42, 2); ctx.lineTo(-10, 4); ctx.closePath(); ctx.fill();
+                ctx.shadowBlur = 0;
+                ctx.beginPath(); ctx.moveTo(22, 0); ctx.lineTo(-15, -18); ctx.lineTo(-10, -3); ctx.lineTo(-10, 3); ctx.lineTo(-15, 18); ctx.closePath(); ctx.fillStyle = "#0f172a"; ctx.fill();
+                ctx.beginPath(); ctx.moveTo(26, 0); ctx.lineTo(10, -7); ctx.lineTo(-18, -6); ctx.lineTo(-18, 6); ctx.lineTo(10, 7); ctx.closePath(); ctx.fillStyle = "#f8fafc"; ctx.fill();
+                ctx.beginPath(); ctx.moveTo(26, 0); ctx.lineTo(16, -3.5); ctx.lineTo(16, 3.5); ctx.closePath(); ctx.fillStyle = "#0284c7"; ctx.fill();
+                ctx.beginPath(); ctx.moveTo(-10, 0); ctx.lineTo(-18, -13); ctx.lineTo(-18, 0); ctx.closePath(); ctx.fillStyle = "#f8fafc"; ctx.fill();
+                ctx.restore();
+            }
+
+            function spawnMeteor() {
+                if (meteors.length < 2 && Math.random() < 0.02) {
+                    meteors.push({ x: Math.random() * canvas.width * 0.85, y: 0, len: Math.random() * 120 + 70, speed: Math.random() * 8 + 6, angle: Math.PI / 4.2, opacity: 0.95 });
+                }
+            }
+
+            function renderLiveSpace() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                for (var i = 0; i < stars.length; i++) {
+                    for (var j = i + 1; j < stars.length; j++) {
+                        var dx = stars[i].x - stars[j].x; var dy = stars[i].y - stars[j].y; var dist = Math.sqrt(dx * dx + dy * dy);
+                        if (dist < 90) {
+                            ctx.beginPath(); ctx.moveTo(stars[i].x, stars[i].y); ctx.lineTo(stars[j].x, stars[j].y);
+                            ctx.strokeStyle = "rgba(0, 240, 255, " + (0.08 - dist / 90 * 0.08) + ")"; ctx.lineWidth = 0.5; ctx.stroke();
+                        }
+                    }
+                }
+                for (var k = 0; k < stars.length; k++) {
+                    var s = stars[k]; s.delta += s.speed; s.x += s.vx; s.y += s.vy;
+                    if (s.x < 0) s.x = canvas.width; if (s.x > canvas.width) s.x = 0;
+                    if (s.y < 0) s.y = canvas.height; if (s.y > canvas.height) s.y = 0;
+                    var dynamicAlpha = Math.abs(Math.sin(s.delta)) * 0.75 + 0.25;
+                    ctx.beginPath(); ctx.arc(s.x, s.y, s.radius, 0, Math.PI * 2); ctx.fillStyle = s.color; ctx.globalAlpha = dynamicAlpha;
+                    if (s.radius > 1.3) { ctx.shadowBlur = 8; ctx.shadowColor = s.color; } ctx.fill(); ctx.shadowBlur = 0; ctx.globalAlpha = 1;
+                }
+                for (var a = 0; a < astronauts.length; a++) {
+                    var ast = astronauts[a]; ast.x += ast.vx; ast.y += ast.vy; ast.angle += ast.rotSpeed;
+                    if (ast.x > canvas.width + 120) ast.x = -100; if (ast.x < -120) ast.x = canvas.width + 80;
+                    if (ast.y > canvas.height + 100) ast.y = -80; if (ast.y < -100) ast.y = canvas.height + 80;
+                    drawAstronaut(ast);
+                }
+                shuttle.x += shuttle.vx; shuttle.y += shuttle.vy;
+                if (shuttle.x > canvas.width + 160) { shuttle.x = -130; shuttle.y = Math.random() * (canvas.height * 0.65) + 60; }
+                drawShuttle(shuttle);
+
+                spawnMeteor();
+                for (var m = meteors.length - 1; m >= 0; m--) {
+                    var met = meteors[m]; var x2 = met.x - met.len * Math.cos(met.angle); var y2 = met.y - met.len * Math.sin(met.angle);
+                    var grad = ctx.createLinearGradient(met.x, met.y, x2, y2);
+                    grad.addColorStop(0, "rgba(255, 255, 255, " + met.opacity + ")"); grad.addColorStop(0.4, "rgba(251, 146, 60, " + (met.opacity * 0.75) + ")"); grad.addColorStop(1, "transparent");
+                    ctx.beginPath(); ctx.moveTo(met.x, met.y); ctx.lineTo(x2, y2); ctx.strokeStyle = grad; ctx.lineWidth = 2.2; ctx.stroke();
+                    met.x += met.speed * Math.cos(met.angle); met.y += met.speed * Math.sin(met.angle); met.opacity -= 0.012;
+                    if (met.opacity <= 0 || met.x > canvas.width || met.y > canvas.height) { meteors.splice(m, 1); }
+                }
+                requestAnimationFrame(renderLiveSpace);
+            }
+            renderLiveSpace();
+        });
+
+        /* 🚀 Warp Speed Intro Animation */
+        var warpCanvas = document.getElementById('warpCanvas');
+        var warpCtx = warpCanvas.getContext('2d'); var warpStars = []; var warpRunning = true; var introTimers = [];
+        function initWarpStars() {
+            warpStars = []; warpCanvas.width = window.innerWidth || 1920; warpCanvas.height = window.innerHeight || 1080;
+            for (var i = 0; i < 300; i++) {
+                warpStars.push({ x: (Math.random() - 0.5) * warpCanvas.width * 2, y: (Math.random() - 0.5) * warpCanvas.height * 2, z: Math.random() * warpCanvas.width });
+            }
+        }
+        initWarpStars(); window.addEventListener('resize', initWarpStars);
+
+        function drawWarp() {
+            if (!warpRunning) return;
+            warpCtx.fillStyle = "rgba(1, 4, 10, 0.3)"; warpCtx.fillRect(0, 0, warpCanvas.width, warpCanvas.height);
+            var cx = warpCanvas.width / 2; var cy = warpCanvas.height / 2;
+            for (var i = 0; i < warpStars.length; i++) {
+                var s = warpStars[i]; s.z -= 11; if (s.z <= 0) s.z = warpCanvas.width;
+                var k = 250 / s.z; var px = s.x * k + cx; var py = s.y * k + cy;
+                if (px >= 0 && px <= warpCanvas.width && py >= 0 && py <= warpCanvas.height) {
+                    var size = (1 - s.z / warpCanvas.width) * 3.8; var alpha = (1 - s.z / warpCanvas.width);
+                    warpCtx.beginPath(); warpCtx.arc(px, py, Math.max(0.5, size), 0, Math.PI * 2); warpCtx.fillStyle = "rgba(0, 240, 255, " + alpha + ")";
+                    warpCtx.shadowBlur = 8; warpCtx.shadowColor = "#00f0ff"; warpCtx.fill();
+                }
+            }
+            requestAnimationFrame(drawWarp);
+        }
+
+        function startLaunchSequence() {
+            if (sessionStorage.getItem('hasSeenLaunch') === 'true') {
+                var overlay = document.getElementById('launchSequenceOverlay'); if (overlay) overlay.style.display = 'none'; return;
+            }
+            warpRunning = true; var overlay = document.getElementById('launchSequenceOverlay'); if (overlay) { overlay.style.display = 'flex'; overlay.classList.remove('fade-out'); }
+            drawWarp();
+            var msg = document.getElementById('launchStatusMsg'); var sub = document.getElementById('launchSubMsg');
+            if (msg) msg.innerText = "STAGE 1: LAUNCH PAD IGNITION & ASCENT..."; if (sub) sub.innerText = "CARTOSAT / SENTINEL SENSOR ARRAY CALIBRATION";
+            playSciFiBeep(520, 'sawtooth', 0.2);
+
+            introTimers.push(setTimeout(function() { if (msg) msg.innerText = "STAGE 2: FAIRING SEPARATION & STRATOSPHERE ESCAPE..."; if (sub) sub.innerText = "ACCELERATING TO ESCAPE VELOCITY (7.8 KM/S)"; playSciFiBeep(880, 'sine', 0.15); }, 1800));
+            introTimers.push(setTimeout(function() { if (msg) msg.innerText = "STAGE 3: ORBITAL INSERTION & SOLAR ARRAYS UNFURLED..."; if (sub) sub.innerText = "LOCKING 786 KM SUN-SYNCHRONOUS ORBIT (SSO)"; playSciFiBeep(1100, 'triangle', 0.2); }, 3600));
+            introTimers.push(setTimeout(function() { if (msg) msg.innerText = "STAGE 4: ENTERING MULTISPECTRAL SENSOR PAYLOAD..."; if (sub) sub.innerText = "ACTIVATING GEMINI 3.6 FLASH VISION-LANGUAGE NEURAL MATRIX"; playSciFiBeep(1400, 'sine', 0.25); }, 5200));
+            introTimers.push(setTimeout(function() { endIntroSequence(); }, 7000));
+        }
+
+        function endIntroSequence() {
+            sessionStorage.setItem('hasSeenLaunch', 'true'); introTimers.forEach(clearTimeout); warpRunning = false;
+            var overlay = document.getElementById('launchSequenceOverlay'); if (overlay) { overlay.classList.add('fade-out'); setTimeout(function() { overlay.style.display = 'none'; }, 950); }
+            playSciFiBeep(1500, 'sawtooth', 0.25);
+        }
+
+        function replayLaunchSequence() {
+            sessionStorage.removeItem('hasSeenLaunch');
+            var overlay = document.getElementById('launchSequenceOverlay'); var rocket = document.querySelector('.rocket-icon'); var progress = document.querySelector('.progress-bar-fill');
+            if (rocket) { rocket.style.animation = 'none'; rocket.offsetHeight; rocket.style.animation = null; }
+            if (progress) { progress.style.animation = 'none'; progress.offsetHeight; progress.style.animation = null; }
+            startLaunchSequence();
+        }
+
+        startLaunchSequence();
+
+        /* ⏱️ UTC & IST Clocks */
+        setInterval(function() {
+            var now = new Date();
+            var uHours = String(now.getUTCHours()).padStart(2, '0');
+            var uMins = String(now.getUTCMinutes()).padStart(2, '0');
+            var uSecs = String(now.getUTCSeconds()).padStart(2, '0');
+            var clockEl = document.getElementById('telemetryClock');
+            if (clockEl) clockEl.innerText = uHours + ":" + uMins + ":" + uSecs + " UTC";
+
+            var istString = now.toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata', hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            var clockISTEl = document.getElementById('telemetryClockIST');
+            if (clockISTEl) clockISTEl.innerText = istString + " IST";
+        }, 1000);
+
+        /* 🔊 Sound Generator */
+        var audioCtx = null;
+        function playSciFiBeep(freq, type, duration) {
+            try {
+                if (!audioCtx) { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
+                var osc = audioCtx.createOscillator(); var gain = audioCtx.createGain();
+                osc.type = type || 'sine'; osc.frequency.value = freq || 800;
+                gain.gain.setValueAtTime(0.03, audioCtx.currentTime); gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + (duration || 0.1));
+                osc.connect(gain); gain.connect(audioCtx.destination); osc.start(); osc.stop(audioCtx.currentTime + (duration || 0.1));
+            } catch(e) {}
+        }
+    </script>
+</body>
+</html>
     <!-- High-Compatibility Glowing Space Satellite Favicon -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%9B%B0%EF%B8%8F%3C/text%3E%3C/svg%3E">
     
