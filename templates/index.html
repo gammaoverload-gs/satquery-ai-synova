@@ -212,7 +212,7 @@
         .btn-replay-launch { background: rgba(0, 240, 255, 0.1); border: 1px solid var(--accent-cyan); color: var(--accent-cyan); padding: 4px 8px; border-radius: 4px; font-size: 10px; font-family: 'JetBrains Mono', monospace; cursor: pointer; transition: all 0.2s; }
         .btn-replay-launch:hover { background: var(--accent-cyan); color: #010409; font-weight: 700; }
 
-        /* 🎨 THEME PALETTE SELECTOR BAR */
+        /* 🎨 TACTICAL PALETTE THEME ENGINE */
         .theme-palette-box {
             display: inline-flex; align-items: center; gap: 7px;
             background: rgba(3, 8, 20, 0.9); border: 1.2px solid var(--border-color);
@@ -747,7 +747,7 @@
                             </button>
                         </div>
 
-                        <!-- 2D MAP / 3D HOLOGRAPHIC GLOBE DUAL VIEW -->
+                        <!-- 2D MAP / 3D SOLID TACTICAL GLOBE DUAL VIEW -->
                         <div style="display: flex; flex-direction: column; gap: 8px;">
                             <label>GPS / GIS Reticle Coordinate Picker:</label>
                             <div class="map-wrapper">
@@ -756,7 +756,8 @@
                                 <div id="map"></div>
                                 <div id="globe3DContainer"></div>
                                 
-                                <div class="tactical-hud-crosshair">
+                                <!-- Reticle HUD: Auto-hidden in 3D mode via JS to prevent collision -->
+                                <div class="tactical-hud-crosshair" id="reticleHUD">
                                     <div class="reticle-bearing-ring"></div>
                                     <div class="reticle-center-pip"></div>
                                     <div class="reticle-corner c-tl"></div>
@@ -968,6 +969,10 @@
                         <div class="glossary-desc"><strong>Short-Wave Infrared:</strong> Wavelength used to detect moisture levels, wildfire hotspots, soil composition, and urban concrete.</div>
                     </div>
                     <div class="glossary-card">
+                        <div class="glossary-term">Grounding <span class="glossary-tag">AI DETECTION</span></div>
+                        <div class="glossary-desc"><strong>Visual Object Grounding:</strong> Locating specific targets (runways, vessels, solar panels) mentioned in a text query and drawing bounding boxes.</div>
+                    </div>
+                    <div class="glossary-card">
                         <div class="glossary-term">Bi-Temporal <span class="glossary-tag">CHANGE DETECT</span></div>
                         <div class="glossary-desc"><strong>Time-Series Comparison:</strong> Analyzing two satellite photos of the exact same area taken at different dates ($T_1$ vs $T_2$) to detect changes.</div>
                     </div>
@@ -991,6 +996,7 @@
             if (globeMaterial) globeMaterial.color.setHex(currentHexTheme);
             if (continentMaterial) continentMaterial.color.setHex(currentHexTheme);
             if (ringMaterial) ringMaterial.color.setHex(currentHexTheme);
+            if (atmosphereMaterial) atmosphereMaterial.color.setHex(currentHexTheme);
             playSciFiBeep(1150, 'triangle', 0.08);
         }
 
@@ -1009,10 +1015,10 @@
             }
         }
 
-        /* 🌐 ENHANCED 3D TACTICAL HOLOGRAPHIC GLOBE ENGINE (Three.js with Real Continents & Drag) */
+        /* 🌐 ENHANCED 3D TACTICAL HOLOGRAPHIC GLOBE ENGINE (Solid Oceanic Core + Realistic Landmass + Drag) */
         var globeInitialized = false;
         var globeScene, globeCamera, globeRenderer, globeCoreGroup;
-        var globeMaterial, continentMaterial, ringMaterial;
+        var globeMaterial, continentMaterial, ringMaterial, atmosphereMaterial;
         var is3DView = false;
         var isGlobeDragging = false;
         var prevMousePos = { x: 0, y: 0 };
@@ -1021,17 +1027,20 @@
             var mapEl = document.getElementById('map');
             var globeEl = document.getElementById('globe3DContainer');
             var btn = document.getElementById('globeToggleBtn');
+            var reticleEl = document.getElementById('reticleHUD');
             playSciFiBeep(1300, 'sine', 0.1);
 
             is3DView = !is3DView;
             if (is3DView) {
                 mapEl.style.display = 'none';
                 globeEl.style.display = 'block';
+                if (reticleEl) reticleEl.style.display = 'none'; // Prevents wireframe crosshair overlap in 3D
                 btn.innerText = '🗺️ 2D MAP VIEW';
                 if (!globeInitialized) { init3DGlobe(); }
             } else {
                 mapEl.style.display = 'block';
                 globeEl.style.display = 'none';
+                if (reticleEl) reticleEl.style.display = 'block';
                 btn.innerText = '🌐 3D GLOBE VIEW';
                 map.invalidateSize();
             }
@@ -1054,69 +1063,106 @@
             globeCoreGroup = new THREE.Group();
             globeScene.add(globeCoreGroup);
 
-            // 1. Dark Oceanic Core Sphere
-            var oceanGeo = new THREE.SphereGeometry(62, 32, 32);
-            var oceanMat = new THREE.MeshBasicMaterial({ color: 0x030d22, transparent: true, opacity: 0.95 });
+            // 1. SOLID NAVY BLUE OCEANIC CORE (NO LONGER AN EMPTY WIREFRAME)
+            var oceanGeo = new THREE.SphereGeometry(61.8, 48, 48);
+            var oceanMat = new THREE.MeshPhongMaterial({
+                color: 0x021028,
+                emissive: 0x010814,
+                shininess: 35,
+                transparent: false
+            });
             var oceanMesh = new THREE.Mesh(oceanGeo, oceanMat);
             globeCoreGroup.add(oceanMesh);
 
-            // 2. Latitude & Longitude Tactical Wireframe Grid
-            var gridGeo = new THREE.SphereGeometry(62.6, 24, 24);
-            globeMaterial = new THREE.MeshBasicMaterial({ color: currentHexTheme, wireframe: true, transparent: true, opacity: 0.22 });
+            // 2. TACTICAL LIGHTING RIG
+            var dirLight = new THREE.DirectionalLight(0xffffff, 1.2);
+            dirLight.position.set(120, 80, 100);
+            globeScene.add(dirLight);
+
+            var ambLight = new THREE.AmbientLight(0x0a2244, 0.8);
+            globeScene.add(ambLight);
+
+            // 3. SUBTLE TACTICAL LAT/LON GRID (Opacity lowered to prevent cage effect)
+            var gridGeo = new THREE.SphereGeometry(62.2, 24, 24);
+            globeMaterial = new THREE.MeshBasicMaterial({ color: currentHexTheme, wireframe: true, transparent: true, opacity: 0.12 });
             var gridMesh = new THREE.Mesh(gridGeo, globeMaterial);
             globeCoreGroup.add(gridMesh);
 
-            // 3. Dense Geographic Continental Clusters (India, Asia, Americas, Africa, Europe)
-            var continentGeo = new THREE.BufferGeometry();
-            var continentPoints = [];
+            // 4. SOLID PROCEDURAL CONTINENTAL TEXTURE MAP (Real World Continents Wrapped Around Solid Sphere)
+            var earthCanvasTex = document.createElement('canvas');
+            earthCanvasTex.width = 1024;
+            earthCanvasTex.height = 512;
+            var texCtx = earthCanvasTex.getContext('2d');
 
-            function addLatLonCluster(centerLat, centerLon, spreadLat, spreadLon, density) {
-                for (var i = 0; i < density; i++) {
-                    var lat = centerLat + (Math.random() - 0.5) * spreadLat;
-                    var lon = centerLon + (Math.random() - 0.5) * spreadLon;
-                    var phi = (90 - lat) * (Math.PI / 180);
-                    var theta = (lon + 180) * (Math.PI / 180);
-                    var r = 63.2;
-                    var x = -(r * Math.sin(phi) * Math.cos(theta));
-                    var z = r * Math.sin(phi) * Math.sin(theta);
-                    var y = r * Math.cos(phi);
-                    continentPoints.push(x, y, z);
+            // Deep ocean base
+            texCtx.fillStyle = '#021330';
+            texCtx.fillRect(0, 0, 1024, 512);
+
+            // Draw continental landmass shapes
+            texCtx.fillStyle = '#0d4a70';
+            texCtx.strokeStyle = '#00f0ff';
+            texCtx.lineWidth = 2;
+
+            function drawContinentPath(coords) {
+                texCtx.beginPath();
+                for (var i = 0; i < coords.length; i++) {
+                    var x = (coords[i][0] + 180) * (1024 / 360);
+                    var y = (90 - coords[i][1]) * (512 / 180);
+                    if (i === 0) texCtx.moveTo(x, y);
+                    else texCtx.lineTo(x, y);
                 }
+                texCtx.closePath();
+                texCtx.fill();
+                texCtx.stroke();
             }
 
             // India & South Asia
-            addLatLonCluster(22, 78, 20, 22, 140);
-            // East Asia & Russia
-            addLatLonCluster(50, 105, 30, 45, 200);
-            // Europe & Mediterranean
-            addLatLonCluster(48, 15, 20, 28, 130);
+            drawContinentPath([[68, 25], [78, 35], [90, 26], [82, 8], [76, 9], [72, 19], [68, 25]]);
+            // Eurasia
+            drawContinentPath([[-10, 36], [10, 48], [40, 70], [140, 72], [145, 38], [120, 22], [100, 5], [78, 35], [35, 32], [25, 42], [-10, 36]]);
             // Africa
-            addLatLonCluster(5, 22, 45, 30, 180);
+            drawContinentPath([[-17, 15], [32, 31], [51, 12], [42, -10], [28, -34], [18, -34], [10, -10], [-14, 5], [-17, 15]]);
             // North America
-            addLatLonCluster(42, -100, 30, 40, 180);
+            drawContinentPath([[-165, 65], [-90, 75], [-55, 52], [-75, 25], [-100, 18], [-122, 35], [-165, 65]]);
             // South America
-            addLatLonCluster(-15, -60, 38, 25, 140);
+            drawContinentPath([[-80, 10], [-35, -6], [-38, -22], [-65, -55], [-76, -45], [-80, 10]]);
             // Australia
-            addLatLonCluster(-25, 135, 22, 26, 90);
+            drawContinentPath([[115, -20], [150, -14], [152, -38], [115, -34], [115, -20]]);
 
-            continentGeo.setAttribute('position', new THREE.Float32BufferAttribute(continentPoints, 3));
-            continentMaterial = new THREE.PointsMaterial({ color: currentHexTheme, size: 2.2, transparent: true, opacity: 0.85 });
-            var continentMesh = new THREE.Points(continentGeo, continentMaterial);
-            globeCoreGroup.add(continentMesh);
+            var dynamicEarthTexture = new THREE.CanvasTexture(earthCanvasTex);
+            var landSphereGeo = new THREE.SphereGeometry(62.4, 48, 48);
+            continentMaterial = new THREE.MeshLambertMaterial({
+                map: dynamicEarthTexture,
+                transparent: true,
+                opacity: 0.95
+            });
+            var landSphereMesh = new THREE.Mesh(landSphereGeo, continentMaterial);
+            globeCoreGroup.add(landSphereMesh);
 
-            // 4. Orbital Telemetry Rings
-            var ringGeo = new THREE.RingGeometry(76, 77.8, 48);
-            ringMaterial = new THREE.MeshBasicMaterial({ color: currentHexTheme, side: THREE.DoubleSide, transparent: true, opacity: 0.6 });
+            // 5. OUTER ATMOSPHERIC FRESNEL GLOW RIM
+            var atmoGeo = new THREE.SphereGeometry(64.2, 32, 32);
+            atmosphereMaterial = new THREE.MeshBasicMaterial({
+                color: currentHexTheme,
+                transparent: true,
+                opacity: 0.15,
+                side: THREE.BackSide
+            });
+            var atmoMesh = new THREE.Mesh(atmoGeo, atmosphereMaterial);
+            globeCoreGroup.add(atmoMesh);
+
+            // 6. DUAL INCLINATION TELEMETRY ORBIT RINGS
+            var ringGeo = new THREE.RingGeometry(78, 79.5, 64);
+            ringMaterial = new THREE.MeshBasicMaterial({ color: currentHexTheme, side: THREE.DoubleSide, transparent: true, opacity: 0.55 });
             var ring1 = new THREE.Mesh(ringGeo, ringMaterial);
             ring1.rotation.x = Math.PI / 2.6;
             globeCoreGroup.add(ring1);
 
             var ring2 = new THREE.Mesh(ringGeo, ringMaterial);
-            ring2.rotation.y = Math.PI / 2.4;
-            ring2.rotation.x = Math.PI / 6;
+            ring2.rotation.y = Math.PI / 2.2;
+            ring2.rotation.x = Math.PI / 5;
             globeCoreGroup.add(ring2);
 
-            // 5. Interactive Touch / Mouse Drag Engine
+            // 7. INTERACTIVE TOUCH / MOUSE DRAG ENGINE
             container.addEventListener('mousedown', function(e) {
                 isGlobeDragging = true;
                 prevMousePos = { x: e.clientX, y: e.clientY };
@@ -1126,8 +1172,8 @@
                 if (!isGlobeDragging || !globeCoreGroup) return;
                 var deltaX = e.clientX - prevMousePos.x;
                 var deltaY = e.clientY - prevMousePos.y;
-                globeCoreGroup.rotation.y += deltaX * 0.006;
-                globeCoreGroup.rotation.x += deltaY * 0.006;
+                globeCoreGroup.rotation.y += deltaX * 0.0055;
+                globeCoreGroup.rotation.x += deltaY * 0.0055;
                 prevMousePos = { x: e.clientX, y: e.clientY };
             });
 
@@ -1142,15 +1188,15 @@
                 if (!isGlobeDragging || !globeCoreGroup || e.touches.length !== 1) return;
                 var deltaX = e.touches[0].clientX - prevMousePos.x;
                 var deltaY = e.touches[0].clientY - prevMousePos.y;
-                globeCoreGroup.rotation.y += deltaX * 0.008;
-                globeCoreGroup.rotation.x += deltaY * 0.008;
+                globeCoreGroup.rotation.y += deltaX * 0.007;
+                globeCoreGroup.rotation.x += deltaY * 0.007;
                 prevMousePos = { x: e.touches[0].clientX, y: e.touches[0].clientY };
             }, { passive: true });
 
             function animateGlobe() {
                 requestAnimationFrame(animateGlobe);
                 if (!isGlobeDragging && globeCoreGroup) {
-                    globeCoreGroup.rotation.y += 0.0035;
+                    globeCoreGroup.rotation.y += 0.003;
                 }
                 globeRenderer.render(globeScene, globeCamera);
             }
