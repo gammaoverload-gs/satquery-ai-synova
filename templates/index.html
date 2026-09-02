@@ -827,7 +827,7 @@
                     <span>•</span>
                     <span>AGENTIC CORE: <strong>GEMINI 3.6 FLASH VLM</strong></span>
                     <span>•</span>
-                    <span>UPLINK TELEMETRY: <strong id="telemetryClock">00:00:00 UTC</strong></span>
+                    <span>UPLINK TELEMETRY: <strong id="telemetryClock">00:00:00 UTC</strong> | <strong id="telemetryClockIST" style="color: var(--accent-green);">00:00:00 IST</strong></span>
                 </p>
 
                 <div class="hero-telemetry-strip">
@@ -1868,15 +1868,30 @@
 
         startLaunchSequence();
 
-        /* ⏱️ UTC Clock */
+        /* ⏱️ UTC & IST Clocks */
         setInterval(function() {
             var now = new Date();
-            var hours = String(now.getUTCHours()).padStart(2, '0');
-            var mins = String(now.getUTCMinutes()).padStart(2, '0');
-            var secs = String(now.getUTCSeconds()).padStart(2, '0');
+            
+            // UTC Clock
+            var uHours = String(now.getUTCHours()).padStart(2, '0');
+            var uMins = String(now.getUTCMinutes()).padStart(2, '0');
+            var uSecs = String(now.getUTCSeconds()).padStart(2, '0');
             var clockEl = document.getElementById('telemetryClock');
             if (clockEl) {
-                clockEl.innerText = hours + ":" + mins + ":" + secs + " UTC";
+                clockEl.innerText = uHours + ":" + uMins + ":" + uSecs + " UTC";
+            }
+
+            // IST Clock
+            var istString = now.toLocaleTimeString('en-IN', { 
+                timeZone: 'Asia/Kolkata', 
+                hour12: false, 
+                hour: '2-digit', 
+                minute: '2-digit', 
+                second: '2-digit' 
+            });
+            var clockISTEl = document.getElementById('telemetryClockIST');
+            if (clockISTEl) {
+                clockISTEl.innerText = istString + " IST";
             }
         }, 1000);
 
@@ -2029,15 +2044,15 @@
             }
 
             /* Analytics Parsing with Hover Tooltip Integration */
-            var rawText = document.getElementById('rawAnalysisData').innerText.trim();
+            var rawText = document.getElementById('rawAnalysisData') ? document.getElementById('rawAnalysisData').innerText.trim() : "";
             var analysisBox = document.getElementById('analysisBox');
-            if (rawText) {
+            if (rawText && analysisBox) {
                 var parsedHTML = (typeof marked !== 'undefined') ? marked.parse(rawText) : rawText;
                 parsedHTML = addHoverTooltips(parsedHTML);
                 analysisBox.innerHTML = parsedHTML;
             }
 
-            var lulcRaw = document.getElementById('lulc-json-data').textContent.trim();
+            var lulcRaw = document.getElementById('lulc-json-data') ? document.getElementById('lulc-json-data').textContent.trim() : "{}";
             var lulcData = {};
             try { lulcData = JSON.parse(lulcRaw); } catch(e) {}
 
