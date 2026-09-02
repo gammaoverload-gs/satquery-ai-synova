@@ -10,7 +10,7 @@
     
     <!-- Leaflet GIS Map CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <!-- Three.js for 3D Globe Tactical View -->
+    <!-- Three.js for 3D Tactical Holographic Globe -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <!-- Chart.js for LULC Analytics & Spectral Indices -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -36,10 +36,17 @@
             --text-muted: #8b949e;
         }
 
-        /* 🎨 THEME PRESETS */
+        /* 🎨 DYNAMIC TACTICAL COLOR PALETTES */
+        body.theme-cyan {
+            --accent-cyan: #00f0ff;
+            --border-color: rgba(56, 189, 248, 0.28);
+            --border-glow: rgba(0, 240, 255, 0.6);
+            --accent-glow: rgba(0, 240, 255, 0.35);
+        }
+
         body.theme-green {
             --accent-cyan: #00ff66;
-            --border-color: rgba(0, 255, 102, 0.25);
+            --border-color: rgba(0, 255, 102, 0.3);
             --border-glow: rgba(0, 255, 102, 0.6);
             --accent-glow: rgba(0, 255, 102, 0.35);
             --accent-amber: #bbf7d0;
@@ -47,10 +54,26 @@
 
         body.theme-amber {
             --accent-cyan: #ffaa00;
-            --border-color: rgba(255, 170, 0, 0.25);
+            --border-color: rgba(255, 170, 0, 0.3);
             --border-glow: rgba(255, 170, 0, 0.6);
             --accent-glow: rgba(255, 170, 0, 0.35);
             --accent-green: #fde047;
+        }
+
+        body.theme-red {
+            --accent-cyan: #ff0055;
+            --border-color: rgba(255, 0, 85, 0.35);
+            --border-glow: rgba(255, 0, 85, 0.7);
+            --accent-glow: rgba(255, 0, 85, 0.4);
+            --accent-green: #fb7185;
+        }
+
+        body.theme-purple {
+            --accent-cyan: #b026ff;
+            --border-color: rgba(176, 38, 255, 0.35);
+            --border-glow: rgba(176, 38, 255, 0.7);
+            --accent-glow: rgba(176, 38, 255, 0.4);
+            --accent-green: #c084fc;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -159,7 +182,7 @@
         /* Top Command Deck */
         .hero-topbar {
             position: relative;
-            background: linear-gradient(135deg, rgba(2, 7, 22, 0.88) 0%, rgba(6, 19, 45, 0.82) 40%, rgba(10, 6, 36, 0.88) 100%);
+            background: linear-gradient(135deg, rgba(2, 7, 22, 0.92) 0%, rgba(6, 19, 45, 0.85) 40%, rgba(10, 6, 36, 0.92) 100%);
             border: 1.5px solid rgba(0, 240, 255, 0.45);
             border-radius: 14px; padding: 22px 32px; overflow: hidden;
             box-shadow: 0 0 45px rgba(0, 240, 255, 0.22), inset 0 0 35px rgba(0, 240, 255, 0.1);
@@ -189,12 +212,26 @@
         .btn-replay-launch { background: rgba(0, 240, 255, 0.1); border: 1px solid var(--accent-cyan); color: var(--accent-cyan); padding: 4px 8px; border-radius: 4px; font-size: 10px; font-family: 'JetBrains Mono', monospace; cursor: pointer; transition: all 0.2s; }
         .btn-replay-launch:hover { background: var(--accent-cyan); color: #010409; font-weight: 700; }
 
-        /* THEME SELECTOR BUTTONS */
-        .theme-selector { display: inline-flex; gap: 4px; background: rgba(2, 6, 23, 0.8); border: 1px solid var(--border-color); padding: 2px 4px; border-radius: 4px; }
-        .theme-dot { width: 12px; height: 12px; border-radius: 50%; cursor: pointer; border: 1px solid rgba(255,255,255,0.4); }
-        .theme-dot.cyan { background: #00f0ff; }
-        .theme-dot.green { background: #00ff66; }
-        .theme-dot.amber { background: #ffaa00; }
+        /* 🎨 THEME PALETTE SELECTOR BAR */
+        .theme-palette-box {
+            display: inline-flex; align-items: center; gap: 7px;
+            background: rgba(3, 8, 20, 0.9); border: 1.2px solid var(--border-color);
+            padding: 4px 10px; border-radius: 6px; margin-left: 6px;
+        }
+        .theme-palette-label {
+            font-family: 'JetBrains Mono', monospace; font-size: 9.5px; color: var(--text-muted); text-transform: uppercase;
+        }
+        .theme-swatches { display: flex; gap: 5px; }
+        .theme-dot {
+            width: 14px; height: 14px; border-radius: 50%; cursor: pointer;
+            border: 1px solid rgba(255, 255, 255, 0.4); transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .theme-dot:hover { transform: scale(1.25); box-shadow: 0 0 8px currentColor; }
+        .theme-dot.cyan { background: #00f0ff; color: #00f0ff; }
+        .theme-dot.green { background: #00ff66; color: #00ff66; }
+        .theme-dot.amber { background: #ffaa00; color: #ffaa00; }
+        .theme-dot.red { background: #ff0055; color: #ff0055; }
+        .theme-dot.purple { background: #b026ff; color: #b026ff; }
 
         /* 🌍 OG CLASSIC GLOWING BLUE ORB & ORBIT-LOCKED SATELLITE */
         .hero-orbit-graphic { position: relative; z-index: 3; width: 140px; height: 140px; display: flex; align-items: center; justify-content: center; }
@@ -256,16 +293,17 @@
         .leaf-sar-active { filter: contrast(180%) grayscale(100%) brightness(110%) drop-shadow(0 0 2px rgba(0,240,255,0.4)) !important; }
         .leaf-ndvi-active { filter: url(#ndviColorMap) !important; }
 
-        /* Scanning Reticle HUD & 3D Globe Container */
+        /* 🌐 3D GLOBE CONTAINER & RETICLE HUD */
         .map-wrapper { position: relative; border: 1px solid var(--border-color); border-radius: 6px; overflow: hidden; height: 320px; }
         #map { height: 100%; width: 100%; }
-        #globe3DContainer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; z-index: 450; background: #01040a; }
+        #globe3DContainer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; z-index: 450; background: #01040a; cursor: grab; }
+        #globe3DContainer:active { cursor: grabbing; }
 
         .btn-view-toggle {
             position: absolute; top: 10px; right: 10px; z-index: 600;
             background: rgba(2, 6, 23, 0.9); border: 1px solid var(--accent-cyan);
             color: var(--accent-cyan); font-family: 'Orbitron', sans-serif; font-size: 10px;
-            padding: 5px 10px; border-radius: 4px; cursor: pointer;
+            padding: 5px 10px; border-radius: 4px; cursor: pointer; box-shadow: 0 0 10px var(--accent-glow);
         }
 
         .tactical-hud-crosshair {
@@ -541,11 +579,16 @@
                     <div class="hero-badge-glow"><span>🛰️</span> SATQUERY AI</div>
                     <h1 class="hero-title">Multimodal Geospatial Tactical Intelligence</h1>
                     
-                    <!-- THEME SWITCHER -->
-                    <div class="theme-selector" title="Switch Tactical Theme">
-                        <div class="theme-dot cyan" onclick="setTacticalTheme('theme-cyan')"></div>
-                        <div class="theme-dot green" onclick="setTacticalTheme('theme-green')"></div>
-                        <div class="theme-dot amber" onclick="setTacticalTheme('theme-amber')"></div>
+                    <!-- 🎨 TACTICAL PALETTE THEME ENGINE -->
+                    <div class="theme-palette-box">
+                        <span class="theme-palette-label">THEME:</span>
+                        <div class="theme-swatches">
+                            <div class="theme-dot cyan" onclick="setTacticalTheme('theme-cyan', 0x00f0ff)" title="Cyan Cyber"></div>
+                            <div class="theme-dot green" onclick="setTacticalTheme('theme-green', 0x00ff66)" title="Night Ops Green"></div>
+                            <div class="theme-dot amber" onclick="setTacticalTheme('theme-amber', 0xffaa00)" title="Amber Tactical"></div>
+                            <div class="theme-dot red" onclick="setTacticalTheme('theme-red', 0xff0055)" title="Red Combat Alert"></div>
+                            <div class="theme-dot purple" onclick="setTacticalTheme('theme-purple', 0xb026ff)" title="Ultraviolet Spec"></div>
+                        </div>
                     </div>
                 </div>
 
@@ -941,8 +984,13 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
         /* 🎨 THEME SWITCHER ENGINE */
-        function setTacticalTheme(themeName) {
-            document.body.className = themeName;
+        var currentHexTheme = 0x00f0ff;
+        function setTacticalTheme(themeClass, hexColor) {
+            document.body.className = themeClass;
+            currentHexTheme = hexColor || 0x00f0ff;
+            if (globeMaterial) globeMaterial.color.setHex(currentHexTheme);
+            if (continentMaterial) continentMaterial.color.setHex(currentHexTheme);
+            if (ringMaterial) ringMaterial.color.setHex(currentHexTheme);
             playSciFiBeep(1150, 'triangle', 0.08);
         }
 
@@ -961,10 +1009,13 @@
             }
         }
 
-        /* 🌐 3D HOLOGRAPHIC GLOBE ENGINE (Three.js) */
+        /* 🌐 ENHANCED 3D TACTICAL HOLOGRAPHIC GLOBE ENGINE (Three.js with Real Continents & Drag) */
         var globeInitialized = false;
-        var globeScene, globeCamera, globeRenderer, globeSphere, globeRing;
+        var globeScene, globeCamera, globeRenderer, globeCoreGroup;
+        var globeMaterial, continentMaterial, ringMaterial;
         var is3DView = false;
+        var isGlobeDragging = false;
+        var prevMousePos = { x: 0, y: 0 };
 
         function toggle3DGlobeView() {
             var mapEl = document.getElementById('map');
@@ -988,34 +1039,119 @@
 
         function init3DGlobe() {
             var container = document.getElementById('globe3DContainer');
-            var w = container.clientWidth || 400;
+            var w = container.clientWidth || 500;
             var h = container.clientHeight || 320;
 
             globeScene = new THREE.Scene();
             globeCamera = new THREE.PerspectiveCamera(45, w / h, 0.1, 1000);
-            globeCamera.position.z = 220;
+            globeCamera.position.z = 210;
 
             globeRenderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
             globeRenderer.setSize(w, h);
+            globeRenderer.setPixelRatio(window.devicePixelRatio || 1);
             container.appendChild(globeRenderer.domElement);
 
-            // Wireframe Hologram Globe
-            var geometry = new THREE.SphereGeometry(65, 24, 24);
-            var material = new THREE.MeshBasicMaterial({ color: 0x00f0ff, wireframe: true, transparent: true, opacity: 0.65 });
-            globeSphere = new THREE.Mesh(geometry, material);
-            globeScene.add(globeSphere);
+            globeCoreGroup = new THREE.Group();
+            globeScene.add(globeCoreGroup);
 
-            // Orbiting Telemetry Rings
-            var ringGeo = new THREE.RingGeometry(80, 82, 32);
-            var ringMat = new THREE.MeshBasicMaterial({ color: 0x00ff66, side: THREE.DoubleSide, transparent: true, opacity: 0.7 });
-            globeRing = new THREE.Mesh(ringGeo, ringMat);
-            globeRing.rotation.x = Math.PI / 3;
-            globeScene.add(globeRing);
+            // 1. Dark Oceanic Core Sphere
+            var oceanGeo = new THREE.SphereGeometry(62, 32, 32);
+            var oceanMat = new THREE.MeshBasicMaterial({ color: 0x030d22, transparent: true, opacity: 0.95 });
+            var oceanMesh = new THREE.Mesh(oceanGeo, oceanMat);
+            globeCoreGroup.add(oceanMesh);
+
+            // 2. Latitude & Longitude Tactical Wireframe Grid
+            var gridGeo = new THREE.SphereGeometry(62.6, 24, 24);
+            globeMaterial = new THREE.MeshBasicMaterial({ color: currentHexTheme, wireframe: true, transparent: true, opacity: 0.22 });
+            var gridMesh = new THREE.Mesh(gridGeo, globeMaterial);
+            globeCoreGroup.add(gridMesh);
+
+            // 3. Dense Geographic Continental Clusters (India, Asia, Americas, Africa, Europe)
+            var continentGeo = new THREE.BufferGeometry();
+            var continentPoints = [];
+
+            function addLatLonCluster(centerLat, centerLon, spreadLat, spreadLon, density) {
+                for (var i = 0; i < density; i++) {
+                    var lat = centerLat + (Math.random() - 0.5) * spreadLat;
+                    var lon = centerLon + (Math.random() - 0.5) * spreadLon;
+                    var phi = (90 - lat) * (Math.PI / 180);
+                    var theta = (lon + 180) * (Math.PI / 180);
+                    var r = 63.2;
+                    var x = -(r * Math.sin(phi) * Math.cos(theta));
+                    var z = r * Math.sin(phi) * Math.sin(theta);
+                    var y = r * Math.cos(phi);
+                    continentPoints.push(x, y, z);
+                }
+            }
+
+            // India & South Asia
+            addLatLonCluster(22, 78, 20, 22, 140);
+            // East Asia & Russia
+            addLatLonCluster(50, 105, 30, 45, 200);
+            // Europe & Mediterranean
+            addLatLonCluster(48, 15, 20, 28, 130);
+            // Africa
+            addLatLonCluster(5, 22, 45, 30, 180);
+            // North America
+            addLatLonCluster(42, -100, 30, 40, 180);
+            // South America
+            addLatLonCluster(-15, -60, 38, 25, 140);
+            // Australia
+            addLatLonCluster(-25, 135, 22, 26, 90);
+
+            continentGeo.setAttribute('position', new THREE.Float32BufferAttribute(continentPoints, 3));
+            continentMaterial = new THREE.PointsMaterial({ color: currentHexTheme, size: 2.2, transparent: true, opacity: 0.85 });
+            var continentMesh = new THREE.Points(continentGeo, continentMaterial);
+            globeCoreGroup.add(continentMesh);
+
+            // 4. Orbital Telemetry Rings
+            var ringGeo = new THREE.RingGeometry(76, 77.8, 48);
+            ringMaterial = new THREE.MeshBasicMaterial({ color: currentHexTheme, side: THREE.DoubleSide, transparent: true, opacity: 0.6 });
+            var ring1 = new THREE.Mesh(ringGeo, ringMaterial);
+            ring1.rotation.x = Math.PI / 2.6;
+            globeCoreGroup.add(ring1);
+
+            var ring2 = new THREE.Mesh(ringGeo, ringMaterial);
+            ring2.rotation.y = Math.PI / 2.4;
+            ring2.rotation.x = Math.PI / 6;
+            globeCoreGroup.add(ring2);
+
+            // 5. Interactive Touch / Mouse Drag Engine
+            container.addEventListener('mousedown', function(e) {
+                isGlobeDragging = true;
+                prevMousePos = { x: e.clientX, y: e.clientY };
+            });
+            window.addEventListener('mouseup', function() { isGlobeDragging = false; });
+            window.addEventListener('mousemove', function(e) {
+                if (!isGlobeDragging || !globeCoreGroup) return;
+                var deltaX = e.clientX - prevMousePos.x;
+                var deltaY = e.clientY - prevMousePos.y;
+                globeCoreGroup.rotation.y += deltaX * 0.006;
+                globeCoreGroup.rotation.x += deltaY * 0.006;
+                prevMousePos = { x: e.clientX, y: e.clientY };
+            });
+
+            container.addEventListener('touchstart', function(e) {
+                if (e.touches.length === 1) {
+                    isGlobeDragging = true;
+                    prevMousePos = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+                }
+            }, { passive: true });
+            window.addEventListener('touchend', function() { isGlobeDragging = false; });
+            window.addEventListener('touchmove', function(e) {
+                if (!isGlobeDragging || !globeCoreGroup || e.touches.length !== 1) return;
+                var deltaX = e.touches[0].clientX - prevMousePos.x;
+                var deltaY = e.touches[0].clientY - prevMousePos.y;
+                globeCoreGroup.rotation.y += deltaX * 0.008;
+                globeCoreGroup.rotation.x += deltaY * 0.008;
+                prevMousePos = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+            }, { passive: true });
 
             function animateGlobe() {
                 requestAnimationFrame(animateGlobe);
-                if (globeSphere) { globeSphere.rotation.y += 0.006; globeSphere.rotation.x += 0.002; }
-                if (globeRing) { globeRing.rotation.z -= 0.008; }
+                if (!isGlobeDragging && globeCoreGroup) {
+                    globeCoreGroup.rotation.y += 0.0035;
+                }
                 globeRenderer.render(globeScene, globeCamera);
             }
             animateGlobe();
@@ -1276,7 +1412,7 @@
                 });
             }
 
-            /* ADVANCED MULTI-BAND RADIOMETRIC & NDVI/NDWI CHART */
+            /* MULTI-BAND RADIOMETRIC & NDVI/NDWI CHART */
             var spectralCanvas = document.getElementById('spectralChart');
             if (spectralCanvas) {
                 var sCtx = spectralCanvas.getContext('2d');
@@ -1423,7 +1559,7 @@
             html2pdf().set({ margin: 10, filename: 'SatQuery_Tactical_Dossier_' + Date.now() + '.pdf', image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2, backgroundColor: '#020617' }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } }).from(pdfContainer).save();
         }
 
-        /* 📥 Client-Side Direct JSON Downloader */
+        /* 📥 Direct JSON Downloader */
         function downloadReportDirect() {
             playSciFiBeep(1100, 'sine', 0.1);
             var rawText = document.getElementById('rawAnalysisData') ? document.getElementById('rawAnalysisData').innerText.trim() : "";
@@ -1448,7 +1584,7 @@
             window.location.href = "/download-geojson";
         }
 
-        /* 🌌 Header Canvas (Constellation lines & shooting stars) */
+        /* 🌌 Header Canvas Animation */
         document.addEventListener('DOMContentLoaded', function () {
             var headerCanvas = document.getElementById('spaceCanvas');
             if (!headerCanvas) return;
@@ -1512,7 +1648,7 @@
             drawHeaderSpace();
         });
 
-        /* 🌌 Full-Screen Deep Space Wallpaper Engine (Astronauts & Shuttle) */
+        /* 🌌 Deep Space Canvas Simulation */
         document.addEventListener('DOMContentLoaded', function () {
             var canvas = document.getElementById('globalSpaceCanvas');
             if (!canvas) return;
@@ -1611,7 +1747,7 @@
             renderLiveSpace();
         });
 
-        /* 🚀 7-Second Hyperspace Warp Launch Sequence */
+        /* 🚀 Warp Speed Intro Animation */
         var warpCanvas = document.getElementById('warpCanvas');
         var warpCtx = warpCanvas.getContext('2d'); var warpStars = []; var warpRunning = true; var introTimers = [];
         function initWarpStars() {
@@ -1684,7 +1820,7 @@
             if (clockISTEl) clockISTEl.innerText = istString + " IST";
         }, 1000);
 
-        /* 🔊 Web Audio API Sound Generator */
+        /* 🔊 Sound Generator */
         var audioCtx = null;
         function playSciFiBeep(freq, type, duration) {
             try {
