@@ -46,7 +46,7 @@
             position: relative;
         }
 
-        /* Ambient Cosmic Background */
+        /* ================== 🌌 FULL-SCREEN LIVING COSMIC BACKDROP ================== */
         #globalSpaceCanvas {
             position: fixed;
             top: 0; left: 0;
@@ -55,6 +55,7 @@
             z-index: 0; opacity: 0.95;
         }
 
+        /* ☀️ Grand Luminous Solar Core & Cosmic Aura */
         .cosmic-sun-wrapper {
             position: fixed;
             top: 50%; left: 50%;
@@ -104,7 +105,7 @@
 
         @keyframes nebulaDrift { 0% { transform: scale(1) translate(0, 0); } 50% { transform: scale(1.08) translate(-25px, 20px); } 100% { transform: scale(1.02) translate(20px, -15px); } }
 
-        /* 7-Second Intro Screen */
+        /* ================== 🎬 7-SECOND LAUNCH INTRO OVERLAY ================== */
         #launchSequenceOverlay {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background: #01040a; z-index: 9999999;
@@ -133,13 +134,13 @@
         .btn-skip-intro { position: absolute; bottom: 30px; right: 40px; z-index: 20; background: rgba(4, 9, 20, 0.85); border: 1px solid var(--border-color); color: var(--accent-cyan); font-family: 'JetBrains Mono', monospace; font-size: 11px; padding: 8px 16px; border-radius: 4px; cursor: pointer; transition: all 0.2s; letter-spacing: 1px; }
         .btn-skip-intro:hover { background: var(--accent-cyan); color: #010409; font-weight: 700; box-shadow: 0 0 15px var(--accent-glow); }
 
-        /* Container Structure */
+        /* Main Container */
         .container { max-width: 1580px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px; position: relative; z-index: 10; }
 
-        /* Top Command Deck */
+        /* ================== COMMAND HEADER WITH 3D EARTH ================== */
         .hero-topbar {
             position: relative;
-            background: linear-gradient(135deg, rgba(2, 7, 22, 0.88) 0%, rgba(6, 19, 45, 0.82) 40%, rgba(10, 6, 36, 0.88) 100%);
+            background: linear-gradient(135deg, rgba(2, 7, 22, 0.92) 0%, rgba(6, 19, 45, 0.85) 40%, rgba(10, 6, 36, 0.92) 100%);
             border: 1.5px solid rgba(0, 240, 255, 0.45);
             border-radius: 14px; padding: 22px 32px; overflow: hidden;
             box-shadow: 0 0 45px rgba(0, 240, 255, 0.22), inset 0 0 35px rgba(0, 240, 255, 0.1);
@@ -169,86 +170,97 @@
         .btn-replay-launch { background: rgba(0, 240, 255, 0.1); border: 1px solid var(--accent-cyan); color: var(--accent-cyan); padding: 4px 8px; border-radius: 4px; font-size: 10px; font-family: 'JetBrains Mono', monospace; cursor: pointer; transition: all 0.2s; }
         .btn-replay-launch:hover { background: var(--accent-cyan); color: #010409; font-weight: 700; }
 
-        .hero-orbit-graphic { position: relative; z-index: 3; width: 130px; height: 130px; display: flex; align-items: center; justify-content: center; }
-        .orbit-circle { position: absolute; width: 120px; height: 120px; border: 1.5px dashed rgba(0, 240, 255, 0.65); border-radius: 50%; animation: rotateOrbit 12s linear infinite; }
-        .orbit-circle::before { content: "🛰️"; position: absolute; top: -14px; left: 50%; transform: translateX(-50%); font-size: 18px; filter: drop-shadow(0 0 12px var(--accent-cyan)); }
-        .earth-core { width: 56px; height: 56px; background: radial-gradient(circle at 35% 35%, #0284c7 0%, #0369a1 40%, #082f49 75%, #020617 100%); border-radius: 50%; box-shadow: 0 0 30px rgba(56, 189, 248, 0.75), inset -6px -6px 18px rgba(0,0,0,0.9); position: relative; animation: pulseEarth 3s ease-in-out infinite alternate; }
-        @keyframes rotateOrbit { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-        @keyframes pulseEarth { from { box-shadow: 0 0 25px rgba(56, 189, 248, 0.5); } to { box-shadow: 0 0 50px rgba(0, 240, 255, 0.95); } }
+        /* 🌍 REAL PROCEDURAL ROTATING EARTH & FREE-MOVING SATELLITE HUD */
+        .hero-orbit-graphic {
+            position: relative; z-index: 3; width: 160px; height: 160px;
+            display: flex; align-items: center; justify-content: center;
+        }
 
-        /* Telemetry Banner Ticker */
+        .orbit-ring-visual {
+            position: absolute; width: 130px; height: 130px;
+            border: 1px dashed rgba(0, 240, 255, 0.35); border-radius: 50%;
+        }
+
+        .satellite-orbiter {
+            position: absolute; width: 100%; height: 100%;
+            animation: orbitalPathing 12s linear infinite;
+            pointer-events: none;
+        }
+
+        .sat-unit {
+            position: absolute; top: -14px; left: 50%;
+            transform: translateX(-50%); font-size: 21px;
+            filter: drop-shadow(0 0 12px var(--accent-cyan));
+            animation: satOrientation 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes orbitalPathing {
+            0% { transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(180deg) scale(1.12); }
+            100% { transform: rotate(360deg) scale(1); }
+        }
+
+        @keyframes satOrientation {
+            0% { transform: translateX(-50%) rotate(-18deg); }
+            100% { transform: translateX(-50%) rotate(18deg); }
+        }
+
+        .earth-core {
+            width: 74px; height: 74px; border-radius: 50%;
+            position: relative; overflow: hidden;
+            background-color: #0b3d91;
+            background-image: 
+                radial-gradient(ellipse at 20% 30%, #15803d 0%, #166534 30%, transparent 60%),
+                radial-gradient(ellipse at 70% 60%, #22c55e 0%, #15803d 35%, transparent 65%),
+                radial-gradient(circle at 40% 80%, #4ade80 0%, #15803d 25%, transparent 55%),
+                radial-gradient(ellipse at 85% 25%, #16a34a 0%, #0b3d91 40%, transparent 50%);
+            background-size: 200% 100%;
+            box-shadow: 
+                inset -16px -16px 24px rgba(0, 0, 0, 0.95),
+                inset 5px 5px 12px rgba(255, 255, 255, 0.4),
+                0 0 35px rgba(56, 189, 248, 0.7);
+            animation: rotateEarthTexture 20s linear infinite;
+        }
+
+        .earth-core::after {
+            content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at 30% 40%, rgba(255,255,255,0.6) 0%, transparent 25%),
+                        radial-gradient(circle at 75% 55%, rgba(255,255,255,0.5) 0%, transparent 30%);
+            background-size: 160% 100%; mix-blend-mode: screen;
+            animation: rotateClouds 12s linear infinite;
+        }
+
+        @keyframes rotateEarthTexture { from { background-position: 0% 0; } to { background-position: 200% 0; } }
+        @keyframes rotateClouds { from { background-position: 200% 0; } to { background-position: 0% 0; } }
+
+        /* FEATURE 5: LIVE MARQUEE TELEMETRY TICKER */
         .tactical-ticker-bar {
-            width: 100%;
-            background: rgba(3, 8, 20, 0.92);
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            padding: 5px 12px;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 10.5px;
-            color: var(--accent-cyan);
-            display: flex;
-            align-items: center;
-            overflow: hidden;
-            box-shadow: inset 0 0 15px rgba(0, 240, 255, 0.08);
+            width: 100%; background: rgba(3, 8, 20, 0.92); border: 1px solid var(--border-color);
+            border-radius: 6px; padding: 5px 12px; font-family: 'JetBrains Mono', monospace; font-size: 10.5px;
+            color: var(--accent-cyan); display: flex; align-items: center; overflow: hidden; box-shadow: inset 0 0 15px rgba(0, 240, 255, 0.08);
         }
-        .ticker-label {
-            color: var(--accent-green);
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            margin-right: 14px;
-            white-space: nowrap;
-            letter-spacing: 0.5px;
-        }
-        .ticker-track {
-            display: flex;
-            white-space: nowrap;
-            animation: tickerSlide 26s linear infinite;
-        }
+        .ticker-label { color: var(--accent-green); font-weight: 700; display: flex; align-items: center; gap: 6px; margin-right: 14px; white-space: nowrap; }
+        .ticker-track { display: flex; white-space: nowrap; animation: tickerSlide 26s linear infinite; }
         .ticker-track span { margin-right: 48px; color: #94a3b8; }
         .ticker-track span b { color: var(--accent-cyan); }
         @keyframes tickerSlide { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
 
-        /* Workspace Tab Navigator */
+        /* Command Center Tabs */
         .workspace-tabs-nav {
-            display: flex;
-            gap: 8px;
-            background: rgba(4, 9, 20, 0.85);
-            border: 1px solid var(--border-color);
-            padding: 6px;
-            border-radius: 10px;
-            backdrop-filter: blur(18px);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
-            flex-wrap: wrap;
+            display: flex; gap: 8px; background: rgba(4, 9, 20, 0.85); border: 1px solid var(--border-color);
+            padding: 6px; border-radius: 10px; backdrop-filter: blur(18px); box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4); flex-wrap: wrap;
         }
 
         .tab-btn {
-            flex: 1;
-            min-width: 170px;
-            background: rgba(2, 6, 23, 0.85);
-            border: 1px solid rgba(56, 189, 248, 0.2);
-            color: var(--text-muted);
-            padding: 10px 14px;
-            border-radius: 6px;
-            font-family: 'Orbitron', sans-serif;
-            font-size: 11px;
-            font-weight: 700;
-            letter-spacing: 0.8px;
-            cursor: pointer;
-            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
+            flex: 1; min-width: 170px; background: rgba(2, 6, 23, 0.85); border: 1px solid rgba(56, 189, 248, 0.2);
+            color: var(--text-muted); padding: 10px 14px; border-radius: 6px; font-family: 'Orbitron', sans-serif;
+            font-size: 11px; font-weight: 700; letter-spacing: 0.8px; cursor: pointer; transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex; align-items: center; justify-content: center; gap: 8px;
         }
         .tab-btn:hover { border-color: var(--accent-cyan); color: var(--accent-cyan); background: rgba(0, 240, 255, 0.08); }
         .tab-btn.active {
             background: linear-gradient(135deg, rgba(0, 85, 255, 0.35), rgba(0, 240, 255, 0.22));
-            border-color: var(--accent-cyan);
-            color: #ffffff;
-            box-shadow: 0 0 20px var(--accent-glow);
-            text-shadow: 0 0 10px var(--accent-cyan);
+            border-color: var(--accent-cyan); color: #ffffff; box-shadow: 0 0 20px var(--accent-glow); text-shadow: 0 0 10px var(--accent-cyan);
         }
 
         .tab-badge { font-family: 'JetBrains Mono', monospace; font-size: 8.5px; padding: 2px 6px; border-radius: 3px; text-transform: uppercase; }
@@ -259,40 +271,28 @@
         .tab-content.active { display: block; }
         @keyframes fadeInTab { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Hardware-Accelerated SVG Filters for Map Tile Pane */
+        /* FEATURE 1: SVG COLOR-TRANSFER SHADERS FOR MAP TILES */
         .leaf-nir-active { filter: url(#cirNirFilter) !important; }
         .leaf-sar-active { filter: contrast(180%) grayscale(100%) brightness(110%) drop-shadow(0 0 2px rgba(0,240,255,0.4)) !important; }
         .leaf-ndvi-active { filter: url(#ndviColorMap) !important; }
 
-        /* Scanning Reticle HUD */
+        /* FEATURE 2: SCANNING RETICLE HUD */
         .map-wrapper { position: relative; border: 1px solid var(--border-color); border-radius: 6px; overflow: hidden; }
         #map { height: 280px; }
 
         .tactical-hud-crosshair {
-            position: absolute;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            width: 90px; height: 90px;
-            pointer-events: none;
-            z-index: 500;
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 90px; height: 90px; pointer-events: none; z-index: 500;
         }
         .reticle-bearing-ring {
-            position: absolute;
-            top: 5px; left: 5px;
-            width: 80px; height: 80px;
-            border-radius: 50%;
-            border: 1px dashed rgba(0, 240, 255, 0.6);
-            animation: bearingSpin 18s linear infinite;
+            position: absolute; top: 5px; left: 5px; width: 80px; height: 80px;
+            border-radius: 50%; border: 1px dashed rgba(0, 240, 255, 0.6); animation: bearingSpin 18s linear infinite;
         }
         @keyframes bearingSpin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
         .reticle-center-pip {
-            position: absolute;
-            top: 42px; left: 42px;
-            width: 6px; height: 6px;
-            background: var(--accent-red);
-            border-radius: 50%;
-            box-shadow: 0 0 8px var(--accent-red);
+            position: absolute; top: 42px; left: 42px; width: 6px; height: 6px;
+            background: var(--accent-red); border-radius: 50%; box-shadow: 0 0 8px var(--accent-red);
         }
         .reticle-corner { position: absolute; width: 10px; height: 10px; border-color: var(--accent-cyan); border-style: solid; }
         .c-tl { top: 0; left: 0; border-width: 2px 0 0 2px; }
@@ -301,12 +301,9 @@
         .c-br { bottom: 0; right: 0; border-width: 0 2px 2px 0; }
 
         .laser-sweep-line {
-            position: absolute;
-            top: 0; left: 0;
-            width: 100%; height: 2px;
+            position: absolute; top: 0; left: 0; width: 100%; height: 2px;
             background: linear-gradient(90deg, transparent, var(--accent-cyan), #ffffff, var(--accent-cyan), transparent);
-            box-shadow: 0 0 10px var(--accent-cyan);
-            animation: scanLaser 2.4s ease-in-out infinite alternate;
+            box-shadow: 0 0 10px var(--accent-cyan); animation: scanLaser 2.4s ease-in-out infinite alternate;
         }
         @keyframes scanLaser {
             0% { transform: translateY(4px); opacity: 0.3; }
@@ -315,26 +312,19 @@
         }
 
         .reticle-azimuth-tag {
-            position: absolute;
-            top: -18px; left: 50%;
-            transform: translateX(-50%);
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 8.5px;
-            color: var(--accent-cyan);
-            background: rgba(2, 6, 23, 0.9);
-            padding: 1px 4px;
-            border: 1px solid rgba(0, 240, 255, 0.3);
-            border-radius: 2px;
-            letter-spacing: 0.5px;
-            white-space: nowrap;
+            position: absolute; top: -18px; left: 50%; transform: translateX(-50%);
+            font-family: 'JetBrains Mono', monospace; font-size: 8.5px; color: var(--accent-cyan);
+            background: rgba(2, 6, 23, 0.9); padding: 1px 4px; border: 1px solid rgba(0, 240, 255, 0.3);
+            border-radius: 2px; letter-spacing: 0.5px; white-space: nowrap;
         }
 
         .mgrs-bar {
             position: absolute; bottom: 0; left: 0; width: 100%; background: rgba(1, 4, 9, 0.88);
-            padding: 4px 10px; font-family: 'JetBrains Mono', monospace; font-size: 9.5px; color: var(--accent-cyan); display: flex; justify-content: space-between; z-index: 600; border-top: 1px solid rgba(0, 240, 255, 0.2);
+            padding: 4px 10px; font-family: 'JetBrains Mono', monospace; font-size: 9.5px; color: var(--accent-cyan);
+            display: flex; justify-content: space-between; z-index: 600; border-top: 1px solid rgba(0, 240, 255, 0.2);
         }
 
-        /* Voice Reactivity Visualizer */
+        /* FEATURE 3: REACTIVE AUDIO EQUALIZER & COMMS */
         .voice-query-group { display: flex; gap: 8px; align-items: center; }
         .btn-mic {
             background: rgba(0, 240, 255, 0.1); border: 1px solid var(--accent-cyan); color: var(--accent-cyan);
@@ -344,14 +334,8 @@
         @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.08); } }
 
         .carrier-audio-visualizer {
-            display: inline-flex;
-            align-items: center;
-            gap: 3px;
-            height: 18px;
-            padding: 0 6px;
-            background: rgba(2, 6, 23, 0.85);
-            border: 1px solid rgba(0, 240, 255, 0.3);
-            border-radius: 3px;
+            display: inline-flex; align-items: center; gap: 3px; height: 18px; padding: 0 6px;
+            background: rgba(2, 6, 23, 0.85); border: 1px solid rgba(0, 240, 255, 0.3); border-radius: 3px;
         }
         .wave-bar { width: 3px; height: 4px; background: var(--accent-cyan); border-radius: 1px; transition: height 0.1s ease; }
         .carrier-beacon { font-family: 'JetBrains Mono', monospace; font-size: 8.5px; color: var(--accent-green); letter-spacing: 0.5px; display: flex; align-items: center; gap: 4px; }
@@ -359,28 +343,25 @@
         .beacon-dot.active { animation: blinkLed 0.5s infinite; }
         @keyframes blinkLed { 0%, 100% { opacity: 0.2; } 50% { opacity: 1; } }
 
-        /* Entity Target Acquisition Chips */
+        /* FEATURE 4: TARGET MATRIX ACQUISITION CHIPS */
         .target-matrix-wrapper { display: flex; flex-direction: column; gap: 6px; margin-top: 4px; }
         .target-chips-container { display: flex; gap: 6px; flex-wrap: wrap; }
         .target-chip {
             background: rgba(4, 9, 20, 0.88); border: 1px solid var(--border-color); border-radius: 4px;
-            padding: 4px 9px; font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #cbd5e1; cursor: pointer;
-            display: inline-flex; align-items: center; gap: 6px; transition: all 0.2s ease;
+            padding: 4px 9px; font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #cbd5e1;
+            cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: all 0.2s ease;
         }
         .target-chip:hover { border-color: var(--accent-cyan); background: rgba(0, 240, 255, 0.12); color: var(--accent-cyan); transform: translateY(-1px); }
         .target-chip.locked { border-color: var(--accent-red); color: #ff99bb; background: rgba(255, 0, 85, 0.15); box-shadow: 0 0 10px rgba(255, 0, 85, 0.35); }
 
-        /* Hover Tooltips */
+        /* Tooltip Styles */
         .geo-tooltip { position: relative; color: var(--accent-cyan); border-bottom: 1.5px dotted var(--accent-cyan); cursor: help; font-weight: 600; }
         .geo-tooltip::after {
-            content: attr(data-tooltip);
-            position: absolute; bottom: 125%; left: 50%;
-            transform: translateX(-50%) translateY(4px);
-            background: #020a1a; border: 1px solid var(--accent-cyan); color: #f8fafc;
-            padding: 8px 12px; border-radius: 6px; font-size: 11px; line-height: 1.4;
-            white-space: normal; width: 240px; box-shadow: 0 4px 20px rgba(0, 240, 255, 0.4);
-            opacity: 0; pointer-events: none; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-            z-index: 9999; font-family: 'Inter', sans-serif; font-weight: 400;
+            content: attr(data-tooltip); position: absolute; bottom: 125%; left: 50%;
+            transform: translateX(-50%) translateY(4px); background: #020a1a; border: 1px solid var(--accent-cyan);
+            color: #f8fafc; padding: 8px 12px; border-radius: 6px; font-size: 11px; line-height: 1.4;
+            white-space: normal; width: 240px; box-shadow: 0 4px 20px rgba(0, 240, 255, 0.4); opacity: 0;
+            pointer-events: none; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); z-index: 9999; font-family: 'Inter', sans-serif; font-weight: 400;
         }
         .geo-tooltip:hover::after { opacity: 1; transform: translateX(-50%) translateY(0); }
 
@@ -390,14 +371,15 @@
         .glossary-tag { font-family: 'JetBrains Mono', monospace; font-size: 9px; padding: 2px 6px; background: rgba(0, 240, 255, 0.1); border: 1px solid rgba(0, 240, 255, 0.3); border-radius: 3px; color: var(--accent-cyan); }
         .glossary-desc { font-size: 12px; color: #cbd5e1; line-height: 1.5; }
 
-        /* Form Inputs & Controls */
+        /* Panels & Cards */
         .card {
             background: var(--bg-card); backdrop-filter: blur(20px); border: 1px solid var(--border-color);
             border-radius: 10px; padding: 22px; display: flex; flex-direction: column; gap: 16px; position: relative; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
         }
         .card-title {
             font-family: 'Orbitron', sans-serif; font-size: 12.5px; font-weight: 700; text-transform: uppercase;
-            letter-spacing: 1px; color: var(--accent-cyan); display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid rgba(56, 189, 248, 0.2); padding-bottom: 10px;
+            letter-spacing: 1px; color: var(--accent-cyan); display: flex; align-items: center; justify-content: space-between;
+            border-bottom: 1px solid rgba(56, 189, 248, 0.2); padding-bottom: 10px;
         }
 
         .ingestion-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
@@ -428,7 +410,8 @@
 
         .btn-submit {
             background: linear-gradient(135deg, #0055ff, #00f0ff); color: #02040a; border: none; padding: 14px;
-            border-radius: 5px; font-weight: 800; font-size: 14px; font-family: 'Orbitron', sans-serif; letter-spacing: 1px; cursor: pointer; box-shadow: 0 0 20px var(--accent-glow); display: flex; justify-content: center; align-items: center; gap: 8px;
+            border-radius: 5px; font-weight: 800; font-size: 14px; font-family: 'Orbitron', sans-serif; letter-spacing: 1px;
+            cursor: pointer; box-shadow: 0 0 20px var(--accent-glow); display: flex; justify-content: center; align-items: center; gap: 8px;
         }
 
         /* Bi-Temporal Split View */
@@ -461,7 +444,7 @@
         .sobel-edge { filter: contrast(250%) grayscale(100%) invert(100%) !important; }
         .sar-polar { filter: contrast(160%) invert(80%) hue-rotate(240deg) saturate(180%) !important; }
 
-        /* Analytics Console */
+        /* Analytics Subgrid */
         .analytics-subgrid { display: grid; grid-template-columns: 1fr 320px; gap: 18px; }
         @media (max-width: 980px) { .analytics-subgrid { grid-template-columns: 1fr; } }
 
@@ -498,7 +481,7 @@
 </head>
 <body>
 
-    <!-- SVG COLOR-INFRARED & NDVI MATRIX PIPELINE -->
+    <!-- FEATURE 1: MULTISPECTRAL FALSE-COLOR CIR & NDVI FILTERS -->
     <svg style="position: absolute; width: 0; height: 0; overflow: hidden;" version="1.1" xmlns="http://www.w3.org/2000/svg">
         <defs>
             <filter id="cirNirFilter">
@@ -554,7 +537,7 @@
 
     <div class="container">
         
-        <!-- Header -->
+        <!-- Header with 3D Earth Globe & Free-moving Satellite -->
         <header class="hero-topbar">
             <canvas id="spaceCanvas"></canvas>
             <div class="hero-content">
@@ -580,8 +563,12 @@
                 </div>
             </div>
 
+            <!-- Orbit Graphic: Rotating 3D Continents & Floating Satellite -->
             <div class="hero-orbit-graphic">
-                <div class="orbit-circle"></div>
+                <div class="orbit-ring-visual"></div>
+                <div class="satellite-orbiter">
+                    <div class="sat-unit">🛰️</div>
+                </div>
                 <div class="earth-core"></div>
             </div>
         </header>
@@ -598,6 +585,7 @@
                 <span><b>GEMINI-3.6-FLASH</b>: VLM INFERENCE LATENCY 342ms</span>
                 <span><b>COPERNICUS HUB</b>: INGESTION PIPELINE ACTIVE</span>
                 <span><b>ENCRYPTION</b>: MIL-STD AES-256 GCM SECURED</span>
+                <!-- Duplicate track for seamless infinite scroll -->
                 <span><b>SYS_OK</b> // EPHEMERIS PROPAGATION: NOMINAL</span>
                 <span><b>SENTINEL-1A</b>: C-BAND SAR POLARIZATION LOCKED (VV+VH)</span>
                 <span><b>CARTOSAT-3</b>: GSD CALIBRATED AT 0.28M PANCHROMATIC</span>
@@ -687,7 +675,7 @@
                                 <span>Capture live Sentinel/Cartosat tile at reticle coordinates</span>
                             </label>
 
-                            <!-- Audio Reactive Visualizer -->
+                            <!-- Audio Waveform Visualizer -->
                             <div class="form-group">
                                 <div style="display: flex; justify-content: space-between; align-items: center;">
                                     <label for="user_question">Tactical Query (Voice / Text):</label>
@@ -866,7 +854,7 @@
                     </div>
                 {% endif %}
 
-                <!-- COLLAPSIBLE AUDITABLE EXECUTION TELEMETRY LOG -->
+                <!-- COLLAPSIBLE AUDITABLE EXECUTION TELEMETRY LOG (ACCORDION) -->
                 <div style="margin-top: 10px; border: 1px solid var(--border-color); border-radius: 6px; overflow: hidden; background: #02040a;">
                     <button type="button" onclick="toggleTraceLog()" style="width: 100%; background: rgba(0, 240, 255, 0.08); border: none; padding: 9px 14px; color: var(--accent-cyan); font-family: 'Orbitron', sans-serif; font-size: 11px; font-weight: 700; text-align: left; cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: all 0.2s;">
                         <span>📜 AUDITABLE EXECUTION TELEMETRY TRACE (XAI AUDIT LOGS)</span>
@@ -943,7 +931,7 @@
     <!-- Leaflet JS Map Script -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-        /* Tab Switcher */
+        /* 🗂️ Command Center Tab Switcher Engine */
         function switchTab(tabId, btnEl) {
             playSciFiBeep(920, 'sine', 0.08);
             document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
@@ -958,7 +946,7 @@
             }
         }
 
-        /* Collapsible Trace Log Toggle */
+        /* 📜 Collapsible Trace Log Toggle */
         function toggleTraceLog() {
             var container = document.getElementById('traceLogContainer');
             var icon = document.getElementById('traceToggleIcon');
@@ -973,7 +961,7 @@
             }
         }
 
-        /* Tooltip Keywords */
+        /* 💡 Highlight Keywords with On-Hover Tooltips */
         var termDict = {
             "SAR": "Synthetic Aperture Radar: Radar imaging that pierces through clouds & darkness 24/7.",
             "LULC": "Land Use / Land Cover: Automatic classification into vegetation, urban, water, and soil.",
@@ -1006,7 +994,7 @@
             });
         }
 
-        /* Location Search */
+        /* 🌐 Global OpenStreetMap Nominatim Location Search Engine */
         function searchLocation() {
             var searchInput = document.getElementById('location_search');
             if (!searchInput) return;
@@ -1029,7 +1017,7 @@
                         document.getElementById('user_question').value = "Analyze satellite imagery and land cover of " + locationName;
                         playSciFiBeep(1200, 'sine', 0.15);
                     } else {
-                        alert("Location not found.");
+                        alert("Location not found. Try entering a different city, landmark, or address.");
                     }
                 })
                 .catch(function() {
@@ -1038,7 +1026,7 @@
                 });
         }
 
-        /* Target Matrix Interaction */
+        /* 🎯 Target Matrix Chip Selection Interaction */
         function highlightTargetChip(chipEl, targetName) {
             playSciFiBeep(1300, 'sine', 0.08);
             document.querySelectorAll('.target-chip').forEach(function(c) { c.classList.remove('locked'); });
@@ -1053,7 +1041,7 @@
             }
         }
 
-        /* Audio Waveform Equalizer */
+        /* 🎙️ Equalizer Waveform Simulator */
         var waveInterval = null;
         function startWaveformAnimation() {
             var bars = [document.getElementById('wb1'), document.getElementById('wb2'), document.getElementById('wb3'), document.getElementById('wb4'), document.getElementById('wb5')];
@@ -1079,7 +1067,7 @@
             bars.forEach(function(b) { if (b) b.style.height = "4px"; });
         }
 
-        /* Multispectral Map Layer Switcher */
+        /* 🗺️ Map Layers & Filter Switcher */
         var mapElement = document.getElementById('map');
         var osmLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 });
         var satelliteLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { maxZoom: 19 });
@@ -1125,6 +1113,7 @@
             if (marker) { marker.setLatLng([lat, lng]); } else { marker = L.marker([lat, lng]).addTo(map); }
         }
 
+        /* 🧭 Dynamic Bearing on Panning */
         map.on('move', function() {
             var center = map.getCenter();
             var az = Math.floor((center.lng * 3.4 + center.lat * 1.8 + 360) % 360);
@@ -1157,7 +1146,7 @@
             targets.forEach(function(img) { img.className = 'shader-target ' + (shaderName !== 'normal' ? shaderName : ''); });
         }
 
-        /* Bi-Temporal Split Slider Engine */
+        /* 🎚️ Bi-Temporal Swipe Slider Drag Engine */
         document.addEventListener('DOMContentLoaded', function () {
             var sliderContainer = document.getElementById('splitSlider');
             var beforeWrapper = document.getElementById('splitBeforeWrapper');
@@ -1190,7 +1179,7 @@
             if (rawText && analysisBox) {
                 var parsedHTML = (typeof marked !== 'undefined') ? marked.parse(rawText) : rawText;
 
-                // Clean LaTeX syntax (e.g. $120\text{--}160$ -> 120 - 160)
+                // Clean LaTeX syntax (e.g., $120\text{--}160$ -> 120 - 160)
                 parsedHTML = parsedHTML.replace(/\$\s*(\d+)\s*\\text\{--\}\s*(\d+)\s*\$/g, '$1 - $2')
                                        .replace(/\$\s*([><=]?\s*\d+%?)\s*\$/g, '$1')
                                        .replace(/\$/g, '');
@@ -1238,7 +1227,7 @@
             {% endif %}
         });
 
-        /* Voice STT & Reactive Visualizer */
+        /* 🎤 Real Browser Speech Recognition (STT) */
         var recognition = null;
         var isListening = false;
         if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
@@ -1278,6 +1267,7 @@
             stopWaveformAnimation();
         }
 
+        /* 🔊 Speech Synthesis (TTS) */
         function playAudioReport() {
             var text = document.getElementById('analysisBox').innerText;
             if (!text || text.indexOf("Upload satellite image") !== -1) { alert("No telemetry data decoded yet."); return; }
@@ -1292,7 +1282,7 @@
             window.speechSynthesis.speak(utterance);
         }
 
-        /* PDF & JSON Exporters */
+        /* 📄 Client-Side PDF Dossier Generator */
         function downloadPDFReport() {
             playSciFiBeep(1100, 'sine', 0.12);
             var rawText = document.getElementById('rawAnalysisData') ? document.getElementById('rawAnalysisData').innerText.trim() : "";
@@ -1338,6 +1328,7 @@
             html2pdf().set({ margin: 10, filename: 'SatQuery_Tactical_Dossier_' + Date.now() + '.pdf', image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2, backgroundColor: '#020617' }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } }).from(pdfContainer).save();
         }
 
+        /* 📥 Client-Side Direct JSON Downloader */
         function downloadReportDirect() {
             playSciFiBeep(1100, 'sine', 0.1);
             var rawText = document.getElementById('rawAnalysisData') ? document.getElementById('rawAnalysisData').innerText.trim() : "";
@@ -1362,7 +1353,7 @@
             window.location.href = "/download-geojson";
         }
 
-        /* Space Header Canvas */
+        /* 🌌 Header Canvas (Constellation lines & shooting stars) */
         document.addEventListener('DOMContentLoaded', function () {
             var headerCanvas = document.getElementById('spaceCanvas');
             if (!headerCanvas) return;
@@ -1426,7 +1417,7 @@
             drawHeaderSpace();
         });
 
-        /* Global Space Canvas */
+        /* 🌌 Full-Screen Deep Space Wallpaper Engine (Astronauts & Shuttle) */
         document.addEventListener('DOMContentLoaded', function () {
             var canvas = document.getElementById('globalSpaceCanvas');
             if (!canvas) return;
@@ -1525,7 +1516,7 @@
             renderLiveSpace();
         });
 
-        /* Launch Sequence Loop */
+        /* 🚀 7-Second Hyperspace Warp Launch Sequence */
         var warpCanvas = document.getElementById('warpCanvas');
         var warpCtx = warpCanvas.getContext('2d'); var warpStars = []; var warpRunning = true; var introTimers = [];
         function initWarpStars() {
@@ -1584,7 +1575,7 @@
 
         startLaunchSequence();
 
-        /* Clocks */
+        /* ⏱️ UTC & IST Clocks */
         setInterval(function() {
             var now = new Date();
             var uHours = String(now.getUTCHours()).padStart(2, '0');
@@ -1598,7 +1589,7 @@
             if (clockISTEl) clockISTEl.innerText = istString + " IST";
         }, 1000);
 
-        /* Synthetic Sound Generator */
+        /* 🔊 Web Audio API Procedural Beep Generator */
         var audioCtx = null;
         function playSciFiBeep(freq, type, duration) {
             try {
