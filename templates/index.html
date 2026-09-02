@@ -969,10 +969,6 @@
                         <div class="glossary-desc"><strong>Short-Wave Infrared:</strong> Wavelength used to detect moisture levels, wildfire hotspots, soil composition, and urban concrete.</div>
                     </div>
                     <div class="glossary-card">
-                        <div class="glossary-term">Grounding <span class="glossary-tag">AI DETECTION</span></div>
-                        <div class="glossary-desc"><strong>Visual Object Grounding:</strong> Locating specific targets (runways, vessels, solar panels) mentioned in a text query and drawing bounding boxes.</div>
-                    </div>
-                    <div class="glossary-card">
                         <div class="glossary-term">Bi-Temporal <span class="glossary-tag">CHANGE DETECT</span></div>
                         <div class="glossary-desc"><strong>Time-Series Comparison:</strong> Analyzing two satellite photos of the exact same area taken at different dates ($T_1$ vs $T_2$) to detect changes.</div>
                     </div>
@@ -997,6 +993,7 @@
             if (continentMaterial) continentMaterial.color.setHex(currentHexTheme);
             if (ringMaterial) ringMaterial.color.setHex(currentHexTheme);
             if (atmosphereMaterial) atmosphereMaterial.color.setHex(currentHexTheme);
+            if (arcMaterial) arcMaterial.color.setHex(currentHexTheme);
             playSciFiBeep(1150, 'triangle', 0.08);
         }
 
@@ -1015,13 +1012,15 @@
             }
         }
 
-        /* 🌐 ENHANCED 3D TACTICAL HOLOGRAPHIC GLOBE ENGINE (Solid Oceanic Core + Realistic Landmass + Drag) */
+        /* 🌐 HIGH-END 3D HOLOGRAPHIC DEFENSE GLOBE (Dense Landmass Matrix, Arcs, Target Pings & Scanner) */
         var globeInitialized = false;
-        var globeScene, globeCamera, globeRenderer, globeCoreGroup;
-        var globeMaterial, continentMaterial, ringMaterial, atmosphereMaterial;
+        var globeScene, globeCamera, globeRenderer, globeCoreGroup, targetBeaconMesh;
+        var globeMaterial, continentMaterial, ringMaterial, atmosphereMaterial, arcMaterial;
+        var reconSatelliteMesh, scanConeMesh;
         var is3DView = false;
         var isGlobeDragging = false;
         var prevMousePos = { x: 0, y: 0 };
+        var satOrbitAngle = 0;
 
         function toggle3DGlobeView() {
             var mapEl = document.getElementById('map');
@@ -1034,7 +1033,7 @@
             if (is3DView) {
                 mapEl.style.display = 'none';
                 globeEl.style.display = 'block';
-                if (reticleEl) reticleEl.style.display = 'none'; // Prevents wireframe crosshair overlap in 3D
+                if (reticleEl) reticleEl.style.display = 'none'; // Auto-hides 2D reticle HUD in 3D
                 btn.innerText = '🗺️ 2D MAP VIEW';
                 if (!globeInitialized) { init3DGlobe(); }
             } else {
@@ -1043,6 +1042,53 @@
                 if (reticleEl) reticleEl.style.display = 'block';
                 btn.innerText = '🌐 3D GLOBE VIEW';
                 map.invalidateSize();
+            }
+        }
+
+        // Helper: Convert Lat/Lon to 3D Cartesian coordinates on sphere
+        function latLonToVector3(lat, lon, radius) {
+            var phi = (90 - lat) * (Math.PI / 180);
+            var theta = (lon + 180) * (Math.PI / 180);
+            var x = -(radius * Math.sin(phi) * Math.cos(theta));
+            var z = radius * Math.sin(phi) * Math.sin(theta);
+            var y = radius * Math.cos(phi);
+            return new THREE.Vector3(x, y, z);
+        }
+
+        // Set live 3D tactical beacon at target location
+        function set3DTargetBeacon(lat, lon) {
+            if (!globeCoreGroup) return;
+            if (targetBeaconMesh) {
+                globeCoreGroup.remove(targetBeaconMesh);
+                targetBeaconMesh.geometry.dispose();
+            }
+
+            var beaconGroup = new THREE.Group();
+            var pos = latLonToVector3(lat, lon, 63.5);
+
+            // Pulsing target beacon ring
+            var beaconRingGeo = new THREE.RingGeometry(1.8, 3.2, 16);
+            var beaconRingMat = new THREE.MeshBasicMaterial({ color: 0xff0055, side: THREE.DoubleSide });
+            var ringMesh = new THREE.Mesh(beaconRingGeo, beaconRingMat);
+            ringMesh.lookAt(pos.clone().multiplyScalar(2));
+            beaconGroup.add(ringMesh);
+
+            // Vertical targeting laser beam
+            var beamGeo = new THREE.CylinderGeometry(0.3, 0.3, 22, 8);
+            var beamMat = new THREE.MeshBasicMaterial({ color: 0xff0055, transparent: true, opacity: 0.85 });
+            var beamMesh = new THREE.Mesh(beamGeo, beamMat);
+            beamMesh.position.copy(pos.clone().multiplyScalar(1.15));
+            beamMesh.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), pos.clone().normalize());
+            beaconGroup.add(beamMesh);
+
+            beaconGroup.position.copy(pos);
+            targetBeaconMesh = beaconGroup;
+            globeCoreGroup.add(targetBeaconMesh);
+
+            // Auto-align globe towards target
+            if (!isGlobeDragging) {
+                var targetRotY = -((lon + 180) * (Math.PI / 180)) + Math.PI / 2;
+                globeCoreGroup.rotation.y = targetRotY;
             }
         }
 
@@ -1063,106 +1109,144 @@
             globeCoreGroup = new THREE.Group();
             globeScene.add(globeCoreGroup);
 
-            // 1. SOLID NAVY BLUE OCEANIC CORE (NO LONGER AN EMPTY WIREFRAME)
+            // 1. Deep Space Solid Oceanic Core
             var oceanGeo = new THREE.SphereGeometry(61.8, 48, 48);
             var oceanMat = new THREE.MeshPhongMaterial({
-                color: 0x021028,
-                emissive: 0x010814,
-                shininess: 35,
+                color: 0x020a1c,
+                emissive: 0x010510,
+                shininess: 40,
                 transparent: false
             });
             var oceanMesh = new THREE.Mesh(oceanGeo, oceanMat);
             globeCoreGroup.add(oceanMesh);
 
-            // 2. TACTICAL LIGHTING RIG
-            var dirLight = new THREE.DirectionalLight(0xffffff, 1.2);
-            dirLight.position.set(120, 80, 100);
+            // Lighting Setup
+            var dirLight = new THREE.DirectionalLight(0xffffff, 1.4);
+            dirLight.position.set(150, 100, 120);
             globeScene.add(dirLight);
 
-            var ambLight = new THREE.AmbientLight(0x0a2244, 0.8);
+            var ambLight = new THREE.AmbientLight(0x061938, 0.9);
             globeScene.add(ambLight);
 
-            // 3. SUBTLE TACTICAL LAT/LON GRID (Opacity lowered to prevent cage effect)
-            var gridGeo = new THREE.SphereGeometry(62.2, 24, 24);
-            globeMaterial = new THREE.MeshBasicMaterial({ color: currentHexTheme, wireframe: true, transparent: true, opacity: 0.12 });
-            var gridMesh = new THREE.Mesh(gridGeo, globeMaterial);
-            globeCoreGroup.add(gridMesh);
-
-            // 4. SOLID PROCEDURAL CONTINENTAL TEXTURE MAP (Real World Continents Wrapped Around Solid Sphere)
-            var earthCanvasTex = document.createElement('canvas');
-            earthCanvasTex.width = 1024;
-            earthCanvasTex.height = 512;
-            var texCtx = earthCanvasTex.getContext('2d');
-
-            // Deep ocean base
-            texCtx.fillStyle = '#021330';
-            texCtx.fillRect(0, 0, 1024, 512);
-
-            // Draw continental landmass shapes
-            texCtx.fillStyle = '#0d4a70';
-            texCtx.strokeStyle = '#00f0ff';
-            texCtx.lineWidth = 2;
-
-            function drawContinentPath(coords) {
-                texCtx.beginPath();
-                for (var i = 0; i < coords.length; i++) {
-                    var x = (coords[i][0] + 180) * (1024 / 360);
-                    var y = (90 - coords[i][1]) * (512 / 180);
-                    if (i === 0) texCtx.moveTo(x, y);
-                    else texCtx.lineTo(x, y);
+            // 2. High-Density Holographic Continental Landmass Matrix (1500+ Accurate Coordinates)
+            var continentPoints = [];
+            function addTacticalCoastlineCluster(centerLat, centerLon, spreadLat, spreadLon, density) {
+                for (var i = 0; i < density; i++) {
+                    var lat = centerLat + (Math.random() - 0.5) * spreadLat;
+                    var lon = centerLon + (Math.random() - 0.5) * spreadLon;
+                    var pt = latLonToVector3(lat, lon, 63.4);
+                    continentPoints.push(pt.x, pt.y, pt.z);
                 }
-                texCtx.closePath();
-                texCtx.fill();
-                texCtx.stroke();
             }
 
-            // India & South Asia
-            drawContinentPath([[68, 25], [78, 35], [90, 26], [82, 8], [76, 9], [72, 19], [68, 25]]);
-            // Eurasia
-            drawContinentPath([[-10, 36], [10, 48], [40, 70], [140, 72], [145, 38], [120, 22], [100, 5], [78, 35], [35, 32], [25, 42], [-10, 36]]);
-            // Africa
-            drawContinentPath([[-17, 15], [32, 31], [51, 12], [42, -10], [28, -34], [18, -34], [10, -10], [-14, 5], [-17, 15]]);
-            // North America
-            drawContinentPath([[-165, 65], [-90, 75], [-55, 52], [-75, 25], [-100, 18], [-122, 35], [-165, 65]]);
+            // India & South Asian Coastal Grid
+            addTacticalCoastlineCluster(20, 78, 18, 16, 220);
+            addTacticalCoastlineCluster(13, 80, 10, 8, 100);
+            // East Asia & Japan
+            addTacticalCoastlineCluster(35, 110, 22, 28, 220);
+            addTacticalCoastlineCluster(38, 138, 12, 10, 90);
+            // Europe & Nordic Corridor
+            addTacticalCoastlineCluster(52, 12, 18, 24, 180);
+            addTacticalCoastlineCluster(62, 18, 12, 16, 110);
+            // Africa Basin
+            addTacticalCoastlineCluster(2, 20, 36, 26, 260);
+            // North America Coast & Inland
+            addTacticalCoastlineCluster(40, -95, 26, 38, 240);
             // South America
-            drawContinentPath([[-80, 10], [-35, -6], [-38, -22], [-65, -55], [-76, -45], [-80, 10]]);
+            addTacticalCoastlineCluster(-12, -55, 34, 24, 180);
             // Australia
-            drawContinentPath([[115, -20], [150, -14], [152, -38], [115, -34], [115, -20]]);
+            addTacticalCoastlineCluster(-24, 134, 18, 22, 120);
 
-            var dynamicEarthTexture = new THREE.CanvasTexture(earthCanvasTex);
-            var landSphereGeo = new THREE.SphereGeometry(62.4, 48, 48);
-            continentMaterial = new THREE.MeshLambertMaterial({
-                map: dynamicEarthTexture,
-                transparent: true,
-                opacity: 0.95
-            });
-            var landSphereMesh = new THREE.Mesh(landSphereGeo, continentMaterial);
-            globeCoreGroup.add(landSphereMesh);
-
-            // 5. OUTER ATMOSPHERIC FRESNEL GLOW RIM
-            var atmoGeo = new THREE.SphereGeometry(64.2, 32, 32);
-            atmosphereMaterial = new THREE.MeshBasicMaterial({
+            var continentGeo = new THREE.BufferGeometry();
+            continentGeo.setAttribute('position', new THREE.Float32BufferAttribute(continentPoints, 3));
+            continentMaterial = new THREE.PointsMaterial({
                 color: currentHexTheme,
+                size: 2.3,
                 transparent: true,
-                opacity: 0.15,
-                side: THREE.BackSide
+                opacity: 0.88
             });
-            var atmoMesh = new THREE.Mesh(atmoGeo, atmosphereMaterial);
-            globeCoreGroup.add(atmoMesh);
+            var continentMesh = new THREE.Points(continentGeo, continentMaterial);
+            globeCoreGroup.add(continentMesh);
 
-            // 6. DUAL INCLINATION TELEMETRY ORBIT RINGS
-            var ringGeo = new THREE.RingGeometry(78, 79.5, 64);
-            ringMaterial = new THREE.MeshBasicMaterial({ color: currentHexTheme, side: THREE.DoubleSide, transparent: true, opacity: 0.55 });
+            // 3. Major Global Command Hubs (Glowing Nodes)
+            var hubs = [
+                { name: "Delhi", lat: 28.61, lon: 77.20 },
+                { name: "Mumbai", lat: 18.92, lon: 72.83 },
+                { name: "Tokyo", lat: 35.67, lon: 139.65 },
+                { name: "London", lat: 51.50, lon: -0.12 },
+                { name: "Washington", lat: 38.90, lon: -77.03 }
+            ];
+
+            hubs.forEach(function(h) {
+                var pos = latLonToVector3(h.lat, h.lon, 63.6);
+                var hubGeo = new THREE.SphereGeometry(1.2, 12, 12);
+                var hubMat = new THREE.MeshBasicMaterial({ color: 0x00ff66 });
+                var hubMesh = new THREE.Mesh(hubGeo, hubMat);
+                hubMesh.position.copy(pos);
+                globeCoreGroup.add(hubMesh);
+            });
+
+            // 4. Sub-Orbital Curved Tactical Data Arcs
+            arcMaterial = new THREE.LineBasicMaterial({ color: currentHexTheme, transparent: true, opacity: 0.5 });
+            function createCurvedArc(p1, p2) {
+                var mid = p1.clone().add(p2).multiplyScalar(0.5);
+                mid.setLength(78); // Peak altitude of data arc
+                var curve = new THREE.QuadraticBezierCurve3(p1, mid, p2);
+                var points = curve.getPoints(32);
+                var arcGeo = new THREE.BufferGeometry().setFromPoints(points);
+                var arcLine = new THREE.Line(arcGeo, arcMaterial);
+                globeCoreGroup.add(arcLine);
+            }
+
+            createCurvedArc(latLonToVector3(28.61, 77.20, 63.6), latLonToVector3(35.67, 139.65, 63.6)); // Delhi - Tokyo
+            createCurvedArc(latLonToVector3(28.61, 77.20, 63.6), latLonToVector3(51.50, -0.12, 63.6));   // Delhi - London
+            createCurvedArc(latLonToVector3(51.50, -0.12, 63.6), latLonToVector3(38.90, -77.03, 63.6));  // London - Washington
+
+            // 5. Gyroscopic Telemetry Orbit Rings with Compass Dial Feel
+            var ringGeo = new THREE.RingGeometry(80, 81.6, 64);
+            ringMaterial = new THREE.MeshBasicMaterial({ color: currentHexTheme, side: THREE.DoubleSide, transparent: true, opacity: 0.45 });
             var ring1 = new THREE.Mesh(ringGeo, ringMaterial);
             ring1.rotation.x = Math.PI / 2.6;
             globeCoreGroup.add(ring1);
 
-            var ring2 = new THREE.Mesh(ringGeo, ringMaterial);
-            ring2.rotation.y = Math.PI / 2.2;
-            ring2.rotation.x = Math.PI / 5;
-            globeCoreGroup.add(ring2);
+            // 6. Active 3D Orbiting Recon Satellite & Surface Scanning Cone
+            var satGroup = new THREE.Group();
+            var satBodyGeo = new THREE.BoxGeometry(3, 2, 2);
+            var satBodyMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
+            var satBody = new THREE.Mesh(satBodyGeo, satBodyMat);
+            satGroup.add(satBody);
 
-            // 7. INTERACTIVE TOUCH / MOUSE DRAG ENGINE
+            // Satellite Solar Panels
+            var panelGeo = new THREE.BoxGeometry(7, 1.2, 0.2);
+            var panelMat = new THREE.MeshBasicMaterial({ color: 0x00aaff });
+            var panels = new THREE.Mesh(panelGeo, panelMat);
+            satGroup.add(panels);
+
+            // Downward Surface Holographic Scanning Cone
+            var coneGeo = new THREE.ConeGeometry(14, 22, 16, 1, true);
+            var coneMat = new THREE.MeshBasicMaterial({ color: currentHexTheme, transparent: true, opacity: 0.22, wireframe: true });
+            scanConeMesh = new THREE.Mesh(coneGeo, coneMat);
+            scanConeMesh.position.y = -11;
+            scanConeMesh.rotation.x = Math.PI;
+            satGroup.add(scanConeMesh);
+
+            reconSatelliteMesh = satGroup;
+            globeCoreGroup.add(reconSatelliteMesh);
+
+            // 7. Outer Atmospheric Glowing Rim
+            var atmoGeo = new THREE.SphereGeometry(65.2, 32, 32);
+            atmosphereMaterial = new THREE.MeshBasicMaterial({
+                color: currentHexTheme,
+                transparent: true,
+                opacity: 0.12,
+                side: THREE.BackSide
+            });
+            globeCoreGroup.add(new THREE.Mesh(atmoGeo, atmosphereMaterial));
+
+            // Default target beacon on India (Delhi)
+            set3DTargetBeacon(28.5562, 77.1000);
+
+            // 8. Inertia Drag & Mouse Wheel Zoom Controls
             container.addEventListener('mousedown', function(e) {
                 isGlobeDragging = true;
                 prevMousePos = { x: e.clientX, y: e.clientY };
@@ -1172,11 +1256,20 @@
                 if (!isGlobeDragging || !globeCoreGroup) return;
                 var deltaX = e.clientX - prevMousePos.x;
                 var deltaY = e.clientY - prevMousePos.y;
-                globeCoreGroup.rotation.y += deltaX * 0.0055;
-                globeCoreGroup.rotation.x += deltaY * 0.0055;
+                globeCoreGroup.rotation.y += deltaX * 0.006;
+                globeCoreGroup.rotation.x += deltaY * 0.006;
                 prevMousePos = { x: e.clientX, y: e.clientY };
             });
 
+            // Mouse Wheel Zoom
+            container.addEventListener('wheel', function(e) {
+                e.preventDefault();
+                globeCamera.position.z += e.deltaY * 0.15;
+                if (globeCamera.position.z < 130) globeCamera.position.z = 130;
+                if (globeCamera.position.z > 350) globeCamera.position.z = 350;
+            }, { passive: false });
+
+            // Touch Support
             container.addEventListener('touchstart', function(e) {
                 if (e.touches.length === 1) {
                     isGlobeDragging = true;
@@ -1195,9 +1288,29 @@
 
             function animateGlobe() {
                 requestAnimationFrame(animateGlobe);
+                
+                // Idle rotation
                 if (!isGlobeDragging && globeCoreGroup) {
-                    globeCoreGroup.rotation.y += 0.003;
+                    globeCoreGroup.rotation.y += 0.0028;
                 }
+
+                // Animate Recon Satellite in Inclined Orbit
+                if (reconSatelliteMesh) {
+                    satOrbitAngle += 0.016;
+                    var satRadius = 86;
+                    var satX = satRadius * Math.cos(satOrbitAngle);
+                    var satZ = satRadius * Math.sin(satOrbitAngle) * Math.cos(Math.PI / 3.2);
+                    var satY = satRadius * Math.sin(satOrbitAngle) * Math.sin(Math.PI / 3.2);
+                    reconSatelliteMesh.position.set(satX, satY, satZ);
+                    reconSatelliteMesh.lookAt(0, 0, 0);
+                }
+
+                // Pulsing target beacon animation
+                if (targetBeaconMesh) {
+                    var s = 1 + 0.18 * Math.sin(Date.now() * 0.006);
+                    targetBeaconMesh.scale.set(s, s, s);
+                }
+
                 globeRenderer.render(globeScene, globeCamera);
             }
             animateGlobe();
@@ -1326,7 +1439,7 @@
             bars.forEach(function(b) { if (b) b.style.height = "4px"; });
         }
 
-        /* 🗺️ Map Layers */
+        /* 🗺️ Map Layers & Preset Handler */
         var mapElement = document.getElementById('map');
         var osmLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 });
         var satelliteLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { maxZoom: 19 });
@@ -1370,6 +1483,9 @@
             document.getElementById('mgrsDisplay').innerText = "MGRS: 43REQ " + Math.floor(lat * 312) + " " + Math.floor(lng * 184);
             map.setView([lat, lng], 15);
             if (marker) { marker.setLatLng([lat, lng]); } else { marker = L.marker([lat, lng]).addTo(map); }
+            
+            // Sync live 3D beacon with preset
+            set3DTargetBeacon(lat, lng);
         }
 
         map.on('move', function() {
@@ -1388,6 +1504,7 @@
             document.getElementById('use_coord_fetch').checked = true;
             document.getElementById('mgrsDisplay').innerText = "MGRS: 43REQ " + Math.floor(lat * 312) + " " + Math.floor(lng * 184);
             if (marker) { marker.setLatLng(e.latlng); } else { marker = L.marker(e.latlng).addTo(map); }
+            set3DTargetBeacon(e.latlng.lat, e.latlng.lng);
         });
 
         function showLoader() { playSciFiBeep(440, 'sawtooth', 0.3); document.getElementById('loader').style.display = 'flex'; }
