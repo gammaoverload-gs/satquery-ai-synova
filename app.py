@@ -7,8 +7,11 @@ import datetime
 import webbrowser
 from threading import Timer
 from flask import Flask, render_template, request, Response
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 from dotenv import load_dotenv
 from google import genai
+from google.genai.errors import APIError
 from preprocessor import (
     load_satellite_image,
     draw_bounding_boxes,
@@ -21,8 +24,22 @@ load_dotenv()
 
 app = Flask(__name__)
 
-# Active official Gemini Vision model endpoint for new AI Studio projects
-ACTIVE_VISION_MODEL = "gemini-3.6-flash"
+# 🛡️ IP-BASED RATE LIMITER: Prevents quota drain from rapid sequential requests
+limiter = Limiter(
+    get_remote_address,
+    app=app,
+    default_limits=["60 per hour"],
+    storage_uri="memory://"
+)
+
+# 🛰️ MULTI-TIER RESILIENT MODEL FALLBACK CHAIN
+# If primary hits 429 quota limits, the system auto-migrates through fallback options
+MODEL_HIERARCHY = [
+    "gemini-3.6-flash",
+    "gemini-2.5-flash",
+    "gemini-2.0-flash",
+    "gemini-1.5-flash"
+]
 
 BEN_METADATA = {
     "s1_name": "Sentinel-1A_IW_GRDH_1SDV",
@@ -38,6 +55,43 @@ def get_genai_client():
     if not api_key:
         raise ValueError("GEMINI_API_KEY not configured. Set it in your .env or Render Environment Variables.")
     return genai.Client(api_key=api_key)
+
+def execute_multimodal_inference_with_fallback(client, contents):
+    """
+    Executes multimodal inference across the model hierarchy.
+    If 429 Resource Exhausted occurs, steps down to the next model in the chain.
+    """
+    last_error = None
+    for model_name in MODEL_HIERARCHY:
+        try:
+            print(f"[SatLink Core] Engaging telemetry uplink via {model_name}...")
+            response = client.models.generate_content(
+                model=model_name,
+                contents=contents
+            )
+            print(f"[SatLink Core] Uplink nominal. Telemetry acquired via {model_name}.")
+            return response, model_name
+        except APIError as e:
+            # Catch 429 RESOURCE_EXHAUSTED or rate quota limit triggers
+            if e.code == 429 or "RESOURCE_EXHAUSTED" in str(e):
+                print(f"[SatLink Quota Warning] Model {model_name} exhausted quota (429). Shifting to fallback orbital bus...")
+                last_error = e
+                continue
+            print(f"[SatLink Error] Non-quota API error on {model_name}: {str(e)}")
+            last_error = e
+            continue
+        except Exception as e:
+            if "429" in str(e) or "RESOURCE_EXHAUSTED" in str(e):
+                print(f"[SatLink Quota Warning] Model {model_name} exhausted quota. Shifting to fallback...")
+                last_error = e
+                continue
+            print(f"[SatLink Error] Unexpected error on {model_name}: {str(e)}")
+            last_error = e
+            continue
+
+    if last_error:
+        raise last_error
+    raise RuntimeError("All satellite AI telemetry models failed to generate content.")
 
 def route_task(query: str, num_images: int) -> str:
     """Routes the query to specialized remote-sensing VLM pipelines."""
@@ -101,13 +155,13 @@ def estimate_lulc_distribution(analysis_text: str) -> dict:
         "Bare Soil / Open Ground": round((soil_score / total) * 100, 1)
     }
 
-def construct_agentic_prompt(task: str, query: str, num_images: int, composite_mode: str, coordinates: str, metadata_list: list) -> str:
+def construct_agentic_prompt(task: str, query: str, num_images: int, composite_mode: str, coordinates: str, metadata_list: list, active_model_label: str) -> str:
     """Builds the remote-sensing system prompt."""
     coord_info = f"\n- Ground Target Coordinates: {coordinates}" if coordinates else ""
     meta_info = f"\n- Channel Metadata: {metadata_list}" if metadata_list else ""
     
     return (
-        f"You are SatQuery AI, an expert agentic remote-sensing geospatial intelligence system powered by {ACTIVE_VISION_MODEL}.\n"
+        f"You are SatQuery AI, an expert agentic remote-sensing geospatial intelligence system powered by {active_model_label}.\n"
         f"You are conducting precision multimodal analysis on {num_images} multi-spectral/radar satellite observation(s).\n\n"
         f"MISSION CONTEXT & SENSOR RIG:\n"
         f"- Target Pipeline Execution: {task}\n"
@@ -135,6 +189,7 @@ def construct_agentic_prompt(task: str, query: str, num_images: int, composite_m
     )
 
 @app.route("/", methods=["GET", "POST"])
+@limiter.limit("5 per minute", error_message="Tactical flood detected. Terminal limit: 5 inferences per minute.")
 def home():
     global LAST_REPORT, LAST_GEOJSON
     analysis_text = "Upload satellite image(s) or select a coordinate preset to begin analysis."
@@ -146,6 +201,7 @@ def home():
     
     s1_name = BEN_METADATA["s1_name"]
     patch_id = BEN_METADATA["patch_id"]
+    active_model_resolved = MODEL_HIERARCHY[0]
 
     if request.method == "POST":
         try:
@@ -197,18 +253,19 @@ def home():
                     num_images=num_images,
                     composite_mode=composite_mode,
                     coordinates=coordinates,
-                    metadata_list=metadata_list
+                    metadata_list=metadata_list,
+                    active_model_label="Gemini Multi-Tier VLM Bus"
                 )
 
                 genai_client = get_genai_client()
                 
-                # Official gemini-3.6-flash multimodal inference
-                response = genai_client.models.generate_content(
-                    model=ACTIVE_VISION_MODEL,
+                # Resilient Multi-Tier Model Handover Execution
+                response, active_model_resolved = execute_multimodal_inference_with_fallback(
+                    client=genai_client,
                     contents=[*loaded_pil_images, system_prompt]
                 )
 
-                raw_text = response.text if response else "No response generated by model."
+                raw_text = response.text if response else "No response generated by satellite core."
                 clean_text, detected_boxes = extract_boxes_from_response(raw_text)
                 analysis_text = clean_text
 
@@ -236,12 +293,13 @@ def home():
                     "Inferred Confidence": "96.4%",
                     "BLEU-4 Grounding Score": "0.841",
                     "ROUGE-L Score": "0.902",
+                    "Active Uplink Bus": active_model_resolved,
                     "Status": "Validated"
                 }
 
                 execution_trace = {
                     "timestamp": datetime.datetime.utcnow().isoformat() + "Z",
-                    "model": ACTIVE_VISION_MODEL,
+                    "model": active_model_resolved,
                     "task": task,
                     "num_inputs": num_images,
                     "composite_mode": composite_mode,
@@ -264,8 +322,17 @@ def home():
             else:
                 analysis_text = "Please upload an image or select a coordinate preset to fetch live imagery."
         except Exception as e:
-            analysis_text = f"Processing Error: {str(e)}"
-            execution_trace = {"status": "FAILED", "error": str(e)}
+            err_msg = str(e)
+            if "429" in err_msg or "RESOURCE_EXHAUSTED" in err_msg:
+                analysis_text = (
+                    "### ⚠️ TACTICAL SATLINK QUOTA LIMIT (429 RESOURCE_EXHAUSTED)\n"
+                    "- **Status:** All fallback satellite models reached their free-tier request quota limit.\n"
+                    "- **Resolution:** The daily quota resets automatically at 00:00 Pacific Time (~12:30 PM IST).\n"
+                    "- **Mitigation:** Deploy an alternative Gemini API Key in your deployment settings to bypass immediately."
+                )
+            else:
+                analysis_text = f"Processing Error: {err_msg}"
+            execution_trace = {"status": "FAILED", "error": err_msg}
 
     return render_template(
         "index.html",
@@ -273,7 +340,7 @@ def home():
         uploaded_images=image_uris,
         evidence_image=evidence_uri,
         trace=execution_trace,
-        s1_name=s1_name,
+        s1_name=active_model_resolved,
         patch_id=patch_id,
         benchmark=benchmark_metrics,
         lulc=lulc_data,
