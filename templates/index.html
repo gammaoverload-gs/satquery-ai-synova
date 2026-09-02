@@ -19,7 +19,7 @@
     <style>
         :root {
             --bg-base: #01040a;
-            --bg-card: rgba(6, 12, 26, 0.85);
+            --bg-card: rgba(6, 12, 26, 0.88);
             --border-color: rgba(56, 189, 248, 0.25);
             --border-glow: rgba(0, 240, 255, 0.6);
             --accent-cyan: #00f0ff;
@@ -47,45 +47,32 @@
         /* ================== 🌌 FULL-SCREEN LIVING COSMIC BACKDROP ================== */
         #globalSpaceCanvas {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
             pointer-events: none;
-            z-index: 0;
-            opacity: 0.95;
+            z-index: 0; opacity: 0.95;
         }
 
         /* ☀️ Grand Luminous Solar Core & Cosmic Aura */
         .cosmic-sun-wrapper {
             position: fixed;
-            top: 50%;
-            left: 50%;
+            top: 50%; left: 50%;
             transform: translate(-50%, -50%);
-            width: 1100px;
-            height: 1100px;
+            width: 1100px; height: 1100px;
             pointer-events: none;
             z-index: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            display: flex; align-items: center; justify-content: center;
         }
 
         .sun-outer-aura {
-            position: absolute;
-            width: 850px;
-            height: 850px;
-            border-radius: 50%;
+            position: absolute; width: 850px; height: 850px; border-radius: 50%;
             background: radial-gradient(circle, rgba(251, 146, 60, 0.22) 0%, rgba(234, 88, 12, 0.12) 40%, rgba(249, 115, 22, 0.05) 65%, transparent 80%);
             filter: blur(35px);
             animation: auraBreathing 8s ease-in-out infinite alternate;
         }
 
         .sun-rays {
-            position: absolute;
-            width: 950px;
-            height: 950px;
-            border-radius: 50%;
+            position: absolute; width: 950px; height: 950px; border-radius: 50%;
             background: conic-gradient(from 0deg, 
                 transparent 0deg, 
                 rgba(255, 215, 0, 0.16) 20deg, 
@@ -101,10 +88,7 @@
         }
 
         .sun-corona {
-            position: absolute;
-            width: 280px;
-            height: 280px;
-            border-radius: 50%;
+            position: absolute; width: 280px; height: 280px; border-radius: 50%;
             background: radial-gradient(circle, #ffffff 0%, #fffbeb 20%, #fef08a 40%, #f59e0b 65%, #ea580c 85%, transparent 100%);
             box-shadow: 
                 0 0 70px #ffffff,
@@ -114,192 +98,53 @@
             animation: sunPulse 5s ease-in-out infinite alternate;
         }
 
-        @keyframes sunPulse {
-            0% { transform: scale(0.96); opacity: 0.85; filter: brightness(1); }
-            100% { transform: scale(1.08); opacity: 1; filter: brightness(1.25); }
-        }
-
-        @keyframes auraBreathing {
-            0% { transform: scale(0.92); opacity: 0.6; }
-            100% { transform: scale(1.15); opacity: 0.95; }
-        }
-
-        @keyframes rotateSunRays {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
+        @keyframes sunPulse { 0% { transform: scale(0.96); opacity: 0.85; filter: brightness(1); } 100% { transform: scale(1.08); opacity: 1; filter: brightness(1.25); } }
+        @keyframes auraBreathing { 0% { transform: scale(0.92); opacity: 0.6; } 100% { transform: scale(1.15); opacity: 0.95; } }
+        @keyframes rotateSunRays { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
         .ambient-nebula {
-            position: fixed;
-            top: -20%;
-            left: -20%;
-            width: 140vw;
-            height: 140vh;
-            background: 
-                radial-gradient(circle at 18% 28%, rgba(0, 240, 255, 0.07) 0%, transparent 45%),
-                radial-gradient(circle at 82% 72%, rgba(176, 38, 255, 0.065) 0%, transparent 50%),
-                radial-gradient(circle at 50% 50%, rgba(249, 115, 22, 0.06) 0%, transparent 60%);
-            pointer-events: none;
-            z-index: 2;
+            position: fixed; top: -20%; left: -20%; width: 140vw; height: 140vh;
+            background: radial-gradient(circle at 18% 28%, rgba(0, 240, 255, 0.07) 0%, transparent 45%), radial-gradient(circle at 82% 72%, rgba(176, 38, 255, 0.065) 0%, transparent 50%), radial-gradient(circle at 50% 50%, rgba(249, 115, 22, 0.06) 0%, transparent 60%);
+            pointer-events: none; z-index: 2;
             animation: nebulaDrift 30s ease-in-out infinite alternate;
         }
 
         .ambient-grid-overlay {
-            position: fixed;
-            top: 0; left: 0; width: 100vw; height: 100vh;
-            background-image: 
-                linear-gradient(rgba(0, 240, 255, 0.018) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0, 240, 255, 0.018) 1px, transparent 1px);
-            background-size: 60px 60px;
-            pointer-events: none;
-            z-index: 3;
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background-image: linear-gradient(rgba(0, 240, 255, 0.018) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 240, 255, 0.018) 1px, transparent 1px);
+            background-size: 60px 60px; pointer-events: none; z-index: 3;
         }
 
-        @keyframes nebulaDrift {
-            0% { transform: scale(1) translate(0, 0); }
-            50% { transform: scale(1.08) translate(-25px, 20px); }
-            100% { transform: scale(1.02) translate(20px, -15px); }
-        }
+        @keyframes nebulaDrift { 0% { transform: scale(1) translate(0, 0); } 50% { transform: scale(1.08) translate(-25px, 20px); } 100% { transform: scale(1.02) translate(20px, -15px); } }
 
         /* ================== 🎬 7-SECOND LAUNCH INTRO OVERLAY ================== */
         #launchSequenceOverlay {
-            position: fixed;
-            top: 0; left: 0; width: 100vw; height: 100vh;
-            background: #01040a;
-            z-index: 9999999;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            transition: opacity 1s cubic-bezier(0.85, 0, 0.15, 1), transform 1s ease;
-            overflow: hidden;
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: #01040a; z-index: 9999999;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            transition: opacity 1s cubic-bezier(0.85, 0, 0.15, 1), transform 1s ease; overflow: hidden;
         }
-        #launchSequenceOverlay.fade-out {
-            opacity: 0 !important;
-            transform: scale(1.2) !important;
-            pointer-events: none !important;
-        }
+        #launchSequenceOverlay.fade-out { opacity: 0 !important; transform: scale(1.2) !important; pointer-events: none !important; }
 
-        #warpCanvas {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 1;
-        }
+        #warpCanvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
+        .cinematic-hud { position: relative; z-index: 10; display: flex; flex-direction: column; align-items: center; gap: 24px; text-align: center; }
+        .spacecraft-box { position: relative; width: 170px; height: 170px; display: flex; align-items: center; justify-content: center; }
+        .rocket-icon { font-size: 70px; filter: drop-shadow(0 0 35px var(--accent-cyan)); animation: rocketThrust 0.1s infinite alternate, ascendFlight 6.2s cubic-bezier(0.4, 0, 0.2, 1) forwards; display: inline-block; }
+        .lens-portal { position: absolute; width: 10px; height: 10px; border-radius: 50%; border: 2px solid var(--accent-cyan); opacity: 0; animation: portalZoom 1.8s 5.0s cubic-bezier(0.8, 0, 0.2, 1) forwards; }
 
-        .cinematic-hud {
-            position: relative;
-            z-index: 10;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 24px;
-            text-align: center;
-        }
+        @keyframes rocketThrust { from { transform: translateY(0px) rotate(-45deg); } to { transform: translateY(-4px) rotate(-45deg); } }
+        @keyframes ascendFlight { 0% { transform: scale(0.6) translateY(150px) rotate(-45deg); opacity: 0; } 15% { transform: scale(0.9) translateY(40px) rotate(-45deg); opacity: 1; } 45% { transform: scale(1.2) translateY(-10px) rotate(-45deg); } 70% { transform: scale(1.6) translateY(-40px) rotate(-45deg); opacity: 1; } 100% { transform: scale(5.5) translateY(-320px) rotate(-45deg); opacity: 0; } }
+        @keyframes portalZoom { 0% { width: 10px; height: 10px; opacity: 1; border-width: 2px; } 50% { box-shadow: 0 0 80px var(--accent-cyan); } 100% { width: 3200px; height: 3200px; opacity: 1; border-width: 50px; background: rgba(0, 240, 255, 0.25); } }
 
-        .spacecraft-box {
-            position: relative;
-            width: 170px; height: 170px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+        .launch-terminal-text { font-family: 'Orbitron', sans-serif; font-size: 20px; font-weight: 800; letter-spacing: 3px; color: var(--accent-cyan); text-shadow: 0 0 20px var(--accent-cyan); min-height: 32px; }
+        .launch-subtext { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #94a3b8; letter-spacing: 1.5px; }
 
-        .rocket-icon {
-            font-size: 70px;
-            filter: drop-shadow(0 0 35px var(--accent-cyan));
-            animation: rocketThrust 0.1s infinite alternate, ascendFlight 6.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-            display: inline-block;
-        }
+        .progress-bar-container { width: 340px; height: 5px; background: rgba(56, 189, 248, 0.2); border-radius: 4px; overflow: hidden; margin-top: 6px; }
+        .progress-bar-fill { width: 0%; height: 100%; background: linear-gradient(90deg, #0055ff, var(--accent-cyan), #00ff66); box-shadow: 0 0 14px var(--accent-cyan); animation: fillProgress 6.8s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+        @keyframes fillProgress { 0% { width: 0%; } 20% { width: 25%; } 50% { width: 55%; } 75% { width: 80%; } 100% { width: 100%; } }
 
-        .lens-portal {
-            position: absolute;
-            width: 10px; height: 10px;
-            border-radius: 50%;
-            border: 2px solid var(--accent-cyan);
-            opacity: 0;
-            animation: portalZoom 1.8s 5.0s cubic-bezier(0.8, 0, 0.2, 1) forwards;
-        }
-
-        @keyframes rocketThrust {
-            from { transform: translateY(0px) rotate(-45deg); }
-            to { transform: translateY(-4px) rotate(-45deg); }
-        }
-
-        @keyframes ascendFlight {
-            0% { transform: scale(0.6) translateY(150px) rotate(-45deg); opacity: 0; }
-            15% { transform: scale(0.9) translateY(40px) rotate(-45deg); opacity: 1; }
-            45% { transform: scale(1.2) translateY(-10px) rotate(-45deg); }
-            70% { transform: scale(1.6) translateY(-40px) rotate(-45deg); opacity: 1; }
-            100% { transform: scale(5.5) translateY(-320px) rotate(-45deg); opacity: 0; }
-        }
-
-        @keyframes portalZoom {
-            0% { width: 10px; height: 10px; opacity: 1; border-width: 2px; }
-            50% { box-shadow: 0 0 80px var(--accent-cyan); }
-            100% { width: 3200px; height: 3200px; opacity: 1; border-width: 50px; background: rgba(0, 240, 255, 0.25); }
-        }
-
-        .launch-terminal-text {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 20px;
-            font-weight: 800;
-            letter-spacing: 3px;
-            color: var(--accent-cyan);
-            text-shadow: 0 0 20px var(--accent-cyan);
-            min-height: 32px;
-        }
-
-        .launch-subtext {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 12px;
-            color: #94a3b8;
-            letter-spacing: 1.5px;
-        }
-
-        .progress-bar-container {
-            width: 340px;
-            height: 5px;
-            background: rgba(56, 189, 248, 0.2);
-            border-radius: 4px;
-            overflow: hidden;
-            margin-top: 6px;
-        }
-        .progress-bar-fill {
-            width: 0%;
-            height: 100%;
-            background: linear-gradient(90deg, #0055ff, var(--accent-cyan), #00ff66);
-            box-shadow: 0 0 14px var(--accent-cyan);
-            animation: fillProgress 6.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-        }
-        @keyframes fillProgress {
-            0% { width: 0%; }
-            20% { width: 25%; }
-            50% { width: 55%; }
-            75% { width: 80%; }
-            100% { width: 100%; }
-        }
-
-        .btn-skip-intro {
-            position: absolute;
-            bottom: 30px; right: 40px;
-            z-index: 20;
-            background: rgba(4, 9, 20, 0.85);
-            border: 1px solid var(--border-color);
-            color: var(--accent-cyan);
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 11px;
-            padding: 8px 16px;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: all 0.2s;
-            letter-spacing: 1px;
-        }
-        .btn-skip-intro:hover {
-            background: var(--accent-cyan);
-            color: #010409;
-            font-weight: 700;
-            box-shadow: 0 0 15px var(--accent-glow);
-        }
+        .btn-skip-intro { position: absolute; bottom: 30px; right: 40px; z-index: 20; background: rgba(4, 9, 20, 0.85); border: 1px solid var(--border-color); color: var(--accent-cyan); font-family: 'JetBrains Mono', monospace; font-size: 11px; padding: 8px 16px; border-radius: 4px; cursor: pointer; transition: all 0.2s; letter-spacing: 1px; }
+        .btn-skip-intro:hover { background: var(--accent-cyan); color: #010409; font-weight: 700; box-shadow: 0 0 15px var(--accent-glow); }
 
         /* ================== MAIN APP WRAPPER ================== */
         .container { 
@@ -307,7 +152,7 @@
             margin: 0 auto; 
             display: flex; 
             flex-direction: column; 
-            gap: 16px; 
+            gap: 14px; 
             position: relative; 
             z-index: 10; 
         }
@@ -318,23 +163,20 @@
             background: linear-gradient(135deg, rgba(2, 7, 22, 0.88) 0%, rgba(6, 19, 45, 0.82) 40%, rgba(10, 6, 36, 0.88) 100%);
             border: 1.5px solid rgba(0, 240, 255, 0.45);
             border-radius: 14px;
-            padding: 34px 42px;
+            padding: 26px 36px;
             overflow: hidden;
             box-shadow: 0 0 45px rgba(0, 240, 255, 0.22), inset 0 0 35px rgba(0, 240, 255, 0.1);
             display: grid;
             grid-template-columns: 1fr auto;
             align-items: center;
             gap: 32px;
-            min-height: 190px;
             backdrop-filter: blur(14px);
         }
 
         #spaceCanvas {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
             pointer-events: none;
             z-index: 1;
             display: block;
@@ -362,13 +204,13 @@
             z-index: 3;
             display: flex;
             flex-direction: column;
-            gap: 14px;
+            gap: 10px;
         }
 
         .hero-title-row {
             display: flex;
             align-items: center;
-            gap: 18px;
+            gap: 16px;
             flex-wrap: wrap;
         }
 
@@ -377,21 +219,21 @@
             color: #010409;
             font-family: 'Orbitron', sans-serif;
             font-weight: 900;
-            padding: 10px 18px;
-            border-radius: 8px;
-            font-size: 18px;
-            letter-spacing: 2.5px;
-            box-shadow: 0 0 30px var(--accent-glow);
+            padding: 8px 15px;
+            border-radius: 6px;
+            font-size: 16px;
+            letter-spacing: 2px;
+            box-shadow: 0 0 25px var(--accent-glow);
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
         }
 
         .hero-title {
             font-family: 'Orbitron', sans-serif;
-            font-size: 32px;
+            font-size: 28px;
             font-weight: 900;
-            letter-spacing: 2px;
+            letter-spacing: 1.8px;
             background: linear-gradient(90deg, #ffffff 0%, var(--accent-cyan) 50%, #d8b4fe 100%);
             -webkit-background-clip: text;
             background-clip: text;
@@ -400,12 +242,12 @@
         }
 
         .hero-subtitle {
-            font-size: 13.5px;
+            font-size: 12.5px;
             color: #94a3b8;
             font-family: 'JetBrains Mono', monospace;
             display: flex;
             align-items: center;
-            gap: 14px;
+            gap: 12px;
             flex-wrap: wrap;
             letter-spacing: 0.5px;
         }
@@ -413,23 +255,23 @@
 
         .hero-telemetry-strip {
             display: flex;
-            gap: 12px;
+            gap: 10px;
             align-items: center;
             flex-wrap: wrap;
-            margin-top: 6px;
+            margin-top: 4px;
         }
 
         .pill {
             background: rgba(4, 9, 20, 0.92);
             border: 1px solid var(--border-color);
             color: var(--accent-cyan);
-            padding: 6px 14px;
+            padding: 5px 12px;
             border-radius: 6px;
-            font-size: 11.5px;
+            font-size: 11px;
             font-family: 'JetBrains Mono', monospace;
             display: inline-flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
             box-shadow: 0 2px 12px rgba(0,0,0,0.5);
             letter-spacing: 0.5px;
         }
@@ -443,9 +285,9 @@
             background: rgba(0, 240, 255, 0.1);
             border: 1px solid var(--accent-cyan);
             color: var(--accent-cyan);
-            padding: 5px 10px;
+            padding: 4px 9px;
             border-radius: 4px;
-            font-size: 11px;
+            font-size: 10.5px;
             font-family: 'JetBrains Mono', monospace;
             cursor: pointer;
             transition: all 0.2s;
@@ -456,20 +298,19 @@
             font-weight: 700;
         }
 
-        /* Orbit Graphic */
         .hero-orbit-graphic {
             position: relative;
             z-index: 3;
-            width: 160px;
-            height: 160px;
+            width: 140px;
+            height: 140px;
             display: flex;
             align-items: center;
             justify-content: center;
         }
         .orbit-circle {
             position: absolute;
-            width: 150px;
-            height: 150px;
+            width: 130px;
+            height: 130px;
             border: 1.5px dashed rgba(0, 240, 255, 0.65);
             border-radius: 50%;
             animation: rotateOrbit 12s linear infinite;
@@ -479,15 +320,15 @@
             position: absolute;
             top: -14px; left: 50%;
             transform: translateX(-50%);
-            font-size: 22px;
+            font-size: 20px;
             filter: drop-shadow(0 0 12px var(--accent-cyan));
         }
         .earth-core {
-            width: 72px;
-            height: 72px;
+            width: 62px;
+            height: 62px;
             background: radial-gradient(circle at 35% 35%, #0284c7 0%, #0369a1 40%, #082f49 75%, #020617 100%);
             border-radius: 50%;
-            box-shadow: 0 0 35px rgba(56, 189, 248, 0.75), inset -6px -6px 18px rgba(0,0,0,0.9);
+            box-shadow: 0 0 30px rgba(56, 189, 248, 0.75), inset -6px -6px 18px rgba(0,0,0,0.9);
             position: relative;
             animation: pulseEarth 3s ease-in-out infinite alternate;
         }
@@ -495,30 +336,96 @@
         @keyframes pulseEarth { from { box-shadow: 0 0 25px rgba(56, 189, 248, 0.5); } to { box-shadow: 0 0 50px rgba(0, 240, 255, 0.95); } }
 
         @media (max-width: 1080px) {
-            .hero-topbar { grid-template-columns: 1fr; padding: 24px 20px; }
-            .hero-title { font-size: 24px; }
+            .hero-topbar { grid-template-columns: 1fr; padding: 22px 18px; }
+            .hero-title { font-size: 22px; }
             .hero-orbit-graphic { display: none; }
         }
 
-        /* ================== WORKSPACE GRID ================== */
-        .workspace { display: grid; grid-template-columns: 470px 1fr; gap: 16px; }
-        @media (max-width: 1180px) { .workspace { grid-template-columns: 1fr; } }
+        /* ================== 🗂️ SYNOVA COMMAND CENTER TABS ================== */
+        .workspace-tabs-nav {
+            display: flex;
+            gap: 10px;
+            background: rgba(4, 9, 20, 0.85);
+            border: 1px solid var(--border-color);
+            padding: 8px;
+            border-radius: 10px;
+            backdrop-filter: blur(18px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+        }
 
+        .tab-btn {
+            flex: 1;
+            background: rgba(2, 6, 23, 0.85);
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            color: var(--text-muted);
+            padding: 12px 18px;
+            border-radius: 6px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 11.5px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .tab-btn:hover {
+            border-color: var(--accent-cyan);
+            color: var(--accent-cyan);
+            background: rgba(0, 240, 255, 0.08);
+        }
+
+        .tab-btn.active {
+            background: linear-gradient(135deg, rgba(0, 85, 255, 0.35), rgba(0, 240, 255, 0.22));
+            border-color: var(--accent-cyan);
+            color: #ffffff;
+            box-shadow: 0 0 20px var(--accent-glow);
+            text-shadow: 0 0 10px var(--accent-cyan);
+        }
+
+        .tab-badge {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 9px;
+            padding: 2px 7px;
+            border-radius: 3px;
+            text-transform: uppercase;
+        }
+        .tab-badge.green { background: rgba(0, 255, 102, 0.15); border: 1px solid var(--accent-green); color: var(--accent-green); }
+        .tab-badge.cyan { background: rgba(0, 240, 255, 0.15); border: 1px solid var(--accent-cyan); color: var(--accent-cyan); }
+
+        .tab-content {
+            display: none;
+            animation: fadeInTab 0.35s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeInTab {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ================== CARDS & PANELS ================== */
         .card {
             background: var(--bg-card);
             backdrop-filter: blur(20px);
             border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 18px;
+            border-radius: 10px;
+            padding: 22px;
             display: flex;
             flex-direction: column;
-            gap: 14px;
+            gap: 16px;
             position: relative;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
         }
+
         .card-title {
             font-family: 'Orbitron', sans-serif;
-            font-size: 12px;
+            font-size: 12.5px;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 1px;
@@ -527,54 +434,61 @@
             align-items: center;
             justify-content: space-between;
             border-bottom: 1px solid rgba(56, 189, 248, 0.2);
-            padding-bottom: 8px;
+            padding-bottom: 10px;
         }
+
+        .ingestion-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        @media (max-width: 1080px) { .ingestion-grid { grid-template-columns: 1fr; } }
 
         .form-group { display: flex; flex-direction: column; gap: 5px; }
         label { font-size: 10.5px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; font-family: 'JetBrains Mono', monospace; }
 
-        .input-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .input-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         input[type="file"], select, input[type="text"] {
             width: 100%;
             background: #040914;
             border: 1px solid var(--border-color);
             color: var(--text-main);
-            padding: 8px 11px;
-            border-radius: 4px;
+            padding: 9px 12px;
+            border-radius: 5px;
             font-size: 12px;
             outline: none;
             font-family: 'JetBrains Mono', monospace;
             transition: all 0.2s ease;
         }
-        input[type="file"] { font-size: 10.5px; padding: 6px; cursor: pointer; }
+        input[type="file"] { font-size: 10.5px; padding: 7px; cursor: pointer; }
         input[type="text"]:focus, select:focus {
             border-color: var(--accent-cyan);
             box-shadow: 0 0 10px var(--accent-glow);
         }
 
-        .preset-container { display: flex; gap: 5px; flex-wrap: wrap; }
+        .preset-container { display: flex; gap: 6px; flex-wrap: wrap; }
         .preset-btn {
             background: rgba(0, 240, 255, 0.08);
             border: 1px solid rgba(0, 240, 255, 0.3);
             color: var(--accent-cyan);
             font-size: 10.5px;
-            padding: 4px 8px;
-            border-radius: 3px;
+            padding: 5px 10px;
+            border-radius: 4px;
             font-family: 'JetBrains Mono', monospace;
             cursor: pointer;
             transition: all 0.2s;
         }
-        .preset-btn:hover { background: var(--accent-cyan); color: #02040a; font-weight: 700; box-shadow: 0 0 10px var(--accent-glow); }
+        .preset-btn:hover { background: var(--accent-cyan); color: #02040a; font-weight: 700; box-shadow: 0 0 12px var(--accent-glow); }
 
-        .voice-query-group { display: flex; gap: 6px; align-items: center; }
+        .voice-query-group { display: flex; gap: 8px; align-items: center; }
         .btn-mic {
             background: rgba(0, 240, 255, 0.1);
             border: 1px solid var(--accent-cyan);
             color: var(--accent-cyan);
-            padding: 8px 12px;
-            border-radius: 4px;
+            padding: 9px 14px;
+            border-radius: 5px;
             cursor: pointer;
-            font-size: 13px;
+            font-size: 14px;
             transition: all 0.2s;
         }
         .btn-mic.listening {
@@ -585,14 +499,9 @@
         }
         @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.08); } }
 
-        /* Map with Reticle Overlay & MGRS Telemetry */
-        .map-wrapper {
-            position: relative;
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            overflow: hidden;
-        }
-        #map { height: 185px; }
+        /* Map Wrapper */
+        .map-wrapper { position: relative; border: 1px solid var(--border-color); border-radius: 6px; overflow: hidden; }
+        #map { height: 260px; }
         .map-reticle {
             position: absolute;
             top: 50%; left: 50%;
@@ -608,10 +517,10 @@
         .mgrs-bar {
             position: absolute;
             bottom: 0; left: 0; width: 100%;
-            background: rgba(1, 4, 9, 0.85);
-            padding: 3px 8px;
+            background: rgba(1, 4, 9, 0.88);
+            padding: 4px 10px;
             font-family: 'JetBrains Mono', monospace;
-            font-size: 9px;
+            font-size: 9.5px;
             color: var(--accent-cyan);
             display: flex;
             justify-content: space-between;
@@ -623,11 +532,11 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            font-size: 11px;
+            font-size: 11.5px;
             color: var(--accent-cyan);
             background: rgba(0, 240, 255, 0.05);
-            padding: 6px 10px;
-            border-radius: 4px;
+            padding: 8px 12px;
+            border-radius: 5px;
             border: 1px dashed rgba(0, 240, 255, 0.3);
             cursor: pointer;
             font-family: 'JetBrains Mono', monospace;
@@ -638,10 +547,10 @@
             background: linear-gradient(135deg, #0055ff, #00f0ff);
             color: #02040a;
             border: none;
-            padding: 12px;
-            border-radius: 4px;
+            padding: 14px;
+            border-radius: 5px;
             font-weight: 800;
-            font-size: 13px;
+            font-size: 14px;
             font-family: 'Orbitron', sans-serif;
             letter-spacing: 1px;
             cursor: pointer;
@@ -654,61 +563,46 @@
         }
         .btn-submit:hover { transform: translateY(-1px); box-shadow: 0 0 30px rgba(0, 240, 255, 0.7); }
 
-        .right-pane { display: flex; flex-direction: column; gap: 16px; }
-
         /* ================== 🎚️ BI-TEMPORAL SPLIT-VIEW SLIDER ================== */
         .split-slider-container {
             position: relative;
             width: 100%;
-            height: 330px;
+            height: 380px;
             background: #020617;
             border: 1.5px solid var(--border-color);
-            border-radius: 6px;
+            border-radius: 8px;
             overflow: hidden;
             user-select: none;
             -webkit-user-select: none;
             box-shadow: 0 4px 25px rgba(0, 0, 0, 0.6);
-            margin-bottom: 12px;
+            margin-bottom: 14px;
             cursor: ew-resize;
         }
 
         .split-slider-container img {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
             object-fit: cover;
             pointer-events: none;
         }
 
-        .split-img-after {
-            z-index: 1;
-        }
-
+        .split-img-after { z-index: 1; }
         .split-img-before-wrapper {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 50%;
-            height: 100%;
+            top: 0; left: 0;
+            width: 50%; height: 100%;
             overflow: hidden;
             z-index: 2;
             border-right: 2px solid var(--accent-cyan);
             box-shadow: 2px 0 15px var(--accent-glow);
         }
-
-        .split-img-before-wrapper img {
-            height: 100%;
-            max-width: none;
-        }
+        .split-img-before-wrapper img { height: 100%; max-width: none; }
 
         .slider-handle {
             position: absolute;
-            top: 0;
-            left: 50%;
-            width: 3px;
-            height: 100%;
+            top: 0; left: 50%;
+            width: 3px; height: 100%;
             background: var(--accent-cyan);
             box-shadow: 0 0 12px var(--accent-cyan);
             cursor: ew-resize;
@@ -720,8 +614,7 @@
         }
 
         .handle-knob {
-            width: 32px;
-            height: 32px;
+            width: 34px; height: 34px;
             background: rgba(2, 6, 23, 0.95);
             border: 2px solid var(--accent-cyan);
             border-radius: 50%;
@@ -737,62 +630,57 @@
 
         .slider-tag {
             position: absolute;
-            top: 10px;
-            padding: 3px 8px;
-            background: rgba(1, 4, 10, 0.85);
+            top: 12px;
+            padding: 4px 10px;
+            background: rgba(1, 4, 10, 0.88);
             border: 1px solid var(--border-color);
-            border-radius: 3px;
+            border-radius: 4px;
             font-family: 'JetBrains Mono', monospace;
-            font-size: 9.5px;
+            font-size: 10px;
             letter-spacing: 0.5px;
             z-index: 5;
             pointer-events: none;
         }
-        .tag-before { left: 10px; color: var(--accent-cyan); }
-        .tag-after { right: 10px; color: var(--accent-green); }
+        .tag-before { left: 12px; color: var(--accent-cyan); }
+        .tag-after { right: 12px; color: var(--accent-green); }
 
         /* Media / Telemetry HUD Grid */
-        .media-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 10px; }
+        .media-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; }
         .media-box {
             background: #040914;
             border: 1px solid var(--border-color);
-            border-radius: 6px;
-            padding: 8px;
+            border-radius: 8px;
+            padding: 10px;
             display: flex;
             flex-direction: column;
-            gap: 6px;
+            gap: 8px;
             position: relative;
             cursor: zoom-in;
         }
-        .media-box span { font-size: 9.5px; font-weight: 700; color: var(--accent-cyan); font-family: 'JetBrains Mono', monospace; }
-        .media-box img { width: 100%; height: 165px; object-fit: cover; border-radius: 4px; transition: filter 0.3s; }
+        .media-box span { font-size: 10px; font-weight: 700; color: var(--accent-cyan); font-family: 'JetBrains Mono', monospace; }
+        .media-box img { width: 100%; height: 210px; object-fit: cover; border-radius: 5px; transition: filter 0.3s; }
         .hud-corner {
             position: absolute;
-            bottom: 12px; right: 12px;
+            bottom: 14px; right: 14px;
             font-family: 'JetBrains Mono', monospace;
-            font-size: 8.5px;
-            background: rgba(2, 6, 23, 0.85);
-            padding: 2px 5px;
+            font-size: 9px;
+            background: rgba(2, 6, 23, 0.88);
+            padding: 3px 6px;
             border: 1px solid var(--border-color);
-            border-radius: 2px;
+            border-radius: 3px;
             color: var(--accent-green);
         }
 
         /* Shader Filter Buttons Toolbar */
-        .shader-toolbar {
-            display: flex;
-            gap: 5px;
-            flex-wrap: wrap;
-            margin-top: 2px;
-        }
+        .shader-toolbar { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 2px; }
         .btn-shader {
             background: rgba(2, 6, 23, 0.9);
             border: 1px solid var(--border-color);
             color: var(--text-muted);
-            font-size: 9.5px;
+            font-size: 10px;
             font-family: 'JetBrains Mono', monospace;
-            padding: 3px 7px;
-            border-radius: 2px;
+            padding: 4px 9px;
+            border-radius: 3px;
             cursor: pointer;
             transition: all 0.2s;
         }
@@ -807,93 +695,89 @@
         .sobel-edge { filter: contrast(250%) grayscale(100%) invert(100%) !important; }
         .sar-polar { filter: contrast(160%) invert(80%) hue-rotate(240deg) saturate(180%) !important; }
 
-        /* Analysis Console */
-        .analytics-subgrid { display: grid; grid-template-columns: 1fr 280px; gap: 14px; }
+        /* Analytics Console */
+        .analytics-subgrid { display: grid; grid-template-columns: 1fr 320px; gap: 18px; }
         @media (max-width: 980px) { .analytics-subgrid { grid-template-columns: 1fr; } }
 
         .analysis-box {
             background: #030712;
             border: 1px solid var(--border-color);
-            border-radius: 6px;
-            padding: 16px;
-            font-size: 13px;
+            border-radius: 8px;
+            padding: 20px;
+            font-size: 13.5px;
             line-height: 1.7;
             color: #d1d5db;
-            max-height: 380px;
+            max-height: 480px;
             overflow-y: auto;
             font-family: 'Inter', sans-serif;
-            border-left: 3px solid var(--accent-cyan);
+            border-left: 4px solid var(--accent-cyan);
         }
         .analysis-box h1, .analysis-box h2, .analysis-box h3 {
             color: var(--accent-cyan);
             font-family: 'Orbitron', sans-serif;
-            font-size: 12.5px;
-            margin-top: 12px;
-            margin-bottom: 6px;
+            font-size: 13px;
+            margin-top: 14px;
+            margin-bottom: 8px;
             letter-spacing: 0.5px;
             border-bottom: 1px solid rgba(0, 240, 255, 0.2);
-            padding-bottom: 3px;
+            padding-bottom: 4px;
         }
         .analysis-box h3:first-child { margin-top: 0; }
-        .analysis-box ul { padding-left: 18px; margin-bottom: 8px; }
-        .analysis-box li { margin-bottom: 4px; }
+        .analysis-box ul { padding-left: 20px; margin-bottom: 10px; }
+        .analysis-box li { margin-bottom: 5px; }
         .analysis-box strong { color: #ffffff; }
 
-        .dual-chart-pane {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
+        .dual-chart-pane { display: flex; flex-direction: column; gap: 12px; }
         .chart-box {
             background: #030712;
             border: 1px solid var(--border-color);
-            border-radius: 6px;
-            padding: 10px;
+            border-radius: 8px;
+            padding: 14px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
         }
-        .chart-box h4 { font-family: 'Orbitron', sans-serif; font-size: 10px; color: var(--accent-cyan); letter-spacing: 1px; margin-bottom: 6px; }
+        .chart-box h4 { font-family: 'Orbitron', sans-serif; font-size: 10.5px; color: var(--accent-cyan); letter-spacing: 1px; margin-bottom: 8px; }
 
-        .bench-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 4px; }
+        .bench-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 8px; }
         .metric-card {
             background: #030712;
             border: 1px solid var(--border-color);
-            padding: 8px 10px;
-            border-radius: 4px;
+            padding: 10px 12px;
+            border-radius: 6px;
             display: flex;
             flex-direction: column;
         }
-        .metric-title { font-size: 9px; color: var(--text-muted); font-family: 'JetBrains Mono', monospace; text-transform: uppercase; }
-        .metric-val { font-size: 13.5px; font-weight: 700; color: var(--accent-green); font-family: 'JetBrains Mono', monospace; }
+        .metric-title { font-size: 9.5px; color: var(--text-muted); font-family: 'JetBrains Mono', monospace; text-transform: uppercase; }
+        .metric-val { font-size: 14px; font-weight: 700; color: var(--accent-green); font-family: 'JetBrains Mono', monospace; }
 
         pre {
             background: #02040a;
             color: var(--accent-cyan);
-            padding: 10px;
-            border-radius: 4px;
-            font-size: 11px;
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 11.5px;
             font-family: 'JetBrains Mono', monospace;
             border: 1px solid rgba(0, 240, 255, 0.2);
             overflow-x: auto;
-            max-height: 120px;
+            max-height: 150px;
         }
 
-        .action-bar { display: flex; gap: 6px; align-items: center; }
+        .action-bar { display: flex; gap: 8px; align-items: center; }
         .btn-action {
             background: rgba(0, 240, 255, 0.1);
             border: 1px solid var(--accent-cyan);
             color: var(--accent-cyan);
-            padding: 5px 9px;
-            border-radius: 3px;
-            font-size: 10.5px;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 11px;
             font-family: 'JetBrains Mono', monospace;
             cursor: pointer;
             text-decoration: none;
             display: inline-flex;
             align-items: center;
-            gap: 4px;
+            gap: 5px;
             transition: all 0.2s;
         }
         .btn-action:hover { background: var(--accent-cyan); color: #02040a; font-weight: 700; }
@@ -1028,205 +912,227 @@
             </div>
         </header>
 
-        <div class="workspace">
-            
-            <!-- Left Command Panel -->
+        <!-- 🗂️ SYNOVA COMMAND CENTER TAB NAVIGATION -->
+        <nav class="workspace-tabs-nav">
+            <button class="tab-btn active" onclick="switchTab('tab-ingestion', this)">
+                <span>📡</span> SENSOR INGESTION & TARGETING
+            </button>
+            <button class="tab-btn" onclick="switchTab('tab-payload', this)">
+                <span>🖼️</span> PAYLOAD VISUALS & SPLIT SLIDER 
+                {% if uploaded_images %}<span class="tab-badge green">ACTIVE TILE</span>{% endif %}
+            </button>
+            <button class="tab-btn" onclick="switchTab('tab-analytics', this)">
+                <span>🧠</span> DECODED REASONING & LULC 
+                {% if has_report %}<span class="tab-badge cyan">DECODED</span>{% endif %}
+            </button>
+        </nav>
+
+        <!-- TAB 1: SENSOR INGESTION & TARGETING FORM -->
+        <div id="tab-ingestion" class="tab-content active">
             <div class="card">
                 <div class="card-title">
-                    <span>📡 SENSOR INGESTION & TARGETING</span>
-                    <span style="font-size: 9.5px; color: var(--text-muted);">C-BAND & VIS-NIR</span>
+                    <span>📡 SENSOR INGESTION & TARGET RETICLE</span>
+                    <span style="font-size: 10px; color: var(--text-muted);">C-BAND SAR & VIS-NIR MULTISPECTRAL</span>
                 </div>
+                
                 <form method="POST" enctype="multipart/form-data" onsubmit="showLoader()">
-                    
-                    <div class="form-group">
-                        <label for="file_input_1">Primary Channel (T1 / Optical / GeoTIFF):</label>
-                        <input type="file" id="file_input_1" name="satellite_image_1" accept=".tif,.tiff,.png,.jpg,.jpeg">
-                    </div>
+                    <div class="ingestion-grid">
+                        
+                        <!-- Form Inputs Column -->
+                        <div style="display: flex; flex-direction: column; gap: 12px;">
+                            <div class="form-group">
+                                <label for="file_input_1">Primary Channel (T1 / Optical / GeoTIFF):</label>
+                                <input type="file" id="file_input_1" name="satellite_image_1" accept=".tif,.tiff,.png,.jpg,.jpeg">
+                            </div>
 
-                    <div class="form-group" style="margin-top: 4px;">
-                        <label for="file_input_2">Secondary Channel (Optional: T2 / SAR Radar):</label>
-                        <input type="file" id="file_input_2" name="satellite_image_2" accept=".tif,.tiff,.png,.jpg,.jpeg">
-                    </div>
+                            <div class="form-group">
+                                <label for="file_input_2">Secondary Channel (Optional: T2 / SAR Radar):</label>
+                                <input type="file" id="file_input_2" name="satellite_image_2" accept=".tif,.tiff,.png,.jpg,.jpeg">
+                            </div>
 
-                    <div class="input-row" style="margin-top: 4px;">
-                        <div class="form-group">
-                            <label for="composite_mode">Sensor Mode:</label>
-                            <select id="composite_mode" name="composite_mode" onchange="changeMapLayer(this.value)">
-                                <option value="SATELLITE">Optical Satellite (Esri)</option>
-                                <option value="NIR">Infrared False-Color (NIR)</option>
-                                <option value="NDVI">Synthetic NDVI (Topo)</option>
-                                <option value="RGB">OpenStreetMap Base</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="coordinates">Target Reticle (Lat, Lng):</label>
-                            <input type="text" id="coordinates" name="coordinates" placeholder="Target Coordinates">
-                        </div>
-                    </div>
+                            <div class="input-row">
+                                <div class="form-group">
+                                    <label for="composite_mode">Sensor Composite Mode:</label>
+                                    <select id="composite_mode" name="composite_mode" onchange="changeMapLayer(this.value)">
+                                        <option value="SATELLITE">Optical Satellite (Esri Imagery)</option>
+                                        <option value="NIR">Infrared False-Color (NIR)</option>
+                                        <option value="NDVI">Synthetic NDVI (Topographic)</option>
+                                        <option value="RGB">OpenStreetMap Base Layer</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="coordinates">Target Reticle (Lat, Lng):</label>
+                                    <input type="text" id="coordinates" name="coordinates" placeholder="Target Coordinates">
+                                </div>
+                            </div>
 
-                    <div class="form-group" style="margin-top: 2px;">
-                        <label>Sector Target Presets:</label>
-                        <div class="preset-container">
-                            <button type="button" class="preset-btn" onclick="setPreset(28.5562, 77.1000, 'Delhi IGI Airfield')">✈️ Delhi IGI</button>
-                            <button type="button" class="preset-btn" onclick="setPreset(18.9438, 72.8354, 'Mumbai Port Naval Base')">🚢 Mumbai Harbor</button>
-                            <button type="button" class="preset-btn" onclick="setPreset(25.3176, 82.9739, 'Varanasi Urban Corridor')">🏛️ Varanasi Sector</button>
-                            <button type="button" class="preset-btn" onclick="setPreset(27.5350, 71.9100, 'Bhadla Solar Infrastructure')">☀️ Bhadla Solar</button>
-                        </div>
-                    </div>
+                            <div class="form-group">
+                                <label>Mission Sector Target Presets:</label>
+                                <div class="preset-container">
+                                    <button type="button" class="preset-btn" onclick="setPreset(28.5562, 77.1000, 'Delhi IGI Airfield Sector')">✈️ Delhi IGI</button>
+                                    <button type="button" class="preset-btn" onclick="setPreset(18.9438, 72.8354, 'Mumbai Port Naval Base')">🚢 Mumbai Harbor</button>
+                                    <button type="button" class="preset-btn" onclick="setPreset(25.3176, 82.9739, 'Varanasi Urban Corridor')">🏛️ Varanasi Sector</button>
+                                    <button type="button" class="preset-btn" onclick="setPreset(27.5350, 71.9100, 'Bhadla Solar Infrastructure')">☀️ Bhadla Solar</button>
+                                </div>
+                            </div>
 
-                    <div class="map-wrapper" style="margin-top: 4px;">
-                        <div id="map"></div>
-                        <div class="map-reticle"></div>
-                        <div class="mgrs-bar">
-                            <span id="mgrsDisplay">MGRS: 43REQ 8921 4410</span>
-                            <span id="sunAngleDisplay">SUN ELEV: 58.4° // AZ: 142.1°</span>
-                        </div>
-                    </div>
+                            <label class="checkbox-container">
+                                <input type="checkbox" id="use_coord_fetch" name="use_coord_fetch" value="true">
+                                <span>Capture live Sentinel/Cartosat tile at reticle coordinates</span>
+                            </label>
 
-                    <label class="checkbox-container" style="margin-top: 4px;">
-                        <input type="checkbox" id="use_coord_fetch" name="use_coord_fetch" value="true">
-                        <span>Capture live satellite tile at reticle coordinates</span>
-                    </label>
+                            <div class="form-group">
+                                <label for="user_question">Tactical Operational Query (Voice / Text):</label>
+                                <div class="voice-query-group">
+                                    <input type="text" id="user_question" name="user_question" placeholder="Transmit query or click mic..." required>
+                                    <button type="button" id="micBtn" class="btn-mic" onclick="toggleVoiceRecognition()" title="Voice Comms">🎙️</button>
+                                </div>
+                            </div>
 
-                    <div class="form-group" style="margin-top: 6px;">
-                        <label for="user_question">Tactical Query (Voice / Text):</label>
-                        <div class="voice-query-group">
-                            <input type="text" id="user_question" name="user_question" placeholder="Transmit query or click mic..." required>
-                            <button type="button" id="micBtn" class="btn-mic" onclick="toggleVoiceRecognition()" title="Voice Comms">
-                                🎙️
+                            <button type="submit" class="btn-submit" style="margin-top: 4px;">
+                                <span>⚡</span> INITIATE MULTIMODAL AGENTIC TELEMETRY
                             </button>
                         </div>
-                    </div>
 
-                    <button type="submit" class="btn-submit" style="margin-top: 6px;">
-                        <span>⚡</span> INITIATE AGENTIC TELEMETRY
-                    </button>
+                        <!-- Map Interactive Column -->
+                        <div style="display: flex; flex-direction: column; gap: 8px;">
+                            <label>GPS / GIS Reticle Coordinate Picker:</label>
+                            <div class="map-wrapper">
+                                <div id="map"></div>
+                                <div class="map-reticle"></div>
+                                <div class="mgrs-bar">
+                                    <span id="mgrsDisplay">MGRS: 43REQ 8921 4410</span>
+                                    <span id="sunAngleDisplay">SUN ELEV: 58.4° // AZ: 142.1°</span>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
                 </form>
             </div>
-
-            <!-- Right Analytics Dashboard -->
-            <div class="right-pane">
-                
-                <div class="card">
-                    <div class="card-title">
-                        <span>🖼️ OPTICAL / RADAR PAYLOAD & SHADER CONTROLS</span>
-                        <div class="shader-toolbar">
-                            <button type="button" class="btn-shader active" onclick="applyShader('normal')">RAW</button>
-                            <button type="button" class="btn-shader" onclick="applyShader('flir-thermal')">FLIR HEAT</button>
-                            <button type="button" class="btn-shader" onclick="applyShader('night-vision')">NVG</button>
-                            <button type="button" class="btn-shader" onclick="applyShader('sobel-edge')">SOBEL EDGE</button>
-                            <button type="button" class="btn-shader" onclick="applyShader('sar-polar')">SAR POLAR</button>
-                        </div>
-                    </div>
-
-                    <!-- 🎚️ Interactive Bi-Temporal Split-View Slider (Rendered if 2 Images Available) -->
-                    {% if uploaded_images and uploaded_images|length >= 2 %}
-                        <div class="split-slider-container" id="splitSlider">
-                            <img src="{{ uploaded_images[1] }}" class="split-img-after" id="splitImgAfter" alt="T2 Satellite Observation">
-                            <span class="slider-tag tag-after">T2 // POST-TEMPORAL RECON</span>
-
-                            <div class="split-img-before-wrapper" id="splitBeforeWrapper">
-                                <img src="{{ uploaded_images[0] }}" id="splitImgBefore" alt="T1 Satellite Observation">
-                                <span class="slider-tag tag-before">T1 // BASELINE APERTURE</span>
-                            </div>
-
-                            <div class="slider-handle" id="sliderHandle">
-                                <div class="handle-knob">◀ ▶</div>
-                            </div>
-                        </div>
-                    {% endif %}
-
-                    <div class="media-grid">
-                        {% if uploaded_images and uploaded_images|length > 0 %}
-                            {% for uri in uploaded_images %}
-                                <div class="media-box" onclick="openLightbox('{{ uri }}')">
-                                    <span>TILE FEED #{{ loop.index }} // CAPTURE OK</span>
-                                    <img src="{{ uri }}" id="tileImg{{ loop.index }}" class="shader-target" alt="Satellite Layer">
-                                    <div class="hud-corner">GSD: 0.5M</div>
-                                </div>
-                            {% endfor %}
-                        {% else %}
-                            <div class="media-box" style="cursor: default;">
-                                <span>ORBITAL SENSOR FEED // STANDBY</span>
-                                <div style="height: 165px; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.5); border-radius: 3px; color: var(--text-muted); font-size: 11px; font-family: 'JetBrains Mono', monospace;">
-                                    NO OPTICAL / SAR PAYLOAD LOADED
-                                </div>
-                            </div>
-                        {% endif %}
-
-                        {% if evidence_image %}
-                            <div class="media-box" onclick="openLightbox('{{ evidence_image }}')" style="border-color: var(--accent-red); box-shadow: 0 0 15px rgba(255, 0, 85, 0.2);">
-                                <span style="color: var(--accent-red);">GROUNDED OBJECT MATRIX / DIFF OVERLAY</span>
-                                <img src="{{ evidence_image }}" class="shader-target" alt="Grounding Evidence Overlay">
-                                <div class="hud-corner" style="color: var(--accent-red); border-color: var(--accent-red);">TARGETS LOCKED</div>
-                            </div>
-                        {% endif %}
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(0, 240, 255, 0.2); padding-bottom: 6px;">
-                        <div class="card-title" style="border-bottom: none; padding-bottom: 0;">
-                            <span>🧠 DECODED AGENTIC REASONING & SPECTRAL PARTITION</span>
-                        </div>
-                        <div class="action-bar">
-                            <button type="button" class="btn-action" onclick="playAudioReport()">
-                                🔊 COMMS
-                            </button>
-                            {% if has_geojson %}
-                                <a href="/download-geojson" class="btn-action">🗺️ GEOJSON</a>
-                            {% endif %}
-                            {% if has_report %}
-                                <a href="/download-report" class="btn-action">📥 JSON REPORT</a>
-                            {% endif %}
-                        </div>
-                    </div>
-                    
-                    <div class="analytics-subgrid">
-                        <div id="analysisBox" class="analysis-box"></div>
-                        
-                        <div class="dual-chart-pane">
-                            <div class="chart-box">
-                                <h4>LULC PARTITION</h4>
-                                <canvas id="lulcChart" width="180" height="130"></canvas>
-                            </div>
-                            <div class="chart-box">
-                                <h4>RADIOMETRIC PROFILE</h4>
-                                <canvas id="spectralChart" width="180" height="90"></canvas>
-                            </div>
-                        </div>
-                    </div>
-
-                    {% if benchmark %}
-                        <div class="bench-grid">
-                            <div class="metric-card">
-                                <span class="metric-title">TARGET BENCHMARK</span>
-                                <span class="metric-val" style="color: var(--accent-cyan); font-size: 11.5px;">{{ benchmark.get('Evaluated Against', 'RSVQA') }}</span>
-                            </div>
-                            <div class="metric-card">
-                                <span class="metric-title">INFERENCE CONFIDENCE</span>
-                                <span class="metric-val">{{ benchmark.get('Inferred Confidence', '96.4%') }}</span>
-                            </div>
-                            <div class="metric-card">
-                                <span class="metric-title">BLEU-4 GROUNDING</span>
-                                <span class="metric-val">{{ benchmark.get('BLEU-4 Grounding Score', '0.841') }}</span>
-                            </div>
-                            <div class="metric-card">
-                                <span class="metric-title">ROUGE-L FIDELITY</span>
-                                <span class="metric-val">{{ benchmark.get('ROUGE-L Score', '0.902') }}</span>
-                            </div>
-                        </div>
-                    {% endif %}
-
-                    <div style="margin-top: 4px;">
-                        <span style="font-size: 9.5px; font-weight: 700; color: var(--text-muted); font-family: 'JetBrains Mono', monospace; text-transform: uppercase;">AUDITABLE EXECUTION TELEMETRY:</span>
-                        <pre>{{ trace | tojson(indent=2) }}</pre>
-                    </div>
-                </div>
-
-            </div>
-
         </div>
+
+        <!-- TAB 2: PAYLOAD VISUALS & SPLIT SWIPE SLIDER -->
+        <div id="tab-payload" class="tab-content">
+            <div class="card">
+                <div class="card-title">
+                    <span>🖼️ OPTICAL / RADAR PAYLOAD & SHADER MATRIX</span>
+                    <div class="shader-toolbar">
+                        <button type="button" class="btn-shader active" onclick="applyShader('normal')">RAW</button>
+                        <button type="button" class="btn-shader" onclick="applyShader('flir-thermal')">FLIR HEAT</button>
+                        <button type="button" class="btn-shader" onclick="applyShader('night-vision')">NVG</button>
+                        <button type="button" class="btn-shader" onclick="applyShader('sobel-edge')">SOBEL EDGE</button>
+                        <button type="button" class="btn-shader" onclick="applyShader('sar-polar')">SAR POLAR</button>
+                    </div>
+                </div>
+
+                <!-- 🎚️ Interactive Bi-Temporal Split-View Slider (Rendered if 2 Images Available) -->
+                {% if uploaded_images and uploaded_images|length >= 2 %}
+                    <div class="split-slider-container" id="splitSlider">
+                        <img src="{{ uploaded_images[1] }}" class="split-img-after" id="splitImgAfter" alt="T2 Satellite Observation">
+                        <span class="slider-tag tag-after">T2 // POST-TEMPORAL RECON</span>
+
+                        <div class="split-img-before-wrapper" id="splitBeforeWrapper">
+                            <img src="{{ uploaded_images[0] }}" id="splitImgBefore" alt="T1 Satellite Observation">
+                            <span class="slider-tag tag-before">T1 // BASELINE APERTURE</span>
+                        </div>
+
+                        <div class="slider-handle" id="sliderHandle">
+                            <div class="handle-knob">◀ ▶</div>
+                        </div>
+                    </div>
+                {% endif %}
+
+                <div class="media-grid">
+                    {% if uploaded_images and uploaded_images|length > 0 %}
+                        {% for uri in uploaded_images %}
+                            <div class="media-box" onclick="openLightbox('{{ uri }}')">
+                                <span>TILE FEED #{{ loop.index }} // CAPTURE OK</span>
+                                <img src="{{ uri }}" id="tileImg{{ loop.index }}" class="shader-target" alt="Satellite Layer">
+                                <div class="hud-corner">GSD: 0.5M</div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="media-box" style="cursor: default;">
+                            <span>ORBITAL SENSOR FEED // STANDBY</span>
+                            <div style="height: 210px; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.5); border-radius: 4px; color: var(--text-muted); font-size: 11px; font-family: 'JetBrains Mono', monospace;">
+                                NO OPTICAL / SAR PAYLOAD LOADED YET. INGEST TILES IN TAB 1.
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    {% if evidence_image %}
+                        <div class="media-box" onclick="openLightbox('{{ evidence_image }}')" style="border-color: var(--accent-red); box-shadow: 0 0 20px rgba(255, 0, 85, 0.25);">
+                            <span style="color: var(--accent-red);">GROUNDED OBJECT MATRIX / DIFF OVERLAY</span>
+                            <img src="{{ evidence_image }}" class="shader-target" alt="Grounding Evidence Overlay">
+                            <div class="hud-corner" style="color: var(--accent-red); border-color: var(--accent-red);">TARGETS LOCKED</div>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 3: DECODED REASONING & LULC ANALYTICS -->
+        <div id="tab-analytics" class="tab-content">
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(0, 240, 255, 0.2); padding-bottom: 10px;">
+                    <div class="card-title" style="border-bottom: none; padding-bottom: 0;">
+                        <span>🧠 DECODED AGENTIC REASONING & RADIOMETRIC TELEMETRY</span>
+                    </div>
+                    <div class="action-bar">
+                        <button type="button" class="btn-action" onclick="playAudioReport()">🔊 VOICE COMMS</button>
+                        {% if has_geojson %}
+                            <a href="/download-geojson" class="btn-action">🗺️ GEOJSON</a>
+                        {% endif %}
+                        {% if has_report %}
+                            <a href="/download-report" class="btn-action">📥 JSON REPORT</a>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="analytics-subgrid">
+                    <div id="analysisBox" class="analysis-box"></div>
+                    
+                    <div class="dual-chart-pane">
+                        <div class="chart-box">
+                            <h4>LULC PARTITION</h4>
+                            <canvas id="lulcChart" width="200" height="150"></canvas>
+                        </div>
+                        <div class="chart-box">
+                            <h4>RADIOMETRIC PROFILE</h4>
+                            <canvas id="spectralChart" width="200" height="110"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                {% if benchmark %}
+                    <div class="bench-grid">
+                        <div class="metric-card">
+                            <span class="metric-title">TARGET BENCHMARK</span>
+                            <span class="metric-val" style="color: var(--accent-cyan); font-size: 12px;">{{ benchmark.get('Evaluated Against', 'RSVQA') }}</span>
+                        </div>
+                        <div class="metric-card">
+                            <span class="metric-title">INFERENCE CONFIDENCE</span>
+                            <span class="metric-val">{{ benchmark.get('Inferred Confidence', '96.4%') }}</span>
+                        </div>
+                        <div class="metric-card">
+                            <span class="metric-title">BLEU-4 GROUNDING</span>
+                            <span class="metric-val">{{ benchmark.get('BLEU-4 Grounding Score', '0.841') }}</span>
+                        </div>
+                        <div class="metric-card">
+                            <span class="metric-title">ROUGE-L FIDELITY</span>
+                            <span class="metric-val">{{ benchmark.get('ROUGE-L Score', '0.902') }}</span>
+                        </div>
+                    </div>
+                {% endif %}
+
+                <div style="margin-top: 6px;">
+                    <span style="font-size: 10px; font-weight: 700; color: var(--text-muted); font-family: 'JetBrains Mono', monospace; text-transform: uppercase;">AUDITABLE EXECUTION TELEMETRY TRACE:</span>
+                    <pre>{{ trace | tojson(indent=2) }}</pre>
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <div id="rawAnalysisData" style="display: none;">{{ analysis }}</div>
@@ -1235,6 +1141,22 @@
     <!-- Leaflet JS Map Script -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
+        /* 🗂️ Command Center Tab Switcher Engine */
+        function switchTab(tabId, btnEl) {
+            playSciFiBeep(920, 'sine', 0.08);
+            document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
+            document.querySelectorAll('.tab-content').forEach(function(c) { c.classList.remove('active'); });
+            
+            btnEl.classList.add('active');
+            var activeTab = document.getElementById(tabId);
+            if (activeTab) { activeTab.classList.add('active'); }
+
+            // Trigger Leaflet map invalidateSize if Tab 1 activated
+            if (tabId === 'tab-ingestion' && map) {
+                setTimeout(function() { map.invalidateSize(); }, 100);
+            }
+        }
+
         /* 🌠 Dedicated Header Space Canvas (Stars, Constellations & Meteors) */
         document.addEventListener('DOMContentLoaded', function () {
             var headerCanvas = document.getElementById('spaceCanvas');
@@ -1285,7 +1207,6 @@
             function drawHeaderSpace() {
                 hCtx.clearRect(0, 0, headerCanvas.width, headerCanvas.height);
 
-                // Constellation lines in header
                 for (var i = 0; i < hStars.length; i++) {
                     for (var j = i + 1; j < hStars.length; j++) {
                         var dx = hStars[i].x - hStars[j].x;
@@ -1302,7 +1223,6 @@
                     }
                 }
 
-                // Header stars
                 for (var k = 0; k < hStars.length; k++) {
                     var s = hStars[k];
                     s.delta += s.speed;
@@ -1326,7 +1246,6 @@
                     hCtx.globalAlpha = 1;
                 }
 
-                // Header Meteors
                 spawnHeaderMeteor();
                 for (var m = hMeteors.length - 1; m >= 0; m--) {
                     var met = hMeteors[m];
@@ -1654,8 +1573,8 @@
 
         function initWarpStars() {
             warpStars = [];
-            warpCanvas.width = window.innerWidth || document.documentElement.clientWidth || 1920;
-            warpCanvas.height = window.innerHeight || document.documentElement.clientHeight || 1080;
+            warpCanvas.width = window.innerWidth || 1920;
+            warpCanvas.height = window.innerHeight || 1080;
             for (var i = 0; i < 300; i++) {
                 warpStars.push({
                     x: (Math.random() - 0.5) * warpCanvas.width * 2,
@@ -2005,6 +1924,11 @@
                     }
                 });
             }
+
+            // AUTO-SWITCH TO PAYLOAD / ANALYTICS TAB ON SUBMIT RESULTS
+            {% if has_report or uploaded_images %}
+                switchTab('tab-payload', document.querySelectorAll('.tab-btn')[1]);
+            {% endif %}
         });
 
         /* Voice STT */
