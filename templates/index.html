@@ -73,28 +73,14 @@
 
         .sun-rays {
             position: absolute; width: 950px; height: 950px; border-radius: 50%;
-            background: conic-gradient(from 0deg, 
-                transparent 0deg, 
-                rgba(255, 215, 0, 0.16) 20deg, 
-                transparent 45deg, 
-                rgba(251, 146, 60, 0.18) 85deg, 
-                transparent 125deg, 
-                rgba(255, 180, 50, 0.15) 170deg, 
-                transparent 215deg, 
-                rgba(251, 146, 60, 0.18) 275deg, 
-                transparent 320deg, 
-                rgba(255, 215, 0, 0.16) 360deg);
+            background: conic-gradient(from 0deg, transparent 0deg, rgba(255, 215, 0, 0.16) 20deg, transparent 45deg, rgba(251, 146, 60, 0.18) 85deg, transparent 125deg, rgba(255, 180, 50, 0.15) 170deg, transparent 215deg, rgba(251, 146, 60, 0.18) 275deg, transparent 320deg, rgba(255, 215, 0, 0.16) 360deg);
             animation: rotateSunRays 45s linear infinite;
         }
 
         .sun-corona {
             position: absolute; width: 280px; height: 280px; border-radius: 50%;
             background: radial-gradient(circle, #ffffff 0%, #fffbeb 20%, #fef08a 40%, #f59e0b 65%, #ea580c 85%, transparent 100%);
-            box-shadow: 
-                0 0 70px #ffffff,
-                0 0 130px #f59e0b,
-                0 0 220px rgba(234, 88, 12, 0.85),
-                0 0 380px rgba(249, 115, 22, 0.45);
+            box-shadow: 0 0 70px #ffffff, 0 0 130px #f59e0b, 0 0 220px rgba(234, 88, 12, 0.85), 0 0 380px rgba(249, 115, 22, 0.45);
             animation: sunPulse 5s ease-in-out infinite alternate;
         }
 
@@ -147,191 +133,45 @@
         .btn-skip-intro:hover { background: var(--accent-cyan); color: #010409; font-weight: 700; box-shadow: 0 0 15px var(--accent-glow); }
 
         /* ================== MAIN APP WRAPPER ================== */
-        .container { 
-            max-width: 1580px; 
-            margin: 0 auto; 
-            display: flex; 
-            flex-direction: column; 
-            gap: 14px; 
-            position: relative; 
-            z-index: 10; 
-        }
+        .container { max-width: 1580px; margin: 0 auto; display: flex; flex-direction: column; gap: 14px; position: relative; z-index: 10; }
 
         /* ================== EXPANDED GRAND COMMAND HEADER ================== */
         .hero-topbar {
             position: relative;
             background: linear-gradient(135deg, rgba(2, 7, 22, 0.88) 0%, rgba(6, 19, 45, 0.82) 40%, rgba(10, 6, 36, 0.88) 100%);
             border: 1.5px solid rgba(0, 240, 255, 0.45);
-            border-radius: 14px;
-            padding: 26px 36px;
-            overflow: hidden;
+            border-radius: 14px; padding: 26px 36px; overflow: hidden;
             box-shadow: 0 0 45px rgba(0, 240, 255, 0.22), inset 0 0 35px rgba(0, 240, 255, 0.1);
-            display: grid;
-            grid-template-columns: 1fr auto;
-            align-items: center;
-            gap: 32px;
-            backdrop-filter: blur(14px);
+            display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 32px; backdrop-filter: blur(14px);
         }
 
-        #spaceCanvas {
-            position: absolute;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            pointer-events: none;
-            z-index: 1;
-            display: block;
-        }
+        #spaceCanvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; display: block; }
+        .hero-topbar::before { content: ""; position: absolute; top: 0; left: 0; width: 120px; height: 3px; background: linear-gradient(90deg, var(--accent-cyan), transparent); box-shadow: 0 0 15px var(--accent-cyan); z-index: 2; }
+        .hero-topbar::after { content: ""; position: absolute; bottom: 0; right: 0; width: 120px; height: 3px; background: linear-gradient(270deg, var(--accent-purple), transparent); box-shadow: 0 0 15px var(--accent-purple); z-index: 2; }
 
-        .hero-topbar::before {
-            content: "";
-            position: absolute;
-            top: 0; left: 0; width: 120px; height: 3px;
-            background: linear-gradient(90deg, var(--accent-cyan), transparent);
-            box-shadow: 0 0 15px var(--accent-cyan);
-            z-index: 2;
-        }
-        .hero-topbar::after {
-            content: "";
-            position: absolute;
-            bottom: 0; right: 0; width: 120px; height: 3px;
-            background: linear-gradient(270deg, var(--accent-purple), transparent);
-            box-shadow: 0 0 15px var(--accent-purple);
-            z-index: 2;
-        }
+        .hero-content { position: relative; z-index: 3; display: flex; flex-direction: column; gap: 10px; }
+        .hero-title-row { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
 
-        .hero-content {
-            position: relative;
-            z-index: 3;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .hero-title-row {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            flex-wrap: wrap;
-        }
-
-        .hero-badge-glow {
-            background: linear-gradient(135deg, #0055ff, #00f0ff);
-            color: #010409;
-            font-family: 'Orbitron', sans-serif;
-            font-weight: 900;
-            padding: 8px 15px;
-            border-radius: 6px;
-            font-size: 16px;
-            letter-spacing: 2px;
-            box-shadow: 0 0 25px var(--accent-glow);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .hero-title {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 28px;
-            font-weight: 900;
-            letter-spacing: 1.8px;
-            background: linear-gradient(90deg, #ffffff 0%, var(--accent-cyan) 50%, #d8b4fe 100%);
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-shadow: 0 0 35px rgba(0, 240, 255, 0.45);
-        }
-
-        .hero-subtitle {
-            font-size: 12.5px;
-            color: #94a3b8;
-            font-family: 'JetBrains Mono', monospace;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            flex-wrap: wrap;
-            letter-spacing: 0.5px;
-        }
+        .hero-badge-glow { background: linear-gradient(135deg, #0055ff, #00f0ff); color: #010409; font-family: 'Orbitron', sans-serif; font-weight: 900; padding: 8px 15px; border-radius: 6px; font-size: 16px; letter-spacing: 2px; box-shadow: 0 0 25px var(--accent-glow); display: flex; align-items: center; gap: 8px; }
+        .hero-title { font-family: 'Orbitron', sans-serif; font-size: 28px; font-weight: 900; letter-spacing: 1.8px; background: linear-gradient(90deg, #ffffff 0%, var(--accent-cyan) 50%, #d8b4fe 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0 0 35px rgba(0, 240, 255, 0.45); }
+        .hero-subtitle { font-size: 12.5px; color: #94a3b8; font-family: 'JetBrains Mono', monospace; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; letter-spacing: 0.5px; }
         .hero-subtitle strong { color: var(--accent-cyan); font-weight: 600; }
 
-        .hero-telemetry-strip {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-            flex-wrap: wrap;
-            margin-top: 4px;
-        }
-
-        .pill {
-            background: rgba(4, 9, 20, 0.92);
-            border: 1px solid var(--border-color);
-            color: var(--accent-cyan);
-            padding: 5px 12px;
-            border-radius: 6px;
-            font-size: 11px;
-            font-family: 'JetBrains Mono', monospace;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.5);
-            letter-spacing: 0.5px;
-        }
+        .hero-telemetry-strip { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-top: 4px; }
+        .pill { background: rgba(4, 9, 20, 0.92); border: 1px solid var(--border-color); color: var(--accent-cyan); padding: 5px 12px; border-radius: 6px; font-size: 11px; font-family: 'JetBrains Mono', monospace; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 2px 12px rgba(0,0,0,0.5); letter-spacing: 0.5px; }
         .pill.green { border-color: var(--accent-green); color: var(--accent-green); }
         .pill.amber { border-color: var(--accent-amber); color: var(--accent-amber); }
         .pill.purple { border-color: var(--accent-purple); color: #e9d5ff; }
         .pulse-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent-green); animation: radar 1.5s infinite; }
         @keyframes radar { 0% { box-shadow: 0 0 0 0 rgba(0, 255, 102, 0.8); } 70% { box-shadow: 0 0 0 9px rgba(0, 255, 102, 0); } 100% { box-shadow: 0 0 0 0 rgba(0, 255, 102, 0); } }
 
-        .btn-replay-launch {
-            background: rgba(0, 240, 255, 0.1);
-            border: 1px solid var(--accent-cyan);
-            color: var(--accent-cyan);
-            padding: 4px 9px;
-            border-radius: 4px;
-            font-size: 10.5px;
-            font-family: 'JetBrains Mono', monospace;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .btn-replay-launch:hover {
-            background: var(--accent-cyan);
-            color: #010409;
-            font-weight: 700;
-        }
+        .btn-replay-launch { background: rgba(0, 240, 255, 0.1); border: 1px solid var(--accent-cyan); color: var(--accent-cyan); padding: 4px 9px; border-radius: 4px; font-size: 10.5px; font-family: 'JetBrains Mono', monospace; cursor: pointer; transition: all 0.2s; }
+        .btn-replay-launch:hover { background: var(--accent-cyan); color: #010409; font-weight: 700; }
 
-        .hero-orbit-graphic {
-            position: relative;
-            z-index: 3;
-            width: 140px;
-            height: 140px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .orbit-circle {
-            position: absolute;
-            width: 130px;
-            height: 130px;
-            border: 1.5px dashed rgba(0, 240, 255, 0.65);
-            border-radius: 50%;
-            animation: rotateOrbit 12s linear infinite;
-        }
-        .orbit-circle::before {
-            content: "🛰️";
-            position: absolute;
-            top: -14px; left: 50%;
-            transform: translateX(-50%);
-            font-size: 20px;
-            filter: drop-shadow(0 0 12px var(--accent-cyan));
-        }
-        .earth-core {
-            width: 62px;
-            height: 62px;
-            background: radial-gradient(circle at 35% 35%, #0284c7 0%, #0369a1 40%, #082f49 75%, #020617 100%);
-            border-radius: 50%;
-            box-shadow: 0 0 30px rgba(56, 189, 248, 0.75), inset -6px -6px 18px rgba(0,0,0,0.9);
-            position: relative;
-            animation: pulseEarth 3s ease-in-out infinite alternate;
-        }
+        .hero-orbit-graphic { position: relative; z-index: 3; width: 140px; height: 140px; display: flex; align-items: center; justify-content: center; }
+        .orbit-circle { position: absolute; width: 130px; height: 130px; border: 1.5px dashed rgba(0, 240, 255, 0.65); border-radius: 50%; animation: rotateOrbit 12s linear infinite; }
+        .orbit-circle::before { content: "🛰️"; position: absolute; top: -14px; left: 50%; transform: translateX(-50%); font-size: 20px; filter: drop-shadow(0 0 12px var(--accent-cyan)); }
+        .earth-core { width: 62px; height: 62px; background: radial-gradient(circle at 35% 35%, #0284c7 0%, #0369a1 40%, #082f49 75%, #020617 100%); border-radius: 50%; box-shadow: 0 0 30px rgba(56, 189, 248, 0.75), inset -6px -6px 18px rgba(0,0,0,0.9); position: relative; animation: pulseEarth 3s ease-in-out infinite alternate; }
         @keyframes rotateOrbit { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
         @keyframes pulseEarth { from { box-shadow: 0 0 25px rgba(56, 189, 248, 0.5); } to { box-shadow: 0 0 50px rgba(0, 240, 255, 0.95); } }
 
@@ -950,6 +790,15 @@
                                 <input type="file" id="file_input_2" name="satellite_image_2" accept=".tif,.tiff,.png,.jpg,.jpeg">
                             </div>
 
+                            <!-- 🌐 GLOBAL LOCATION SEARCH BAR -->
+                            <div class="form-group">
+                                <label for="location_search">Global Location Search (City / Landmark / Address):</label>
+                                <div class="voice-query-group">
+                                    <input type="text" id="location_search" placeholder="Type city or landmark (e.g. Taj Mahal, Tokyo, Lucknow)..." onkeydown="if(event.key==='Enter'){event.preventDefault(); searchLocation();}">
+                                    <button type="button" class="btn-mic" onclick="searchLocation()" title="Search Location" style="background: rgba(0, 240, 255, 0.15);">🔍</button>
+                                </div>
+                            </div>
+
                             <div class="input-row">
                                 <div class="form-group">
                                     <label for="composite_mode">Sensor Composite Mode:</label>
@@ -1155,6 +1004,39 @@
             if (tabId === 'tab-ingestion' && map) {
                 setTimeout(function() { map.invalidateSize(); }, 100);
             }
+        }
+
+        /* 🌐 Global OpenStreetMap Nominatim Location Search Engine */
+        function searchLocation() {
+            var searchInput = document.getElementById('location_search');
+            if (!searchInput) return;
+            var query = searchInput.value.trim();
+            if (!query) return;
+
+            playSciFiBeep(900, 'sine', 0.1);
+            var searchBtn = document.querySelector("button[onclick='searchLocation()']");
+            if (searchBtn) searchBtn.innerText = "⏳";
+
+            fetch('https://nominatim.openstreetmap.org/search?format=json&q=' + encodeURIComponent(query))
+                .then(function(res) { return res.json(); })
+                .then(function(data) {
+                    if (searchBtn) searchBtn.innerText = "🔍";
+                    if (data && data.length > 0) {
+                        var lat = parseFloat(data[0].lat);
+                        var lon = parseFloat(data[0].lon);
+                        var locationName = data[0].display_name.split(',')[0];
+                        
+                        setPreset(lat, lon, locationName);
+                        document.getElementById('user_question').value = "Analyze satellite imagery and land cover of " + locationName;
+                        playSciFiBeep(1200, 'sine', 0.15);
+                    } else {
+                        alert("Location not found. Try entering a different city, landmark, or address.");
+                    }
+                })
+                .catch(function(err) {
+                    if (searchBtn) searchBtn.innerText = "🔍";
+                    alert("Location search service temporarily unavailable.");
+                });
         }
 
         /* 🌠 Dedicated Header Space Canvas (Stars, Constellations & Meteors) */
