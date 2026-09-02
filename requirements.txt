@@ -8,3 +8,4 @@ requests>=2.31.0
 datasets>=2.18.0
 nltk>=3.8.1
 rouge-score>=0.1.2
+Flask-Limiter>=3.5.0
