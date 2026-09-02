@@ -137,7 +137,7 @@
         /* ================== MAIN APP WRAPPER ================== */
         .container { max-width: 1580px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px; position: relative; z-index: 10; }
 
-        /* ================== COMMAND HEADER WITH PROCEDURAL 3D EARTH ================== */
+        /* ================== COMMAND HEADER WITH OG BLUE GLOBE ================== */
         .hero-topbar {
             position: relative;
             background: linear-gradient(135deg, rgba(2, 7, 22, 0.92) 0%, rgba(6, 19, 45, 0.85) 40%, rgba(10, 6, 36, 0.92) 100%);
@@ -170,31 +170,29 @@
         .btn-replay-launch { background: rgba(0, 240, 255, 0.1); border: 1px solid var(--accent-cyan); color: var(--accent-cyan); padding: 4px 8px; border-radius: 4px; font-size: 10px; font-family: 'JetBrains Mono', monospace; cursor: pointer; transition: all 0.2s; }
         .btn-replay-launch:hover { background: var(--accent-cyan); color: #010409; font-weight: 700; }
 
-        /* ================== 🌍 PROCEDURAL 3D VECTOR EARTH & SATELLITE HUD ================== */
+        /* 🌍 OG GLOWING BLUE EARTH & ORBIT-LOCKED SATELLITE HUD */
         .hero-orbit-graphic {
-            position: relative; z-index: 3; width: 160px; height: 160px;
+            position: relative; z-index: 3; width: 150px; height: 150px;
             display: flex; align-items: center; justify-content: center;
         }
 
         .orbit-ring-visual {
-            position: absolute; width: 124px; height: 124px;
-            border: 1.5px dashed rgba(0, 240, 255, 0.45); border-radius: 50%;
+            position: absolute; width: 120px; height: 120px;
+            border: 1.5px dashed rgba(0, 240, 255, 0.5); border-radius: 50%;
             pointer-events: none;
         }
 
-        /* 🛰️ Orbital Ring Locked Revolution Engine */
         .satellite-orbiter {
-            position: absolute; width: 124px; height: 124px;
+            position: absolute; width: 120px; height: 120px;
             border-radius: 50%;
-            animation: orbitalRingLocked 11s linear infinite;
+            animation: orbitalRingLocked 10s linear infinite;
             pointer-events: none;
         }
 
         .sat-unit {
             position: absolute; top: -11px; left: 50%;
-            transform: translateX(-50%); font-size: 19px;
-            filter: drop-shadow(0 0 10px var(--accent-cyan));
-            animation: satAttitudeWobble 2.5s ease-in-out infinite alternate;
+            transform: translateX(-50%); font-size: 18px;
+            filter: drop-shadow(0 0 12px var(--accent-cyan));
         }
 
         @keyframes orbitalRingLocked {
@@ -202,17 +200,18 @@
             100% { transform: rotate(360deg); }
         }
 
-        @keyframes satAttitudeWobble {
-            0% { transform: translateX(-50%) rotate(-12deg) scale(0.95); }
-            50% { transform: translateX(-50%) rotate(0deg) scale(1.02); }
-            100% { transform: translateX(-50%) rotate(14deg) scale(0.98); }
+        .earth-core {
+            width: 58px; height: 58px;
+            background: radial-gradient(circle at 35% 35%, #00f0ff 0%, #0284c7 45%, #0369a1 70%, #020617 100%);
+            border-radius: 50%;
+            box-shadow: 0 0 30px rgba(0, 240, 255, 0.85), inset -5px -5px 15px rgba(0, 0, 0, 0.85);
+            position: relative;
+            animation: pulseEarth 3s ease-in-out infinite alternate;
         }
 
-        #earthCanvas {
-            border-radius: 50%;
-            box-shadow: 
-                0 0 25px rgba(0, 240, 255, 0.6),
-                0 0 45px rgba(2, 132, 199, 0.4);
+        @keyframes pulseEarth {
+            from { box-shadow: 0 0 25px rgba(56, 189, 248, 0.6); }
+            to { box-shadow: 0 0 50px rgba(0, 240, 255, 0.95), inset -5px -5px 15px rgba(0, 0, 0, 0.85); }
         }
 
         /* ================== FEATURE 5: TELEMETRY STATUS TICKER ================== */
@@ -519,7 +518,7 @@
 
     <div class="container">
         
-        <!-- Header with 3D Procedural Earth Canvas & Orbit-locked Satellite -->
+        <!-- Header with OG Glowing Blue Earth & Orbit-locked Satellite -->
         <header class="hero-topbar">
             <canvas id="spaceCanvas"></canvas>
             <div class="hero-content">
@@ -545,13 +544,13 @@
                 </div>
             </div>
 
-            <!-- Orbit Graphic: 3D Procedural Earth Globe & Orbit-Locked Satellite -->
+            <!-- Orbit Graphic: OG Glowing Blue Earth & Orbit-Locked Satellite -->
             <div class="hero-orbit-graphic">
                 <div class="orbit-ring-visual"></div>
                 <div class="satellite-orbiter">
                     <div class="sat-unit">🛰️</div>
                 </div>
-                <canvas id="earthCanvas" width="76" height="76"></canvas>
+                <div class="earth-core"></div>
             </div>
         </header>
 
@@ -910,122 +909,9 @@
     <div id="rawAnalysisData" style="display: none;">{{ analysis }}</div>
     <script id="lulc-json-data" type="application/json">{{ lulc | tojson if lulc else "{}" }}</script>
 
-    <!-- Leaflet JS Map Script -->
+    <!-- Leaflet GIS Map Script -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-        /* ================== 🌍 PROCEDURAL 3D VECTOR EARTH ENGINE ================== */
-        (function initProceduralEarth() {
-            var canvas = document.getElementById('earthCanvas');
-            if (!canvas) return;
-            var ctx = canvas.getContext('2d');
-            var width = canvas.width;
-            var height = canvas.height;
-            var radius = width / 2;
-            var rotation = 0;
-            var cloudRotation = 0;
-
-            // Accurate polygon approximations of major continental landmasses [lon, lat]
-            var continents = [
-                // Eurasia & India
-                [[-10, 36], [0, 45], [30, 70], [60, 72], [140, 70], [140, 35], [105, 10], [80, 8], [72, 22], [60, 25], [35, 30], [25, 40], [-10, 36]],
-                // Africa
-                [[-18, 15], [30, 32], [50, 12], [40, -10], [20, -35], [12, -10], [-15, 5], [-18, 15]],
-                // North America
-                [[-165, 65], [-90, 75], [-55, 50], [-75, 25], [-100, 20], [-120, 35], [-165, 65]],
-                // South America
-                [[-80, 10], [-35, -5], [-40, -22], [-65, -55], [-75, -45], [-80, 10]],
-                // Australia
-                [[115, -20], [150, -15], [150, -38], [115, -35], [115, -20]]
-            ];
-
-            function project(lon, lat, rot) {
-                var lambda = ((lon + rot + 180) % 360 - 180) * Math.PI / 180;
-                var phi = lat * Math.PI / 180;
-                
-                // Back-face culling for the sphere
-                if (Math.cos(lambda) * Math.cos(phi) < -0.15) return null;
-
-                var x = radius + radius * Math.sin(lambda) * Math.cos(phi) * 0.95;
-                var y = radius - radius * Math.sin(phi) * 0.95;
-                return { x: x, y: y };
-            }
-
-            function renderGlobe() {
-                ctx.clearRect(0, 0, width, height);
-
-                // 1. Base Deep Space Ocean
-                ctx.save();
-                ctx.beginPath();
-                ctx.arc(radius, radius, radius - 1, 0, Math.PI * 2);
-                ctx.clip();
-
-                var oceanGrad = ctx.createRadialGradient(radius * 0.7, radius * 0.6, 2, radius, radius, radius);
-                oceanGrad.addColorStop(0, '#1e40af'); // Sunlit ocean blue
-                oceanGrad.addColorStop(0.6, '#0369a1');
-                oceanGrad.addColorStop(1, '#020617'); // Space edge shadow
-                ctx.fillStyle = oceanGrad;
-                ctx.fillRect(0, 0, width, height);
-
-                // 2. Render Geographic Continents
-                ctx.fillStyle = '#15803d'; // Forest landmass
-                ctx.strokeStyle = '#22c55e'; // Natural coastlines
-                ctx.lineWidth = 0.8;
-
-                continents.forEach(function(poly) {
-                    ctx.beginPath();
-                    var first = true;
-                    for (var i = 0; i < poly.length; i++) {
-                        var pt = project(poly[i][0], poly[i][1], rotation);
-                        if (pt) {
-                            if (first) { ctx.moveTo(pt.x, pt.y); first = false; }
-                            else { ctx.lineTo(pt.x, pt.y); }
-                        }
-                    }
-                    ctx.closePath();
-                    ctx.fill();
-                    ctx.stroke();
-                });
-
-                // 3. Procedural Realistic Atmosphere / Clouds
-                ctx.fillStyle = 'rgba(255, 255, 255, 0.45)';
-                for (var c = 0; c < 5; c++) {
-                    var cLon = (c * 72 + cloudRotation) % 360 - 180;
-                    var cLat = Math.sin(c * 2) * 40;
-                    var cPt = project(cLon, cLat, 0);
-                    if (cPt) {
-                        ctx.beginPath();
-                        ctx.arc(cPt.x, cPt.y, 8, 0, Math.PI * 2);
-                        ctx.arc(cPt.x + 6, cPt.y - 2, 6, 0, Math.PI * 2);
-                        ctx.fill();
-                    }
-                }
-
-                // 4. 3D Spherical Shadow (Day/Night Terminator)
-                var shadowGrad = ctx.createRadialGradient(radius * 0.4, radius * 0.4, radius * 0.2, radius, radius, radius);
-                shadowGrad.addColorStop(0, 'rgba(255, 255, 255, 0.25)'); // Specular sun glint
-                shadowGrad.addColorStop(0.5, 'rgba(0, 0, 0, 0)');
-                shadowGrad.addColorStop(0.85, 'rgba(0, 5, 20, 0.7)');
-                shadowGrad.addColorStop(1, 'rgba(0, 2, 10, 0.96)'); // Dark night side
-                ctx.fillStyle = shadowGrad;
-                ctx.fillRect(0, 0, width, height);
-
-                ctx.restore();
-
-                // 5. Outer Atmospheric Rayleigh Rim
-                ctx.beginPath();
-                ctx.arc(radius, radius, radius - 1, 0, Math.PI * 2);
-                ctx.strokeStyle = 'rgba(56, 189, 248, 0.7)';
-                ctx.lineWidth = 1.5;
-                ctx.stroke();
-
-                rotation += 0.35;
-                cloudRotation += 0.48;
-                requestAnimationFrame(renderGlobe);
-            }
-
-            renderGlobe();
-        })();
-
         /* 🗂️ Command Center Tab Switcher Engine */
         function switchTab(tabId, btnEl) {
             playSciFiBeep(920, 'sine', 0.08);
@@ -1573,9 +1459,9 @@
                 for (var i = 0; i < stars.length; i++) {
                     for (var j = i + 1; j < stars.length; j++) {
                         var dx = stars[i].x - stars[j].x; var dy = stars[i].y - stars[j].y; var dist = Math.sqrt(dx * dx + dy * dy);
-                        if (dist < 80) {
+                        if (dist < 90) {
                             ctx.beginPath(); ctx.moveTo(stars[i].x, stars[i].y); ctx.lineTo(stars[j].x, stars[j].y);
-                            ctx.strokeStyle = "rgba(0, 240, 255, " + (0.08 - dist / 80 * 0.08) + ")"; ctx.lineWidth = 0.5; ctx.stroke();
+                            ctx.strokeStyle = "rgba(0, 240, 255, " + (0.08 - dist / 90 * 0.08) + ")"; ctx.lineWidth = 0.5; ctx.stroke();
                         }
                     }
                 }
