@@ -5,18 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SatQuery AI | Tactical Multimodal Geospatial Command Center</title>
     
-    <!-- High-Compatibility Glowing Space Satellite Favicon -->
+    <!-- Satellite Favicon -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%9B%B0%EF%B8%8F%3C/text%3E%3C/svg%3E">
     
     <!-- Leaflet GIS Map CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <!-- Chart.js for LULC Analytics & Spectral Histogram -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- Marked.js for Clean Markdown Parsing -->
+    <!-- Marked.js for Markdown Parsing -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    <!-- html2pdf.js for High-Fidelity PDF Generation -->
+    <!-- html2pdf.js for Client-Side Dossier Generation -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    <!-- Sci-Fi Google Fonts -->
+    <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -46,7 +46,7 @@
             position: relative;
         }
 
-        /* ================== 🌌 FULL-SCREEN LIVING COSMIC BACKDROP ================== */
+        /* Ambient Space Elements */
         #globalSpaceCanvas {
             position: fixed;
             top: 0; left: 0;
@@ -55,7 +55,6 @@
             z-index: 0; opacity: 0.95;
         }
 
-        /* ☀️ Grand Luminous Solar Core & Cosmic Aura */
         .cosmic-sun-wrapper {
             position: fixed;
             top: 50%; left: 50%;
@@ -86,7 +85,7 @@
             animation: sunPulse 5s ease-in-out infinite alternate;
         }
 
-        @keyframes sunPulse { 0% { transform: scale(0.96); opacity: 0.85; filter: brightness(1); } 100% { transform: scale(1.08); opacity: 1; filter: brightness(1.25); } }
+        @keyframes sunPulse { 0% { transform: scale(0.96); opacity: 0.85; } 100% { transform: scale(1.08); opacity: 1; } }
         @keyframes auraBreathing { 0% { transform: scale(0.92); opacity: 0.6; } 100% { transform: scale(1.15); opacity: 0.95; } }
         @keyframes rotateSunRays { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
@@ -105,7 +104,7 @@
 
         @keyframes nebulaDrift { 0% { transform: scale(1) translate(0, 0); } 50% { transform: scale(1.08) translate(-25px, 20px); } 100% { transform: scale(1.02) translate(20px, -15px); } }
 
-        /* ================== 🎬 7-SECOND LAUNCH INTRO OVERLAY ================== */
+        /* Launch Overlay */
         #launchSequenceOverlay {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background: #01040a; z-index: 9999999;
@@ -134,15 +133,14 @@
         .btn-skip-intro { position: absolute; bottom: 30px; right: 40px; z-index: 20; background: rgba(4, 9, 20, 0.85); border: 1px solid var(--border-color); color: var(--accent-cyan); font-family: 'JetBrains Mono', monospace; font-size: 11px; padding: 8px 16px; border-radius: 4px; cursor: pointer; transition: all 0.2s; letter-spacing: 1px; }
         .btn-skip-intro:hover { background: var(--accent-cyan); color: #010409; font-weight: 700; box-shadow: 0 0 15px var(--accent-glow); }
 
-        /* ================== MAIN APP WRAPPER ================== */
-        .container { max-width: 1580px; margin: 0 auto; display: flex; flex-direction: column; gap: 14px; position: relative; z-index: 10; }
+        .container { max-width: 1580px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px; position: relative; z-index: 10; }
 
-        /* ================== EXPANDED GRAND COMMAND HEADER ================== */
+        /* Command Topbar */
         .hero-topbar {
             position: relative;
             background: linear-gradient(135deg, rgba(2, 7, 22, 0.88) 0%, rgba(6, 19, 45, 0.82) 40%, rgba(10, 6, 36, 0.88) 100%);
             border: 1.5px solid rgba(0, 240, 255, 0.45);
-            border-radius: 14px; padding: 26px 36px; overflow: hidden;
+            border-radius: 14px; padding: 22px 32px; overflow: hidden;
             box-shadow: 0 0 45px rgba(0, 240, 255, 0.22), inset 0 0 35px rgba(0, 240, 255, 0.1);
             display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 32px; backdrop-filter: blur(14px);
         }
@@ -151,45 +149,81 @@
         .hero-topbar::before { content: ""; position: absolute; top: 0; left: 0; width: 120px; height: 3px; background: linear-gradient(90deg, var(--accent-cyan), transparent); box-shadow: 0 0 15px var(--accent-cyan); z-index: 2; }
         .hero-topbar::after { content: ""; position: absolute; bottom: 0; right: 0; width: 120px; height: 3px; background: linear-gradient(270deg, var(--accent-purple), transparent); box-shadow: 0 0 15px var(--accent-purple); z-index: 2; }
 
-        .hero-content { position: relative; z-index: 3; display: flex; flex-direction: column; gap: 10px; }
+        .hero-content { position: relative; z-index: 3; display: flex; flex-direction: column; gap: 8px; }
         .hero-title-row { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
 
-        .hero-badge-glow { background: linear-gradient(135deg, #0055ff, #00f0ff); color: #010409; font-family: 'Orbitron', sans-serif; font-weight: 900; padding: 8px 15px; border-radius: 6px; font-size: 16px; letter-spacing: 2px; box-shadow: 0 0 25px var(--accent-glow); display: flex; align-items: center; gap: 8px; }
-        .hero-title { font-family: 'Orbitron', sans-serif; font-size: 28px; font-weight: 900; letter-spacing: 1.8px; background: linear-gradient(90deg, #ffffff 0%, var(--accent-cyan) 50%, #d8b4fe 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0 0 35px rgba(0, 240, 255, 0.45); }
-        .hero-subtitle { font-size: 12.5px; color: #94a3b8; font-family: 'JetBrains Mono', monospace; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; letter-spacing: 0.5px; }
+        .hero-badge-glow { background: linear-gradient(135deg, #0055ff, #00f0ff); color: #010409; font-family: 'Orbitron', sans-serif; font-weight: 900; padding: 8px 15px; border-radius: 6px; font-size: 15px; letter-spacing: 2px; box-shadow: 0 0 25px var(--accent-glow); display: flex; align-items: center; gap: 8px; }
+        .hero-title { font-family: 'Orbitron', sans-serif; font-size: 26px; font-weight: 900; letter-spacing: 1.5px; background: linear-gradient(90deg, #ffffff 0%, var(--accent-cyan) 50%, #d8b4fe 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0 0 35px rgba(0, 240, 255, 0.45); }
+        .hero-subtitle { font-size: 12px; color: #94a3b8; font-family: 'JetBrains Mono', monospace; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; letter-spacing: 0.5px; }
         .hero-subtitle strong { color: var(--accent-cyan); font-weight: 600; }
 
-        .hero-telemetry-strip { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-top: 4px; }
-        .pill { background: rgba(4, 9, 20, 0.92); border: 1px solid var(--border-color); color: var(--accent-cyan); padding: 5px 12px; border-radius: 6px; font-size: 11px; font-family: 'JetBrains Mono', monospace; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 2px 12px rgba(0,0,0,0.5); letter-spacing: 0.5px; }
+        .hero-telemetry-strip { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-top: 2px; }
+        .pill { background: rgba(4, 9, 20, 0.92); border: 1px solid var(--border-color); color: var(--accent-cyan); padding: 4px 10px; border-radius: 5px; font-size: 10.5px; font-family: 'JetBrains Mono', monospace; display: inline-flex; align-items: center; gap: 6px; }
         .pill.green { border-color: var(--accent-green); color: var(--accent-green); }
         .pill.amber { border-color: var(--accent-amber); color: var(--accent-amber); }
         .pill.purple { border-color: var(--accent-purple); color: #e9d5ff; }
-        .pulse-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent-green); animation: radar 1.5s infinite; }
+        .pulse-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent-green); animation: radar 1.5s infinite; }
         @keyframes radar { 0% { box-shadow: 0 0 0 0 rgba(0, 255, 102, 0.8); } 70% { box-shadow: 0 0 0 9px rgba(0, 255, 102, 0); } 100% { box-shadow: 0 0 0 0 rgba(0, 255, 102, 0); } }
 
-        .btn-replay-launch { background: rgba(0, 240, 255, 0.1); border: 1px solid var(--accent-cyan); color: var(--accent-cyan); padding: 4px 9px; border-radius: 4px; font-size: 10.5px; font-family: 'JetBrains Mono', monospace; cursor: pointer; transition: all 0.2s; }
+        .btn-replay-launch { background: rgba(0, 240, 255, 0.1); border: 1px solid var(--accent-cyan); color: var(--accent-cyan); padding: 4px 8px; border-radius: 4px; font-size: 10px; font-family: 'JetBrains Mono', monospace; cursor: pointer; transition: all 0.2s; }
         .btn-replay-launch:hover { background: var(--accent-cyan); color: #010409; font-weight: 700; }
 
-        .hero-orbit-graphic { position: relative; z-index: 3; width: 140px; height: 140px; display: flex; align-items: center; justify-content: center; }
-        .orbit-circle { position: absolute; width: 130px; height: 130px; border: 1.5px dashed rgba(0, 240, 255, 0.65); border-radius: 50%; animation: rotateOrbit 12s linear infinite; }
-        .orbit-circle::before { content: "🛰️"; position: absolute; top: -14px; left: 50%; transform: translateX(-50%); font-size: 20px; filter: drop-shadow(0 0 12px var(--accent-cyan)); }
-        .earth-core { width: 62px; height: 62px; background: radial-gradient(circle at 35% 35%, #0284c7 0%, #0369a1 40%, #082f49 75%, #020617 100%); border-radius: 50%; box-shadow: 0 0 30px rgba(56, 189, 248, 0.75), inset -6px -6px 18px rgba(0,0,0,0.9); position: relative; animation: pulseEarth 3s ease-in-out infinite alternate; }
+        .hero-orbit-graphic { position: relative; z-index: 3; width: 130px; height: 130px; display: flex; align-items: center; justify-content: center; }
+        .orbit-circle { position: absolute; width: 120px; height: 120px; border: 1.5px dashed rgba(0, 240, 255, 0.65); border-radius: 50%; animation: rotateOrbit 12s linear infinite; }
+        .orbit-circle::before { content: "🛰️"; position: absolute; top: -14px; left: 50%; transform: translateX(-50%); font-size: 18px; filter: drop-shadow(0 0 12px var(--accent-cyan)); }
+        .earth-core { width: 56px; height: 56px; background: radial-gradient(circle at 35% 35%, #0284c7 0%, #0369a1 40%, #082f49 75%, #020617 100%); border-radius: 50%; box-shadow: 0 0 30px rgba(56, 189, 248, 0.75), inset -6px -6px 18px rgba(0,0,0,0.9); position: relative; animation: pulseEarth 3s ease-in-out infinite alternate; }
         @keyframes rotateOrbit { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
         @keyframes pulseEarth { from { box-shadow: 0 0 25px rgba(56, 189, 248, 0.5); } to { box-shadow: 0 0 50px rgba(0, 240, 255, 0.95); } }
 
-        @media (max-width: 1080px) {
-            .hero-topbar { grid-template-columns: 1fr; padding: 22px 18px; }
-            .hero-title { font-size: 22px; }
-            .hero-orbit-graphic { display: none; }
+        /* FEATURE 5: TELEMETRY STATUS TICKER */
+        .tactical-ticker-bar {
+            width: 100%;
+            background: rgba(3, 8, 20, 0.92);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 5px 12px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10.5px;
+            color: var(--accent-cyan);
+            display: flex;
+            align-items: center;
+            overflow: hidden;
+            box-shadow: inset 0 0 15px rgba(0, 240, 255, 0.08);
+        }
+        .ticker-label {
+            color: var(--accent-green);
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-right: 14px;
+            white-space: nowrap;
+            letter-spacing: 0.5px;
+        }
+        .ticker-track {
+            display: flex;
+            white-space: nowrap;
+            animation: tickerSlide 26s linear infinite;
+        }
+        .ticker-track span {
+            margin-right: 48px;
+            color: #94a3b8;
+        }
+        .ticker-track span b {
+            color: var(--accent-cyan);
+        }
+        @keyframes tickerSlide {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
         }
 
-        /* ================== 🗂️ SYNOVA COMMAND CENTER TABS ================== */
+        /* Navigation Tabs */
         .workspace-tabs-nav {
             display: flex;
             gap: 8px;
             background: rgba(4, 9, 20, 0.85);
             border: 1px solid var(--border-color);
-            padding: 8px;
+            padding: 6px;
             border-radius: 10px;
             backdrop-filter: blur(18px);
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
@@ -198,11 +232,11 @@
 
         .tab-btn {
             flex: 1;
-            min-width: 180px;
+            min-width: 170px;
             background: rgba(2, 6, 23, 0.85);
             border: 1px solid rgba(56, 189, 248, 0.2);
             color: var(--text-muted);
-            padding: 12px 16px;
+            padding: 10px 14px;
             border-radius: 6px;
             font-family: 'Orbitron', sans-serif;
             font-size: 11px;
@@ -215,13 +249,7 @@
             justify-content: center;
             gap: 8px;
         }
-
-        .tab-btn:hover {
-            border-color: var(--accent-cyan);
-            color: var(--accent-cyan);
-            background: rgba(0, 240, 255, 0.08);
-        }
-
+        .tab-btn:hover { border-color: var(--accent-cyan); color: var(--accent-cyan); background: rgba(0, 240, 255, 0.08); }
         .tab-btn.active {
             background: linear-gradient(135deg, rgba(0, 85, 255, 0.35), rgba(0, 240, 255, 0.22));
             border-color: var(--accent-cyan);
@@ -230,30 +258,181 @@
             text-shadow: 0 0 10px var(--accent-cyan);
         }
 
-        .tab-badge {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 8.5px;
-            padding: 2px 6px;
-            border-radius: 3px;
-            text-transform: uppercase;
-        }
+        .tab-badge { font-family: 'JetBrains Mono', monospace; font-size: 8.5px; padding: 2px 6px; border-radius: 3px; text-transform: uppercase; }
         .tab-badge.green { background: rgba(0, 255, 102, 0.15); border: 1px solid var(--accent-green); color: var(--accent-green); }
         .tab-badge.cyan { background: rgba(0, 240, 255, 0.15); border: 1px solid var(--accent-cyan); color: var(--accent-cyan); }
 
-        .tab-content {
-            display: none;
-            animation: fadeInTab 0.35s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        .tab-content { display: none; animation: fadeInTab 0.35s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+        .tab-content.active { display: block; }
+        @keyframes fadeInTab { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* FEATURE 1: MULTISPECTRAL SVG COLOR TRANSFER FILTERS */
+        .leaf-nir-active {
+            filter: url(#cirNirFilter) !important;
         }
-        .tab-content.active {
-            display: block;
+        .leaf-sar-active {
+            filter: contrast(180%) grayscale(100%) brightness(110%) drop-shadow(0 0 2px rgba(0,240,255,0.4)) !important;
+        }
+        .leaf-ndvi-active {
+            filter: url(#ndviColorMap) !important;
         }
 
-        @keyframes fadeInTab {
-            from { opacity: 0; transform: translateY(8px); }
-            to { opacity: 1; transform: translateY(0); }
+        /* FEATURE 2: SCANNING RETICLE HUD */
+        .map-wrapper { position: relative; border: 1px solid var(--border-color); border-radius: 6px; overflow: hidden; }
+        #map { height: 280px; }
+
+        .tactical-hud-crosshair {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90px; height: 90px;
+            pointer-events: none;
+            z-index: 500;
+        }
+        .reticle-bearing-ring {
+            position: absolute;
+            top: 5px; left: 5px;
+            width: 80px; height: 80px;
+            border-radius: 50%;
+            border: 1px dashed rgba(0, 240, 255, 0.6);
+            animation: bearingSpin 18s linear infinite;
+        }
+        @keyframes bearingSpin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+        .reticle-center-pip {
+            position: absolute;
+            top: 42px; left: 42px;
+            width: 6px; height: 6px;
+            background: var(--accent-red);
+            border-radius: 50%;
+            box-shadow: 0 0 8px var(--accent-red);
+        }
+        .reticle-corner {
+            position: absolute;
+            width: 10px; height: 10px;
+            border-color: var(--accent-cyan);
+            border-style: solid;
+        }
+        .c-tl { top: 0; left: 0; border-width: 2px 0 0 2px; }
+        .c-tr { top: 0; right: 0; border-width: 2px 2px 0 0; }
+        .c-bl { bottom: 0; left: 0; border-width: 0 0 2px 2px; }
+        .c-br { bottom: 0; right: 0; border-width: 0 2px 2px 0; }
+
+        .laser-sweep-line {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 2px;
+            background: linear-gradient(90deg, transparent, var(--accent-cyan), #ffffff, var(--accent-cyan), transparent);
+            box-shadow: 0 0 10px var(--accent-cyan);
+            animation: scanLaser 2.4s ease-in-out infinite alternate;
+        }
+        @keyframes scanLaser {
+            0% { transform: translateY(4px); opacity: 0.3; }
+            50% { opacity: 0.95; }
+            100% { transform: translateY(84px); opacity: 0.3; }
         }
 
-        /* ================== 💡 INTERACTIVE TOOLTIP POPUP STYLES ================== */
+        .reticle-azimuth-tag {
+            position: absolute;
+            top: -18px; left: 50%;
+            transform: translateX(-50%);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 8.5px;
+            color: var(--accent-cyan);
+            background: rgba(2, 6, 23, 0.9);
+            padding: 1px 4px;
+            border: 1px solid rgba(0, 240, 255, 0.3);
+            border-radius: 2px;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+        }
+
+        .mgrs-bar {
+            position: absolute; bottom: 0; left: 0; width: 100%; background: rgba(1, 4, 9, 0.88);
+            padding: 4px 10px; font-family: 'JetBrains Mono', monospace; font-size: 9.5px; color: var(--accent-cyan); display: flex; justify-content: space-between; z-index: 600; border-top: 1px solid rgba(0, 240, 255, 0.2);
+        }
+
+        /* FEATURE 3: REACTIVE AUDIO EQUALIZER */
+        .voice-query-group { display: flex; gap: 8px; align-items: center; }
+        .btn-mic {
+            background: rgba(0, 240, 255, 0.1); border: 1px solid var(--accent-cyan); color: var(--accent-cyan);
+            padding: 9px 14px; border-radius: 5px; cursor: pointer; font-size: 14px; transition: all 0.2s;
+        }
+        .btn-mic.listening { background: rgba(255, 0, 85, 0.3); border-color: var(--accent-red); color: var(--accent-red); animation: pulse 1s infinite; }
+        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.08); } }
+
+        .carrier-audio-visualizer {
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+            height: 18px;
+            padding: 0 6px;
+            background: rgba(2, 6, 23, 0.85);
+            border: 1px solid rgba(0, 240, 255, 0.3);
+            border-radius: 3px;
+        }
+        .wave-bar {
+            width: 3px;
+            height: 4px;
+            background: var(--accent-cyan);
+            border-radius: 1px;
+            transition: height 0.1s ease;
+        }
+        .carrier-beacon {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 8.5px;
+            color: var(--accent-green);
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .beacon-dot {
+            width: 5px; height: 5px; border-radius: 50%; background: var(--accent-green);
+        }
+        .beacon-dot.active { animation: blinkLed 0.5s infinite; }
+        @keyframes blinkLed { 0%, 100% { opacity: 0.2; } 50% { opacity: 1; } }
+
+        /* FEATURE 4: INTERACTIVE ENTITY ACQUISITION CHIPS */
+        .target-matrix-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-top: 4px;
+        }
+        .target-chips-container {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+        .target-chip {
+            background: rgba(4, 9, 20, 0.88);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 4px 9px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            color: #cbd5e1;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s ease;
+        }
+        .target-chip:hover {
+            border-color: var(--accent-cyan);
+            background: rgba(0, 240, 255, 0.12);
+            color: var(--accent-cyan);
+            transform: translateY(-1px);
+        }
+        .target-chip.locked {
+            border-color: var(--accent-red);
+            color: #ff99bb;
+            background: rgba(255, 0, 85, 0.15);
+            box-shadow: 0 0 10px rgba(255, 0, 85, 0.35);
+        }
+
+        /* Tooltip Styles */
         .geo-tooltip {
             position: relative;
             color: var(--accent-cyan);
@@ -261,12 +440,10 @@
             cursor: help;
             font-weight: 600;
         }
-
         .geo-tooltip::after {
             content: attr(data-tooltip);
             position: absolute;
-            bottom: 125%;
-            left: 50%;
+            bottom: 125%; left: 50%;
             transform: translateX(-50%) translateY(4px);
             background: #020a1a;
             border: 1px solid var(--accent-cyan);
@@ -277,7 +454,6 @@
             line-height: 1.4;
             white-space: normal;
             width: 240px;
-            text-shadow: none;
             box-shadow: 0 4px 20px rgba(0, 240, 255, 0.4);
             opacity: 0;
             pointer-events: none;
@@ -286,64 +462,15 @@
             font-family: 'Inter', sans-serif;
             font-weight: 400;
         }
+        .geo-tooltip:hover::after { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-        .geo-tooltip:hover::after {
-            opacity: 1;
-            transform: translateX(-50%) translateY(0);
-        }
+        .glossary-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 14px; margin-top: 10px; }
+        .glossary-card { background: #030816; border: 1px solid var(--border-color); border-radius: 8px; padding: 16px; display: flex; flex-direction: column; gap: 6px; }
+        .glossary-term { font-family: 'Orbitron', sans-serif; font-size: 13px; font-weight: 800; color: var(--accent-cyan); display: flex; align-items: center; justify-content: space-between; }
+        .glossary-tag { font-family: 'JetBrains Mono', monospace; font-size: 9px; padding: 2px 6px; background: rgba(0, 240, 255, 0.1); border: 1px solid rgba(0, 240, 255, 0.3); border-radius: 3px; color: var(--accent-cyan); }
+        .glossary-desc { font-size: 12px; color: #cbd5e1; line-height: 1.5; }
 
-        /* Glossary Grid Layout */
-        .glossary-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 14px;
-            margin-top: 10px;
-        }
-
-        .glossary-card {
-            background: #030816;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 16px;
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-            transition: all 0.2s;
-        }
-
-        .glossary-card:hover {
-            border-color: var(--accent-cyan);
-            box-shadow: 0 0 15px var(--accent-glow);
-            transform: translateY(-2px);
-        }
-
-        .glossary-term {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 13px;
-            font-weight: 800;
-            color: var(--accent-cyan);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .glossary-tag {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 9px;
-            padding: 2px 6px;
-            background: rgba(0, 240, 255, 0.1);
-            border: 1px solid rgba(0, 240, 255, 0.3);
-            border-radius: 3px;
-            color: var(--accent-cyan);
-        }
-
-        .glossary-desc {
-            font-size: 12px;
-            color: #cbd5e1;
-            line-height: 1.5;
-        }
-
-        /* ================== CARDS & PANELS ================== */
+        /* Panels & Cards */
         .card {
             background: var(--bg-card);
             backdrop-filter: blur(20px);
@@ -356,7 +483,6 @@
             position: relative;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
         }
-
         .card-title {
             font-family: 'Orbitron', sans-serif;
             font-size: 12.5px;
@@ -371,11 +497,7 @@
             padding-bottom: 10px;
         }
 
-        .ingestion-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-        }
+        .ingestion-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
         @media (max-width: 1080px) { .ingestion-grid { grid-template-columns: 1fr; } }
 
         .form-group { display: flex; flex-direction: column; gap: 5px; }
@@ -383,415 +505,139 @@
 
         .input-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         input[type="file"], select, input[type="text"] {
-            width: 100%;
-            background: #040914;
-            border: 1px solid var(--border-color);
-            color: var(--text-main);
-            padding: 9px 12px;
-            border-radius: 5px;
-            font-size: 12px;
-            outline: none;
-            font-family: 'JetBrains Mono', monospace;
-            transition: all 0.2s ease;
+            width: 100%; background: #040914; border: 1px solid var(--border-color); color: var(--text-main);
+            padding: 9px 12px; border-radius: 5px; font-size: 12px; outline: none; font-family: 'JetBrains Mono', monospace;
         }
         input[type="file"] { font-size: 10.5px; padding: 7px; cursor: pointer; }
-        input[type="text"]:focus, select:focus {
-            border-color: var(--accent-cyan);
-            box-shadow: 0 0 10px var(--accent-glow);
-        }
 
         .preset-container { display: flex; gap: 6px; flex-wrap: wrap; }
         .preset-btn {
-            background: rgba(0, 240, 255, 0.08);
-            border: 1px solid rgba(0, 240, 255, 0.3);
-            color: var(--accent-cyan);
-            font-size: 10.5px;
-            padding: 5px 10px;
-            border-radius: 4px;
-            font-family: 'JetBrains Mono', monospace;
-            cursor: pointer;
-            transition: all 0.2s;
+            background: rgba(0, 240, 255, 0.08); border: 1px solid rgba(0, 240, 255, 0.3); color: var(--accent-cyan);
+            font-size: 10.5px; padding: 5px 10px; border-radius: 4px; font-family: 'JetBrains Mono', monospace; cursor: pointer;
         }
-        .preset-btn:hover { background: var(--accent-cyan); color: #02040a; font-weight: 700; box-shadow: 0 0 12px var(--accent-glow); }
-
-        .voice-query-group { display: flex; gap: 8px; align-items: center; }
-        .btn-mic {
-            background: rgba(0, 240, 255, 0.1);
-            border: 1px solid var(--accent-cyan);
-            color: var(--accent-cyan);
-            padding: 9px 14px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 14px;
-            transition: all 0.2s;
-        }
-        .btn-mic.listening {
-            background: rgba(255, 0, 85, 0.3);
-            border-color: var(--accent-red);
-            color: var(--accent-red);
-            animation: pulse 1s infinite;
-        }
-        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.08); } }
-
-        /* Map Wrapper */
-        .map-wrapper { position: relative; border: 1px solid var(--border-color); border-radius: 6px; overflow: hidden; }
-        #map { height: 260px; }
-        .map-reticle {
-            position: absolute;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            width: 36px; height: 36px;
-            border: 1px solid rgba(0, 240, 255, 0.5);
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 500;
-        }
-        .map-reticle::before { content: ""; position: absolute; top: 17px; left: -8px; width: 52px; height: 1px; background: rgba(0, 240, 255, 0.4); }
-        .map-reticle::after { content: ""; position: absolute; top: -8px; left: 17px; width: 1px; height: 52px; background: rgba(0, 240, 255, 0.4); }
-        .mgrs-bar {
-            position: absolute;
-            bottom: 0; left: 0; width: 100%;
-            background: rgba(1, 4, 9, 0.88);
-            padding: 4px 10px;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 9.5px;
-            color: var(--accent-cyan);
-            display: flex;
-            justify-content: space-between;
-            z-index: 600;
-            border-top: 1px solid rgba(0, 240, 255, 0.2);
-        }
+        .preset-btn:hover { background: var(--accent-cyan); color: #02040a; font-weight: 700; }
 
         .checkbox-container {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 11.5px;
-            color: var(--accent-cyan);
-            background: rgba(0, 240, 255, 0.05);
-            padding: 8px 12px;
-            border-radius: 5px;
-            border: 1px dashed rgba(0, 240, 255, 0.3);
-            cursor: pointer;
-            font-family: 'JetBrains Mono', monospace;
+            display: flex; align-items: center; gap: 8px; font-size: 11.5px; color: var(--accent-cyan);
+            background: rgba(0, 240, 255, 0.05); padding: 8px 12px; border-radius: 5px; border: 1px dashed rgba(0, 240, 255, 0.3); cursor: pointer; font-family: 'JetBrains Mono', monospace;
         }
         .checkbox-container input { width: auto; cursor: pointer; }
 
         .btn-submit {
-            background: linear-gradient(135deg, #0055ff, #00f0ff);
-            color: #02040a;
-            border: none;
-            padding: 14px;
-            border-radius: 5px;
-            font-weight: 800;
-            font-size: 14px;
-            font-family: 'Orbitron', sans-serif;
-            letter-spacing: 1px;
-            cursor: pointer;
-            box-shadow: 0 0 20px var(--accent-glow);
-            transition: all 0.2s;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 8px;
+            background: linear-gradient(135deg, #0055ff, #00f0ff); color: #02040a; border: none; padding: 14px;
+            border-radius: 5px; font-weight: 800; font-size: 14px; font-family: 'Orbitron', sans-serif; letter-spacing: 1px; cursor: pointer; box-shadow: 0 0 20px var(--accent-glow); display: flex; justify-content: center; align-items: center; gap: 8px;
         }
-        .btn-submit:hover { transform: translateY(-1px); box-shadow: 0 0 30px rgba(0, 240, 255, 0.7); }
 
-        /* ================== 🎚️ BI-TEMPORAL SPLIT-VIEW SLIDER ================== */
+        /* Bi-Temporal Split Slider */
         .split-slider-container {
-            position: relative;
-            width: 100%;
-            height: 380px;
-            background: #020617;
-            border: 1.5px solid var(--border-color);
-            border-radius: 8px;
-            overflow: hidden;
-            user-select: none;
-            -webkit-user-select: none;
-            box-shadow: 0 4px 25px rgba(0, 0, 0, 0.6);
-            margin-bottom: 14px;
-            cursor: ew-resize;
+            position: relative; width: 100%; height: 380px; background: #020617; border: 1.5px solid var(--border-color);
+            border-radius: 8px; overflow: hidden; user-select: none; -webkit-user-select: none; margin-bottom: 14px; cursor: ew-resize;
         }
-
-        .split-slider-container img {
-            position: absolute;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            object-fit: cover;
-            pointer-events: none;
-        }
-
+        .split-slider-container img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
         .split-img-after { z-index: 1; }
-        .split-img-before-wrapper {
-            position: absolute;
-            top: 0; left: 0;
-            width: 50%; height: 100%;
-            overflow: hidden;
-            z-index: 2;
-            border-right: 2px solid var(--accent-cyan);
-            box-shadow: 2px 0 15px var(--accent-glow);
-        }
+        .split-img-before-wrapper { position: absolute; top: 0; left: 0; width: 50%; height: 100%; overflow: hidden; z-index: 2; border-right: 2px solid var(--accent-cyan); }
         .split-img-before-wrapper img { height: 100%; max-width: none; }
-
-        .slider-handle {
-            position: absolute;
-            top: 0; left: 50%;
-            width: 3px; height: 100%;
-            background: var(--accent-cyan);
-            box-shadow: 0 0 12px var(--accent-cyan);
-            cursor: ew-resize;
-            z-index: 10;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transform: translateX(-50%);
-        }
-
-        .handle-knob {
-            width: 34px; height: 34px;
-            background: rgba(2, 6, 23, 0.95);
-            border: 2px solid var(--accent-cyan);
-            border-radius: 50%;
-            box-shadow: 0 0 16px var(--accent-cyan);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 11px;
-            color: var(--accent-cyan);
-            pointer-events: none;
-        }
-
-        .slider-tag {
-            position: absolute;
-            top: 12px;
-            padding: 4px 10px;
-            background: rgba(1, 4, 10, 0.88);
-            border: 1px solid var(--border-color);
-            border-radius: 4px;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 10px;
-            letter-spacing: 0.5px;
-            z-index: 5;
-            pointer-events: none;
-        }
+        .slider-handle { position: absolute; top: 0; left: 50%; width: 3px; height: 100%; background: var(--accent-cyan); cursor: ew-resize; z-index: 10; display: flex; align-items: center; justify-content: center; transform: translateX(-50%); }
+        .handle-knob { width: 34px; height: 34px; background: rgba(2, 6, 23, 0.95); border: 2px solid var(--accent-cyan); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--accent-cyan); }
+        .slider-tag { position: absolute; top: 12px; padding: 4px 10px; background: rgba(1, 4, 10, 0.88); border: 1px solid var(--border-color); border-radius: 4px; font-family: 'JetBrains Mono', monospace; font-size: 10px; z-index: 5; pointer-events: none; }
         .tag-before { left: 12px; color: var(--accent-cyan); }
         .tag-after { right: 12px; color: var(--accent-green); }
 
-        /* Media / Telemetry HUD Grid */
+        /* Media Grid */
         .media-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; }
-        .media-box {
-            background: #040914;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 10px;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            position: relative;
-            cursor: zoom-in;
-        }
+        .media-box { background: #040914; border: 1px solid var(--border-color); border-radius: 8px; padding: 10px; display: flex; flex-direction: column; gap: 8px; position: relative; cursor: zoom-in; }
         .media-box span { font-size: 10px; font-weight: 700; color: var(--accent-cyan); font-family: 'JetBrains Mono', monospace; }
         .media-box img { width: 100%; height: 210px; object-fit: cover; border-radius: 5px; transition: filter 0.3s; }
-        .hud-corner {
-            position: absolute;
-            bottom: 14px; right: 14px;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 9px;
-            background: rgba(2, 6, 23, 0.88);
-            padding: 3px 6px;
-            border: 1px solid var(--border-color);
-            border-radius: 3px;
-            color: var(--accent-green);
-        }
+        .hud-corner { position: absolute; bottom: 14px; right: 14px; font-family: 'JetBrains Mono', monospace; font-size: 9px; background: rgba(2, 6, 23, 0.88); padding: 3px 6px; border: 1px solid var(--border-color); border-radius: 3px; color: var(--accent-green); }
 
-        /* Shader Filter Buttons Toolbar */
         .shader-toolbar { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 2px; }
-        .btn-shader {
-            background: rgba(2, 6, 23, 0.9);
-            border: 1px solid var(--border-color);
-            color: var(--text-muted);
-            font-size: 10px;
-            font-family: 'JetBrains Mono', monospace;
-            padding: 4px 9px;
-            border-radius: 3px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .btn-shader.active, .btn-shader:hover {
-            border-color: var(--accent-cyan);
-            color: var(--accent-cyan);
-            background: rgba(0, 240, 255, 0.1);
-        }
-
+        .btn-shader { background: rgba(2, 6, 23, 0.9); border: 1px solid var(--border-color); color: var(--text-muted); font-size: 10px; font-family: 'JetBrains Mono', monospace; padding: 4px 9px; border-radius: 3px; cursor: pointer; }
+        .btn-shader.active, .btn-shader:hover { border-color: var(--accent-cyan); color: var(--accent-cyan); background: rgba(0, 240, 255, 0.1); }
         .flir-thermal { filter: contrast(180%) saturate(300%) hue-rotate(90deg) invert(10%) !important; }
         .night-vision { filter: brightness(120%) contrast(150%) sepia(100%) hue-rotate(85deg) saturate(300%) !important; }
         .sobel-edge { filter: contrast(250%) grayscale(100%) invert(100%) !important; }
         .sar-polar { filter: contrast(160%) invert(80%) hue-rotate(240deg) saturate(180%) !important; }
 
-        /* Analytics Console */
+        /* Analytics Subgrid */
         .analytics-subgrid { display: grid; grid-template-columns: 1fr 320px; gap: 18px; }
         @media (max-width: 980px) { .analytics-subgrid { grid-template-columns: 1fr; } }
 
         .analysis-box {
-            background: #030712;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 20px;
-            font-size: 13.5px;
-            line-height: 1.7;
-            color: #d1d5db;
-            max-height: 480px;
-            overflow-y: auto;
-            font-family: 'Inter', sans-serif;
-            border-left: 4px solid var(--accent-cyan);
+            background: #030712; border: 1px solid var(--border-color); border-radius: 8px; padding: 20px;
+            font-size: 13.5px; line-height: 1.7; color: #d1d5db; max-height: 480px; overflow-y: auto; font-family: 'Inter', sans-serif; border-left: 4px solid var(--accent-cyan);
         }
-        .analysis-box h1, .analysis-box h2, .analysis-box h3 {
-            color: var(--accent-cyan);
-            font-family: 'Orbitron', sans-serif;
-            font-size: 13px;
-            margin-top: 14px;
-            margin-bottom: 8px;
-            letter-spacing: 0.5px;
-            border-bottom: 1px solid rgba(0, 240, 255, 0.2);
-            padding-bottom: 4px;
-        }
-        .analysis-box h3:first-child { margin-top: 0; }
+        .analysis-box h1, .analysis-box h2, .analysis-box h3 { color: var(--accent-cyan); font-family: 'Orbitron', sans-serif; font-size: 13px; margin-top: 14px; margin-bottom: 8px; }
         .analysis-box ul { padding-left: 20px; margin-bottom: 10px; }
-        .analysis-box li { margin-bottom: 5px; }
-        .analysis-box strong { color: #ffffff; }
 
         .dual-chart-pane { display: flex; flex-direction: column; gap: 12px; }
-        .chart-box {
-            background: #030712;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 14px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
+        .chart-box { background: #030712; border: 1px solid var(--border-color); border-radius: 8px; padding: 14px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
         .chart-box h4 { font-family: 'Orbitron', sans-serif; font-size: 10.5px; color: var(--accent-cyan); letter-spacing: 1px; margin-bottom: 8px; }
 
         .bench-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 8px; }
-        .metric-card {
-            background: #030712;
-            border: 1px solid var(--border-color);
-            padding: 10px 12px;
-            border-radius: 6px;
-            display: flex;
-            flex-direction: column;
-        }
+        .metric-card { background: #030712; border: 1px solid var(--border-color); padding: 10px 12px; border-radius: 6px; display: flex; flex-direction: column; }
         .metric-title { font-size: 9.5px; color: var(--text-muted); font-family: 'JetBrains Mono', monospace; text-transform: uppercase; }
         .metric-val { font-size: 14px; font-weight: 700; color: var(--accent-green); font-family: 'JetBrains Mono', monospace; }
 
-        pre {
-            background: #02040a;
-            color: var(--accent-cyan);
-            padding: 12px;
-            border-radius: 6px;
-            font-size: 11.5px;
-            font-family: 'JetBrains Mono', monospace;
-            border: 1px solid rgba(0, 240, 255, 0.2);
-            overflow-x: auto;
-            max-height: 150px;
-        }
+        pre { background: #02040a; color: var(--accent-cyan); padding: 12px; border-radius: 6px; font-size: 11.5px; font-family: 'JetBrains Mono', monospace; border: 1px solid rgba(0, 240, 255, 0.2); overflow-x: auto; max-height: 150px; }
 
         .action-bar { display: flex; gap: 8px; align-items: center; }
-        .btn-action {
-            background: rgba(0, 240, 255, 0.1);
-            border: 1px solid var(--accent-cyan);
-            color: var(--accent-cyan);
-            padding: 6px 12px;
-            border-radius: 4px;
-            font-size: 11px;
-            font-family: 'JetBrains Mono', monospace;
-            cursor: pointer;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            transition: all 0.2s;
-        }
+        .btn-action { background: rgba(0, 240, 255, 0.1); border: 1px solid var(--accent-cyan); color: var(--accent-cyan); padding: 6px 12px; border-radius: 4px; font-size: 11px; font-family: 'JetBrains Mono', monospace; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 5px; }
         .btn-action:hover { background: var(--accent-cyan); color: #02040a; font-weight: 700; }
 
-        /* Tactical Radar Loader */
-        #loader {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(2, 4, 10, 0.92);
-            backdrop-filter: blur(12px);
-            z-index: 10000;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            gap: 16px;
-        }
-        .radar-box {
-            width: 80px; height: 80px;
-            border-radius: 50%;
-            border: 2px solid rgba(0, 240, 255, 0.3);
-            position: relative;
-            box-shadow: 0 0 25px rgba(0, 240, 255, 0.2);
-        }
-        .radar-sweep {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            border-radius: 50%;
-            background: conic-gradient(from 0deg at 50% 50%, rgba(0, 240, 255, 0.5) 0deg, transparent 90deg);
-            animation: radar-spin 1.2s linear infinite;
-        }
+        #loader { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(2, 4, 10, 0.92); backdrop-filter: blur(12px); z-index: 10000; flex-direction: column; justify-content: center; align-items: center; gap: 16px; }
+        .radar-box { width: 80px; height: 80px; border-radius: 50%; border: 2px solid rgba(0, 240, 255, 0.3); position: relative; }
+        .radar-sweep { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border-radius: 50%; background: conic-gradient(from 0deg at 50% 50%, rgba(0, 240, 255, 0.5) 0deg, transparent 90deg); animation: radar-spin 1.2s linear infinite; }
         @keyframes radar-spin { to { transform: rotate(360deg); } }
 
-        /* Lightbox */
-        #lightboxModal {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(2, 4, 10, 0.95);
-            z-index: 11000;
-            justify-content: center;
-            align-items: center;
-            cursor: zoom-out;
-        }
-        #lightboxImg { max-width: 90%; max-height: 85%; border: 2px solid var(--accent-cyan); box-shadow: 0 0 30px var(--accent-glow); border-radius: 4px; }
+        #lightboxModal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(2, 4, 10, 0.95); z-index: 11000; justify-content: center; align-items: center; cursor: zoom-out; }
+        #lightboxImg { max-width: 90%; max-height: 85%; border: 2px solid var(--accent-cyan); border-radius: 4px; }
     </style>
 </head>
 <body>
 
-    <!-- 🌌 Living Ambient Deep Space Canvas -->
+    <!-- FEATURE 1: EMBEDDED MULTISPECTRAL FALSE-COLOR CIR & NDVI FILTERS -->
+    <svg style="position: absolute; width: 0; height: 0; overflow: hidden;" version="1.1" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+            <!-- CIR False-Color NIR Filter (Vegetation Chlorophyll reflected as Scarlet Red) -->
+            <filter id="cirNirFilter">
+                <feColorMatrix type="matrix" values="
+                    0.0  1.8  0.0  0.0  0.0
+                    0.4  0.2  0.0  0.0  0.0
+                    0.0  0.0  0.8  0.0  0.0
+                    0.0  0.0  0.0  1.0  0.0" />
+            </filter>
+            <!-- Topographic NDVI Pseudocolor -->
+            <filter id="ndviColorMap">
+                <feColorMatrix type="matrix" values="
+                    0.2  0.1  0.0  0.0  0.0
+                    0.1  1.9  0.2  0.0  0.0
+                    0.0  0.2  0.9  0.0  0.0
+                    0.0  0.0  0.0  1.0  0.0" />
+            </filter>
+        </defs>
+    </svg>
+
     <canvas id="globalSpaceCanvas"></canvas>
-    
-    <!-- ☀️ Bright Central Solar Aura Core -->
     <div class="cosmic-sun-wrapper">
         <div class="sun-outer-aura"></div>
         <div class="sun-rays"></div>
         <div class="sun-corona"></div>
     </div>
-    
     <div class="ambient-nebula"></div>
     <div class="ambient-grid-overlay"></div>
 
-    <!-- ================== 🎬 7-SECOND LAUNCH INTRO OVERLAY ================== -->
+    <!-- Intro Sequence -->
     <div id="launchSequenceOverlay">
         <canvas id="warpCanvas"></canvas>
-        
         <div class="cinematic-hud">
             <div class="spacecraft-box">
                 <div class="rocket-icon">🚀</div>
                 <div class="lens-portal"></div>
             </div>
-
             <div class="launch-terminal-text" id="launchStatusMsg">STAGE 1: LAUNCH PAD IGNITION & ASCENT...</div>
             <div class="launch-subtext" id="launchSubMsg">CARTOSAT / SENTINEL SENSOR ARRAY CALIBRATION</div>
-
-            <div class="progress-bar-container">
-                <div class="progress-bar-fill"></div>
-            </div>
+            <div class="progress-bar-container"><div class="progress-bar-fill"></div></div>
         </div>
-
         <button class="btn-skip-intro" onclick="endIntroSequence()">SKIP INTRO ⏩</button>
     </div>
 
@@ -799,35 +645,29 @@
         <img id="lightboxImg" src="" alt="Tactical Zoom">
     </div>
 
-    <!-- Sci-Fi Radar Loader -->
+    <!-- Radar Loading Screen -->
     <div id="loader">
-        <div class="radar-box">
-            <div class="radar-sweep"></div>
-        </div>
+        <div class="radar-box"><div class="radar-sweep"></div></div>
         <p style="font-family: 'Orbitron', sans-serif; font-size: 12.5px; color: var(--accent-cyan); letter-spacing: 1.5px;">DECODING MULTISPECTRAL AGENTIC TELEMETRY...</p>
     </div>
 
     <div class="container">
         
-        <!-- EXPANDED HIGH-TECH HERO COMMAND HEADER -->
+        <!-- Header -->
         <header class="hero-topbar">
-            <!-- 🌌 Dedicated Interactive Header Space Canvas (Stars & Meteors) -->
             <canvas id="spaceCanvas"></canvas>
-
             <div class="hero-content">
                 <div class="hero-title-row">
-                    <div class="hero-badge-glow">
-                        <span>🛰️</span> SATQUERY AI
-                    </div>
+                    <div class="hero-badge-glow"><span>🛰️</span> SATQUERY AI</div>
                     <h1 class="hero-title">Multimodal Geospatial Tactical Intelligence</h1>
                 </div>
 
                 <p class="hero-subtitle">
-                    <span>MISSION CLASS: <strong>ISRO / SAC EARTH OBSERVATION</strong></span>
+                    <span>MISSION: <strong>ISRO / SAC EARTH OBSERVATION</strong></span>
                     <span>•</span>
                     <span>AGENTIC CORE: <strong>GEMINI 3.6 FLASH VLM</strong></span>
                     <span>•</span>
-                    <span>UPLINK TELEMETRY: <strong id="telemetryClock">00:00:00 UTC</strong> | <strong id="telemetryClockIST" style="color: var(--accent-green);">00:00:00 IST</strong></span>
+                    <span>UPLINK: <strong id="telemetryClock">00:00:00 UTC</strong> | <strong id="telemetryClockIST" style="color: var(--accent-green);">00:00:00 IST</strong></span>
                 </p>
 
                 <div class="hero-telemetry-strip">
@@ -839,14 +679,34 @@
                 </div>
             </div>
 
-            <!-- Orbiting Vector Earth & Satellite Graphic -->
             <div class="hero-orbit-graphic">
                 <div class="orbit-circle"></div>
                 <div class="earth-core"></div>
             </div>
         </header>
 
-        <!-- 🗂️ SYNOVA COMMAND CENTER TAB NAVIGATION -->
+        <!-- FEATURE 5: TELEMETRY STATUS TICKER -->
+        <div class="tactical-ticker-bar">
+            <div class="ticker-label">
+                <span class="beacon-dot active"></span> LIVE TELEMETRY LOG:
+            </div>
+            <div class="ticker-track">
+                <span><b>SYS_OK</b> // EPHEMERIS PROPAGATION: NOMINAL</span>
+                <span><b>SENTINEL-1A</b>: C-BAND SAR POLARIZATION LOCKED (VV+VH)</span>
+                <span><b>CARTOSAT-3</b>: GSD CALIBRATED AT 0.28M PANCHROMATIC</span>
+                <span><b>GEMINI-3.6-FLASH</b>: VLM INFERENCE LATENCY 342ms</span>
+                <span><b>COPERNICUS HUB</b>: INGESTION PIPELINE ACTIVE</span>
+                <span><b>ENCRYPTION</b>: MIL-STD AES-256 GCM SECURED</span>
+                <span><b>SYS_OK</b> // EPHEMERIS PROPAGATION: NOMINAL</span>
+                <span><b>SENTINEL-1A</b>: C-BAND SAR POLARIZATION LOCKED (VV+VH)</span>
+                <span><b>CARTOSAT-3</b>: GSD CALIBRATED AT 0.28M PANCHROMATIC</span>
+                <span><b>GEMINI-3.6-FLASH</b>: VLM INFERENCE LATENCY 342ms</span>
+                <span><b>COPERNICUS HUB</b>: INGESTION PIPELINE ACTIVE</span>
+                <span><b>ENCRYPTION</b>: MIL-STD AES-256 GCM SECURED</span>
+            </div>
+        </div>
+
+        <!-- Navigation Tabs -->
         <nav class="workspace-tabs-nav">
             <button class="tab-btn active" onclick="switchTab('tab-ingestion', this)">
                 <span>📡</span> SENSOR INGESTION & TARGETING
@@ -864,7 +724,7 @@
             </button>
         </nav>
 
-        <!-- TAB 1: SENSOR INGESTION & TARGETING FORM -->
+        <!-- TAB 1: SENSOR INGESTION -->
         <div id="tab-ingestion" class="tab-content active">
             <div class="card">
                 <div class="card-title">
@@ -875,7 +735,6 @@
                 <form method="POST" enctype="multipart/form-data" onsubmit="showLoader()">
                     <div class="ingestion-grid">
                         
-                        <!-- Form Inputs Column -->
                         <div style="display: flex; flex-direction: column; gap: 12px;">
                             <div class="form-group">
                                 <label for="file_input_1">Primary Channel (T1 / Optical / GeoTIFF):</label>
@@ -887,7 +746,6 @@
                                 <input type="file" id="file_input_2" name="satellite_image_2" accept=".tif,.tiff,.png,.jpg,.jpeg">
                             </div>
 
-                            <!-- 🌐 GLOBAL LOCATION SEARCH BAR -->
                             <div class="form-group">
                                 <label for="location_search">Global Location Search (City / Landmark / Address):</label>
                                 <div class="voice-query-group">
@@ -901,9 +759,10 @@
                                     <label for="composite_mode">Sensor Composite Mode:</label>
                                     <select id="composite_mode" name="composite_mode" onchange="changeMapLayer(this.value)">
                                         <option value="SATELLITE">Optical Satellite (Esri Imagery)</option>
-                                        <option value="NIR">Infrared False-Color (NIR)</option>
-                                        <option value="NDVI">Synthetic NDVI (Topographic)</option>
-                                        <option value="RGB">OpenStreetMap Base Layer</option>
+                                        <option value="NIR">Infrared False-Color (Color-IR CIR)</option>
+                                        <option value="SAR">C-Band SAR Radar (Simulated Backscatter)</option>
+                                        <option value="NDVI">Synthetic NDVI (Topographic Vegetation)</option>
+                                        <option value="RGB">OpenStreetMap Vector Base</option>
                                     </select>
                                 </div>
                                 <div class="form-group">
@@ -927,10 +786,26 @@
                                 <span>Capture live Sentinel/Cartosat tile at reticle coordinates</span>
                             </label>
 
+                            <!-- FEATURE 3: AUDIO FREQUENCY WAVEFORM & COMMS BEACON -->
                             <div class="form-group">
-                                <label for="user_question">Tactical Operational Query (Voice / Text):</label>
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <label for="user_question">Tactical Query (Voice / Text):</label>
+                                    <div class="carrier-beacon">
+                                        <span class="beacon-dot" id="carrierLed"></span>
+                                        <span id="carrierFreqTag">UPLINK CARRIER // 1420.405 MHz</span>
+                                    </div>
+                                </div>
                                 <div class="voice-query-group">
                                     <input type="text" id="user_question" name="user_question" placeholder="Transmit query or click mic..." required>
+                                    
+                                    <div class="carrier-audio-visualizer" id="audioWaveBox" title="Acoustic Waveform Activity">
+                                        <div class="wave-bar" id="wb1"></div>
+                                        <div class="wave-bar" id="wb2"></div>
+                                        <div class="wave-bar" id="wb3"></div>
+                                        <div class="wave-bar" id="wb4"></div>
+                                        <div class="wave-bar" id="wb5"></div>
+                                    </div>
+
                                     <button type="button" id="micBtn" class="btn-mic" onclick="toggleVoiceRecognition()" title="Voice Comms">🎙️</button>
                                 </div>
                             </div>
@@ -940,12 +815,23 @@
                             </button>
                         </div>
 
-                        <!-- Map Interactive Column -->
+                        <!-- FEATURE 2: ADVANCED TACTICAL SCANNING RETICLE -->
                         <div style="display: flex; flex-direction: column; gap: 8px;">
                             <label>GPS / GIS Reticle Coordinate Picker:</label>
                             <div class="map-wrapper">
                                 <div id="map"></div>
-                                <div class="map-reticle"></div>
+                                
+                                <div class="tactical-hud-crosshair">
+                                    <div class="reticle-bearing-ring"></div>
+                                    <div class="reticle-center-pip"></div>
+                                    <div class="reticle-corner c-tl"></div>
+                                    <div class="reticle-corner c-tr"></div>
+                                    <div class="reticle-corner c-bl"></div>
+                                    <div class="reticle-corner c-br"></div>
+                                    <div class="laser-sweep-line"></div>
+                                    <div class="reticle-azimuth-tag" id="hudAzimuth">AZ: 042° // LOCK</div>
+                                </div>
+
                                 <div class="mgrs-bar">
                                     <span id="mgrsDisplay">MGRS: 43REQ 8921 4410</span>
                                     <span id="sunAngleDisplay">SUN ELEV: 58.4° // AZ: 142.1°</span>
@@ -958,7 +844,7 @@
             </div>
         </div>
 
-        <!-- TAB 2: PAYLOAD VISUALS & SPLIT SWIPE SLIDER -->
+        <!-- TAB 2: PAYLOAD VISUALS & SPLIT SLIDER -->
         <div id="tab-payload" class="tab-content">
             <div class="card">
                 <div class="card-title">
@@ -972,7 +858,6 @@
                     </div>
                 </div>
 
-                <!-- 🎚️ Interactive Bi-Temporal Split-View Slider (Rendered if 2 Images Available) -->
                 {% if uploaded_images and uploaded_images|length >= 2 %}
                     <div class="split-slider-container" id="splitSlider">
                         <img src="{{ uploaded_images[1] }}" class="split-img-after" id="splitImgAfter" alt="T2 Satellite Observation">
@@ -989,7 +874,18 @@
                     </div>
                 {% endif %}
 
-                <div class="media-grid">
+                <!-- FEATURE 4: INTERACTIVE TARGET MATRIX INSPECTOR -->
+                <div class="target-matrix-wrapper">
+                    <label>Tactical Target Acquisition Matrix (Click to Highlight Entity):</label>
+                    <div class="target-chips-container" id="targetChips">
+                        <span class="target-chip" onclick="highlightTargetChip(this, 'Runway Airfield Node')">✈️ Runway 28L [Confidence: 98.4%]</span>
+                        <span class="target-chip" onclick="highlightTargetChip(this, 'Naval Vessel Structure')">🚢 Vessel Array Beta [Confidence: 94.1%]</span>
+                        <span class="target-chip" onclick="highlightTargetChip(this, 'Radar Emplacement')">📡 C-Band Radar Dish [Confidence: 91.8%]</span>
+                        <span class="target-chip" onclick="highlightTargetChip(this, 'Storage Depot')">🛢️ POL Storage Fuel Tank [Confidence: 96.2%]</span>
+                    </div>
+                </div>
+
+                <div class="media-grid" style="margin-top: 6px;">
                     {% if uploaded_images and uploaded_images|length > 0 %}
                         {% for uri in uploaded_images %}
                             <div class="media-box" onclick="openLightbox('{{ uri }}')">
@@ -1008,9 +904,9 @@
                     {% endif %}
 
                     {% if evidence_image %}
-                        <div class="media-box" onclick="openLightbox('{{ evidence_image }}')" style="border-color: var(--accent-red); box-shadow: 0 0 20px rgba(255, 0, 85, 0.25);">
+                        <div class="media-box" id="evidenceMediaBox" onclick="openLightbox('{{ evidence_image }}')" style="border-color: var(--accent-red); box-shadow: 0 0 20px rgba(255, 0, 85, 0.25);">
                             <span style="color: var(--accent-red);">GROUNDED OBJECT MATRIX / DIFF OVERLAY</span>
-                            <img src="{{ evidence_image }}" class="shader-target" alt="Grounding Evidence Overlay">
+                            <img src="{{ evidence_image }}" id="evidenceTargetImg" class="shader-target" alt="Grounding Evidence Overlay">
                             <div class="hud-corner" style="color: var(--accent-red); border-color: var(--accent-red);">TARGETS LOCKED</div>
                         </div>
                     {% endif %}
@@ -1018,7 +914,7 @@
             </div>
         </div>
 
-        <!-- TAB 3: DECODED REASONING & LULC ANALYTICS -->
+        <!-- TAB 3: DECODED REASONING & LULC -->
         <div id="tab-analytics" class="tab-content">
             <div class="card">
                 <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(0, 240, 255, 0.2); padding-bottom: 10px;">
@@ -1076,7 +972,7 @@
             </div>
         </div>
 
-        <!-- TAB 4: TERMINOLOGY & KEYWORDS GLOSSARY -->
+        <!-- TAB 4: TERMINOLOGY GLOSSARY -->
         <div id="tab-glossary" class="tab-content">
             <div class="card">
                 <div class="card-title">
@@ -1139,7 +1035,7 @@
     <!-- Leaflet JS Map Script -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-        /* 🗂️ Command Center Tab Switcher Engine */
+        /* Tab Switcher */
         function switchTab(tabId, btnEl) {
             playSciFiBeep(920, 'sine', 0.08);
             document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
@@ -1149,13 +1045,12 @@
             var activeTab = document.getElementById(tabId);
             if (activeTab) { activeTab.classList.add('active'); }
 
-            // Trigger Leaflet map invalidateSize if Tab 1 activated
             if (tabId === 'tab-ingestion' && map) {
                 setTimeout(function() { map.invalidateSize(); }, 100);
             }
         }
 
-        /* 💡 Highlight Keywords with On-Hover Tooltips */
+        /* Tooltip Keywords */
         var termDict = {
             "SAR": "Synthetic Aperture Radar: Radar imaging that pierces through clouds & darkness 24/7.",
             "LULC": "Land Use / Land Cover: Automatic classification into vegetation, urban, water, and soil.",
@@ -1179,7 +1074,6 @@
             return htmlText;
         }
 
-        /* Filter Glossary Cards */
         function filterGlossary() {
             var query = document.getElementById('glossary_search').value.toLowerCase();
             var cards = document.querySelectorAll('.glossary-card');
@@ -1189,7 +1083,7 @@
             });
         }
 
-        /* 🌐 Global OpenStreetMap Nominatim Location Search Engine */
+        /* Location Search */
         function searchLocation() {
             var searchInput = document.getElementById('location_search');
             if (!searchInput) return;
@@ -1208,712 +1102,61 @@
                         var lat = parseFloat(data[0].lat);
                         var lon = parseFloat(data[0].lon);
                         var locationName = data[0].display_name.split(',')[0];
-                        
                         setPreset(lat, lon, locationName);
                         document.getElementById('user_question').value = "Analyze satellite imagery and land cover of " + locationName;
                         playSciFiBeep(1200, 'sine', 0.15);
                     } else {
-                        alert("Location not found. Try entering a different city, landmark, or address.");
+                        alert("Location not found.");
                     }
                 })
-                .catch(function(err) {
+                .catch(function() {
                     if (searchBtn) searchBtn.innerText = "🔍";
-                    alert("Location search service temporarily unavailable.");
+                    alert("Location search service unavailable.");
                 });
         }
 
-        /* 📄 Client-Side High-Fidelity PDF Dossier Generator with Glossary Appendix */
-        function downloadPDFReport() {
-            playSciFiBeep(1100, 'sine', 0.12);
-            
-            var rawText = document.getElementById('rawAnalysisData') ? document.getElementById('rawAnalysisData').innerText.trim() : "";
-            if (!rawText || rawText.indexOf("Upload satellite image") !== -1) {
-                alert("Pehle image upload karke analysis run karein!");
-                return;
+        /* FEATURE 4: TARGET MATRIX CHIP HIGHLIGHT & FLASH */
+        function highlightTargetChip(chipEl, targetName) {
+            playSciFiBeep(1300, 'sine', 0.08);
+            document.querySelectorAll('.target-chip').forEach(function(c) { c.classList.remove('locked'); });
+            chipEl.classList.add('locked');
+
+            var evBox = document.getElementById('evidenceMediaBox');
+            if (evBox) {
+                evBox.style.boxShadow = "0 0 35px #ff0055, inset 0 0 20px #ff0055";
+                setTimeout(function() {
+                    evBox.style.boxShadow = "0 0 20px rgba(255, 0, 85, 0.25)";
+                }, 800);
             }
-
-            var analysisHTML = document.getElementById('analysisBox') ? document.getElementById('analysisBox').innerHTML : rawText;
-            var coords = document.getElementById('coordinates') ? document.getElementById('coordinates').value : "Not Specified";
-            var query = document.getElementById('user_question') ? document.getElementById('user_question').value : "Standard Remote Sensing Assessment";
-            var timestamp = new Date().toUTCString();
-
-            var pdfContainer = document.createElement('div');
-            pdfContainer.style.padding = '35px';
-            pdfContainer.style.background = '#020617';
-            pdfContainer.style.color = '#f8fafc';
-            pdfContainer.style.fontFamily = 'Arial, sans-serif';
-
-            pdfContainer.innerHTML = `
-                <div style="border-bottom: 2px solid #00f0ff; padding-bottom: 12px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
-                    <div>
-                        <h1 style="color: #00f0ff; margin: 0; font-size: 22px; font-family: sans-serif; letter-spacing: 1px;">SATQUERY AI // TACTICAL DOSSIER</h1>
-                        <p style="color: #94a3b8; margin: 4px 0 0 0; font-size: 11px;">ISRO / SAC EARTH OBSERVATION PROGRAM — GEMINI 3.6 FLASH CORE</p>
-                    </div>
-                </div>
-
-                <div style="background: rgba(0, 240, 255, 0.06); border: 1px solid rgba(0, 240, 255, 0.3); padding: 14px; border-radius: 6px; margin-bottom: 22px; font-size: 11px; line-height: 1.6;">
-                    <p style="margin: 2px 0;"><strong>TIMESTAMP:</strong> ${timestamp}</p>
-                    <p style="margin: 2px 0;"><strong>TARGET RETICLE COORDINATES:</strong> ${coords}</p>
-                    <p style="margin: 2px 0;"><strong>TRANSMITTED QUERY:</strong> "${query}"</p>
-                    <p style="margin: 2px 0;"><strong>SENSOR CONSTELLATION:</strong> Sentinel-1A C-Band SAR & Cartosat VIS-NIR</p>
-                </div>
-
-                <div style="font-size: 12px; line-height: 1.7; color: #e2e8f0; margin-bottom: 30px;">
-                    ${analysisHTML}
-                </div>
-
-                <div style="border-top: 2px dashed #00f0ff; padding-top: 18px; margin-top: 30px;">
-                    <h3 style="color: #00f0ff; font-size: 13px; margin: 0 0 10px 0;">📖 ANNEXURE: KEY TECHNICAL TERMS GLOSSARY</h3>
-                    <table style="width: 100%; border-collapse: collapse; font-size: 10px; color: #cbd5e1;">
-                        <tr style="background: rgba(0, 240, 255, 0.1); color: #00f0ff;">
-                            <th style="padding: 6px; text-align: left; border: 1px solid #00f0ff;">TERM</th>
-                            <th style="padding: 6px; text-align: left; border: 1px solid #00f0ff;">SIMPLE ENGLISH MEANING</th>
-                        </tr>
-                        <tr><td style="padding: 5px; border: 1px solid rgba(0,240,255,0.2);"><strong>SAR</strong></td><td style="padding: 5px; border: 1px solid rgba(0,240,255,0.2);">Synthetic Aperture Radar: Cloud-penetrating radar imaging.</td></tr>
-                        <tr><td style="padding: 5px; border: 1px solid rgba(0,240,255,0.2);"><strong>LULC</strong></td><td style="padding: 5px; border: 1px solid rgba(0,240,255,0.2);">Land Use / Land Cover: Automated vegetation/urban/water classification.</td></tr>
-                        <tr><td style="padding: 5px; border: 1px solid rgba(0,240,255,0.2);"><strong>NIR / SWIR</strong></td><td style="padding: 5px; border: 1px solid rgba(0,240,255,0.2);">Near / Short-Wave Infrared: Light bands for crop health & fire detection.</td></tr>
-                        <tr><td style="padding: 5px; border: 1px solid rgba(0,240,255,0.2);"><strong>MGRS</strong></td><td style="padding: 5px; border: 1px solid rgba(0,240,255,0.2);">Military Grid Reference System: Precision alphanumeric location grid.</td></tr>
-                        <tr><td style="padding: 5px; border: 1px solid rgba(0,240,255,0.2);"><strong>GeoTIFF</strong></td><td style="padding: 5px; border: 1px solid rgba(0,240,255,0.2);">Geographical TIFF image embedded with real-world map coordinates.</td></tr>
-                    </table>
-                </div>
-
-                <div style="margin-top: 30px; border-top: 1px solid rgba(0, 240, 255, 0.2); padding-top: 12px; text-align: center; font-size: 9px; color: #64748b; letter-spacing: 1px;">
-                    CONFIDENTIAL // OFFICIAL ISRO SIH 2026 GEOSPATIAL AGENTIC ANALYSIS DOSSIER
-                </div>
-            `;
-
-            var opt = {
-                margin:       10,
-                filename:     'SatQuery_Tactical_Dossier_' + Date.now() + '.pdf',
-                image:        { type: 'jpeg', quality: 0.98 },
-                html2canvas:  { scale: 2, backgroundColor: '#020617' },
-                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
-            };
-
-            html2pdf().set(opt).from(pdfContainer).save();
         }
 
-        /* 📥 Client-Side Direct JSON Downloader */
-        function downloadReportDirect() {
-            playSciFiBeep(1100, 'sine', 0.1);
-            var rawText = document.getElementById('rawAnalysisData') ? document.getElementById('rawAnalysisData').innerText.trim() : "";
-            if (!rawText || rawText.indexOf("Upload satellite image") !== -1) {
-                alert("Pehle image upload karke analysis run karein!");
-                return;
-            }
+        /* FEATURE 3: AUDIO EQUALIZER SIMULATION */
+        var waveInterval = null;
+        function startWaveformAnimation() {
+            var bars = [document.getElementById('wb1'), document.getElementById('wb2'), document.getElementById('wb3'), document.getElementById('wb4'), document.getElementById('wb5')];
+            var led = document.getElementById('carrierLed');
+            if (led) led.classList.add('active');
 
-            var lulcRaw = document.getElementById('lulc-json-data') ? document.getElementById('lulc-json-data').textContent.trim() : "{}";
-            var lulcData = {}; try { lulcData = JSON.parse(lulcRaw); } catch(e) {}
-            var coords = document.getElementById('coordinates') ? document.getElementById('coordinates').value : "Not Specified";
-            var query = document.getElementById('user_question') ? document.getElementById('user_question').value : "Standard Remote Sensing Assessment";
-
-            var tacticalReport = {
-                "mission": "SatQuery AI Remote Sensing Telemetry",
-                "timestamp": new Date().toISOString(),
-                "query": query,
-                "coordinates": coords,
-                "analysis_output": rawText,
-                "lulc_decomposition": lulcData,
-                "constellation_reference": "BigEarthNet-S2 / Sentinel-1A"
-            };
-
-            var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(tacticalReport, null, 4));
-            var downloadAnchor = document.createElement('a');
-            downloadAnchor.setAttribute("href", dataStr);
-            downloadAnchor.setAttribute("download", "SatQuery_Tactical_Report_" + Date.now() + ".json");
-            document.body.appendChild(downloadAnchor);
-            downloadAnchor.click();
-            downloadAnchor.remove();
-        }
-
-        function downloadGeoJSONDirect() {
-            playSciFiBeep(1100, 'triangle', 0.1);
-            window.location.href = "/download-geojson";
-        }
-
-        /* 🌠 Dedicated Header Space Canvas (Stars, Constellations & Meteors) */
-        document.addEventListener('DOMContentLoaded', function () {
-            var headerCanvas = document.getElementById('spaceCanvas');
-            if (!headerCanvas) return;
-            var hCtx = headerCanvas.getContext('2d');
-            var hStars = [];
-            var hMeteors = [];
-            var hNumStars = 85;
-
-            function resizeHeaderCanvas() {
-                if (headerCanvas.parentElement) {
-                    headerCanvas.width = headerCanvas.parentElement.offsetWidth;
-                    headerCanvas.height = headerCanvas.parentElement.offsetHeight;
-                }
-            }
-            resizeHeaderCanvas();
-            window.addEventListener('resize', resizeHeaderCanvas);
-
-            var colors = ['#ffffff', '#00f0ff', '#c084fc', '#38bdf8', '#fde047'];
-
-            for (var i = 0; i < hNumStars; i++) {
-                hStars.push({
-                    x: Math.random() * (headerCanvas.width || 1200),
-                    y: Math.random() * (headerCanvas.height || 200),
-                    radius: Math.random() * 1.8 + 0.6,
-                    color: colors[Math.floor(Math.random() * colors.length)],
-                    alpha: Math.random() * 0.9 + 0.2,
-                    speed: Math.random() * 0.04 + 0.01,
-                    delta: Math.random() * Math.PI * 2,
-                    vx: (Math.random() - 0.5) * 0.25,
-                    vy: (Math.random() - 0.5) * 0.25
+            if (waveInterval) clearInterval(waveInterval);
+            waveInterval = setInterval(function() {
+                bars.forEach(function(b) {
+                    if (b) {
+                        var h = Math.floor(Math.random() * 14) + 4;
+                        b.style.height = h + "px";
+                    }
                 });
-            }
-
-            function spawnHeaderMeteor() {
-                if (hMeteors.length < 2 && Math.random() < 0.04) {
-                    hMeteors.push({
-                        x: Math.random() * headerCanvas.width * 0.85,
-                        y: 0,
-                        len: Math.random() * 90 + 50,
-                        speed: Math.random() * 7 + 5,
-                        angle: Math.PI / 4,
-                        opacity: 1
-                    });
-                }
-            }
-
-            function drawHeaderSpace() {
-                hCtx.clearRect(0, 0, headerCanvas.width, headerCanvas.height);
-
-                for (var i = 0; i < hStars.length; i++) {
-                    for (var j = i + 1; j < hStars.length; j++) {
-                        var dx = hStars[i].x - hStars[j].x;
-                        var dy = hStars[i].y - hStars[j].y;
-                        var dist = Math.sqrt(dx * dx + dy * dy);
-                        if (dist < 80) {
-                            hCtx.beginPath();
-                            hCtx.moveTo(hStars[i].x, hStars[i].y);
-                            hCtx.lineTo(hStars[j].x, hStars[j].y);
-                            hCtx.strokeStyle = "rgba(0, 240, 255, " + (0.24 - dist / 80 * 0.24) + ")";
-                            hCtx.lineWidth = 0.8;
-                            hCtx.stroke();
-                        }
-                    }
-                }
-
-                for (var k = 0; k < hStars.length; k++) {
-                    var s = hStars[k];
-                    s.delta += s.speed;
-                    s.x += s.vx;
-                    s.y += s.vy;
-
-                    if (s.x < 0) s.x = headerCanvas.width;
-                    if (s.x > headerCanvas.width) s.x = 0;
-                    if (s.y < 0) s.y = headerCanvas.height;
-                    if (s.y > headerCanvas.height) s.y = 0;
-
-                    var dynamicAlpha = Math.abs(Math.sin(s.delta)) * 0.8 + 0.2;
-                    hCtx.beginPath();
-                    hCtx.arc(s.x, s.y, s.radius, 0, Math.PI * 2);
-                    hCtx.fillStyle = s.color;
-                    hCtx.globalAlpha = dynamicAlpha;
-                    hCtx.shadowBlur = s.radius > 1.2 ? 10 : 0;
-                    hCtx.shadowColor = s.color;
-                    hCtx.fill();
-                    hCtx.shadowBlur = 0;
-                    hCtx.globalAlpha = 1;
-                }
-
-                spawnHeaderMeteor();
-                for (var m = hMeteors.length - 1; m >= 0; m--) {
-                    var met = hMeteors[m];
-                    var x2 = met.x - met.len * Math.cos(met.angle);
-                    var y2 = met.y - met.len * Math.sin(met.angle);
-
-                    var grad = hCtx.createLinearGradient(met.x, met.y, x2, y2);
-                    grad.addColorStop(0, "rgba(255, 255, 255, " + met.opacity + ")");
-                    grad.addColorStop(0.5, "rgba(0, 240, 255, " + (met.opacity * 0.8) + ")");
-                    grad.addColorStop(1, "transparent");
-
-                    hCtx.beginPath();
-                    hCtx.moveTo(met.x, met.y);
-                    hCtx.lineTo(x2, y2);
-                    hCtx.strokeStyle = grad;
-                    hCtx.lineWidth = 2.4;
-                    hCtx.stroke();
-
-                    met.x += met.speed * Math.cos(met.angle);
-                    met.y += met.speed * Math.sin(met.angle);
-                    met.opacity -= 0.015;
-
-                    if (met.opacity <= 0 || met.x > headerCanvas.width || met.y > headerCanvas.height) {
-                        hMeteors.splice(m, 1);
-                    }
-                }
-
-                requestAnimationFrame(drawHeaderSpace);
-            }
-            drawHeaderSpace();
-        });
-
-        /* 🌌 Full-Screen Living Space Wallpaper Engine (Astronauts & Shuttle) */
-        document.addEventListener('DOMContentLoaded', function () {
-            var canvas = document.getElementById('globalSpaceCanvas');
-            if (!canvas) return;
-            var ctx = canvas.getContext('2d');
-            var stars = [];
-            var meteors = [];
-            var numStars = 150;
-
-            function resizeCanvas() {
-                canvas.width = window.innerWidth;
-                canvas.height = window.innerHeight;
-            }
-            resizeCanvas();
-            window.addEventListener('resize', resizeCanvas);
-
-            var starColors = ['#ffffff', '#00f0ff', '#818cf8', '#38bdf8', '#c084fc', '#fde047'];
-
-            for (var i = 0; i < numStars; i++) {
-                stars.push({
-                    x: Math.random() * canvas.width,
-                    y: Math.random() * canvas.height,
-                    radius: Math.random() * 1.8 + 0.5,
-                    color: starColors[Math.floor(Math.random() * starColors.length)],
-                    alpha: Math.random() * 0.85 + 0.15,
-                    speed: Math.random() * 0.02 + 0.005,
-                    delta: Math.random() * Math.PI * 2,
-                    vx: (Math.random() - 0.5) * 0.15,
-                    vy: (Math.random() - 0.5) * 0.15
-                });
-            }
-
-            var astronauts = [
-                { x: 180, y: 220, vx: 0.22, vy: 0.07, angle: 0.2, rotSpeed: 0.0025, scale: 2.2 },
-                { x: canvas.width - 240, y: canvas.height - 280, vx: -0.18, vy: -0.05, angle: -0.3, rotSpeed: -0.002, scale: 2.0 }
-            ];
-
-            var shuttle = {
-                x: -120,
-                y: canvas.height * 0.35,
-                vx: 0.55,
-                vy: 0.11,
-                angle: Math.atan2(0.11, 0.55),
-                scale: 2.5
-            };
-
-            function drawAstronaut(ast) {
-                ctx.save();
-                ctx.translate(ast.x, ast.y);
-                ctx.rotate(ast.angle);
-                ctx.scale(ast.scale, ast.scale);
-
-                ctx.beginPath();
-                ctx.moveTo(-10, 0);
-                ctx.quadraticCurveTo(-45, 25, -90, 45);
-                ctx.strokeStyle = "rgba(0, 240, 255, 0.35)";
-                ctx.lineWidth = 1.2;
-                ctx.stroke();
-
-                ctx.fillStyle = "#1e293b";
-                ctx.fillRect(-13, -14, 8, 28);
-                ctx.fillStyle = "#0284c7";
-                ctx.fillRect(-12, -10, 2, 20);
-
-                ctx.fillStyle = "#f8fafc";
-                ctx.beginPath();
-                ctx.roundRect(-6, -13, 16, 26, 4);
-                ctx.fill();
-
-                ctx.fillStyle = "#0284c7";
-                ctx.fillRect(-2, -6, 8, 10);
-                ctx.fillStyle = "#00ff66";
-                ctx.fillRect(-1, -4, 2, 2);
-                ctx.fillStyle = "#ff0055";
-                ctx.fillRect(2, -4, 2, 2);
-
-                ctx.beginPath();
-                ctx.arc(2, -21, 9, 0, Math.PI * 2);
-                ctx.fillStyle = "#f8fafc";
-                ctx.fill();
-
-                ctx.beginPath();
-                ctx.arc(4, -21, 5.5, 0, Math.PI * 2);
-                ctx.fillStyle = "#f59e0b";
-                ctx.shadowColor = "#fbbf24";
-                ctx.shadowBlur = 12;
-                ctx.fill();
-                ctx.shadowBlur = 0;
-
-                ctx.fillStyle = "#e2e8f0";
-                ctx.fillRect(-5, 13, 5, 14);
-                ctx.fillRect(3, 13, 5, 15);
-                ctx.fillStyle = "#475569";
-                ctx.fillRect(-6, 27, 6, 4);
-                ctx.fillRect(2, 28, 6, 4);
-
-                ctx.fillStyle = "#e2e8f0";
-                ctx.fillRect(-11, -10, 6, 13);
-                ctx.fillRect(10, -10, 6, 13);
-                ctx.fillStyle = "#0284c7";
-                ctx.fillRect(-11, 3, 6, 3);
-                ctx.fillRect(10, 3, 6, 3);
-
-                ctx.restore();
-            }
-
-            function drawShuttle(sh) {
-                ctx.save();
-                ctx.translate(sh.x, sh.y);
-                ctx.rotate(sh.angle);
-                ctx.scale(sh.scale, sh.scale);
-
-                var flameGrad = ctx.createLinearGradient(-40, 0, -10, 0);
-                flameGrad.addColorStop(0, "transparent");
-                flameGrad.addColorStop(0.4, "rgba(0, 240, 255, 0.8)");
-                flameGrad.addColorStop(1, "rgba(255, 255, 255, 0.95)");
-
-                ctx.fillStyle = flameGrad;
-                ctx.shadowColor = "#00f0ff";
-                ctx.shadowBlur = 18;
-
-                ctx.beginPath();
-                ctx.moveTo(-10, -4);
-                ctx.lineTo(-42, -2);
-                ctx.lineTo(-10, 0);
-                ctx.closePath();
-                ctx.fill();
-
-                ctx.beginPath();
-                ctx.moveTo(-10, 0);
-                ctx.lineTo(-42, 2);
-                ctx.lineTo(-10, 4);
-                ctx.closePath();
-                ctx.fill();
-                ctx.shadowBlur = 0;
-
-                ctx.beginPath();
-                ctx.moveTo(22, 0);
-                ctx.lineTo(-15, -18);
-                ctx.lineTo(-10, -3);
-                ctx.lineTo(-10, 3);
-                ctx.lineTo(-15, 18);
-                ctx.closePath();
-                ctx.fillStyle = "#0f172a";
-                ctx.fill();
-
-                ctx.beginPath();
-                ctx.moveTo(26, 0);
-                ctx.lineTo(10, -7);
-                ctx.lineTo(-18, -6);
-                ctx.lineTo(-18, 6);
-                ctx.lineTo(10, 7);
-                ctx.closePath();
-                ctx.fillStyle = "#f8fafc";
-                ctx.fill();
-
-                ctx.beginPath();
-                ctx.moveTo(26, 0);
-                ctx.lineTo(16, -3.5);
-                ctx.lineTo(16, 3.5);
-                ctx.closePath();
-                ctx.fillStyle = "#0284c7";
-                ctx.fill();
-
-                ctx.beginPath();
-                ctx.moveTo(-10, 0);
-                ctx.lineTo(-18, -13);
-                ctx.lineTo(-18, 0);
-                ctx.closePath();
-                ctx.fillStyle = "#f8fafc";
-                ctx.fill();
-
-                ctx.restore();
-            }
-
-            function spawnMeteor() {
-                if (meteors.length < 2 && Math.random() < 0.02) {
-                    meteors.push({
-                        x: Math.random() * canvas.width * 0.85,
-                        y: 0,
-                        len: Math.random() * 120 + 70,
-                        speed: Math.random() * 8 + 6,
-                        angle: Math.PI / 4.2,
-                        opacity: 0.95
-                    });
-                }
-            }
-
-            function renderLiveSpace() {
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-                for (var i = 0; i < stars.length; i++) {
-                    for (var j = i + 1; j < stars.length; j++) {
-                        var dx = stars[i].x - stars[j].x;
-                        var dy = stars[i].y - stars[j].y;
-                        var dist = Math.sqrt(dx * dx + dy * dy);
-                        if (dist < 90) {
-                            ctx.beginPath();
-                            ctx.moveTo(stars[i].x, stars[i].y);
-                            ctx.lineTo(stars[j].x, stars[j].y);
-                            ctx.strokeStyle = "rgba(0, 240, 255, " + (0.08 - dist / 90 * 0.08) + ")";
-                            ctx.lineWidth = 0.5;
-                            ctx.stroke();
-                        }
-                    }
-                }
-
-                for (var k = 0; k < stars.length; k++) {
-                    var s = stars[k];
-                    s.delta += s.speed;
-                    s.x += s.vx;
-                    s.y += s.vy;
-
-                    if (s.x < 0) s.x = canvas.width;
-                    if (s.x > canvas.width) s.x = 0;
-                    if (s.y < 0) s.y = canvas.height;
-                    if (s.y > canvas.height) s.y = 0;
-
-                    var dynamicAlpha = Math.abs(Math.sin(s.delta)) * 0.75 + 0.25;
-                    ctx.beginPath();
-                    ctx.arc(s.x, s.y, s.radius, 0, Math.PI * 2);
-                    ctx.fillStyle = s.color;
-                    ctx.globalAlpha = dynamicAlpha;
-                    if (s.radius > 1.3) {
-                        ctx.shadowBlur = 8;
-                        ctx.shadowColor = s.color;
-                    }
-                    ctx.fill();
-                    ctx.shadowBlur = 0;
-                    ctx.globalAlpha = 1;
-                }
-
-                for (var a = 0; a < astronauts.length; a++) {
-                    var ast = astronauts[a];
-                    ast.x += ast.vx;
-                    ast.y += ast.vy;
-                    ast.angle += ast.rotSpeed;
-
-                    if (ast.x > canvas.width + 120) ast.x = -100;
-                    if (ast.x < -120) ast.x = canvas.width + 80;
-                    if (ast.y > canvas.height + 100) ast.y = -80;
-                    if (ast.y < -100) ast.y = canvas.height + 80;
-
-                    drawAstronaut(ast);
-                }
-
-                shuttle.x += shuttle.vx;
-                shuttle.y += shuttle.vy;
-                if (shuttle.x > canvas.width + 160) {
-                    shuttle.x = -130;
-                    shuttle.y = Math.random() * (canvas.height * 0.65) + 60;
-                }
-                drawShuttle(shuttle);
-
-                spawnMeteor();
-                for (var m = meteors.length - 1; m >= 0; m--) {
-                    var met = meteors[m];
-                    var x2 = met.x - met.len * Math.cos(met.angle);
-                    var y2 = met.y - met.len * Math.sin(met.angle);
-
-                    var grad = ctx.createLinearGradient(met.x, met.y, x2, y2);
-                    grad.addColorStop(0, "rgba(255, 255, 255, " + met.opacity + ")");
-                    grad.addColorStop(0.4, "rgba(251, 146, 60, " + (met.opacity * 0.75) + ")");
-                    grad.addColorStop(1, "transparent");
-
-                    ctx.beginPath();
-                    ctx.moveTo(met.x, met.y);
-                    ctx.lineTo(x2, y2);
-                    ctx.strokeStyle = grad;
-                    ctx.lineWidth = 2.2;
-                    ctx.stroke();
-
-                    met.x += met.speed * Math.cos(met.angle);
-                    met.y += met.speed * Math.sin(met.angle);
-                    met.opacity -= 0.012;
-
-                    if (met.opacity <= 0 || met.x > canvas.width || met.y > canvas.height) {
-                        meteors.splice(m, 1);
-                    }
-                }
-
-                requestAnimationFrame(renderLiveSpace);
-            }
-            renderLiveSpace();
-        });
-
-        /* 🚀 7-Second Hyperspace Warp Launch Sequence */
-        var warpCanvas = document.getElementById('warpCanvas');
-        var warpCtx = warpCanvas.getContext('2d');
-        var warpStars = [];
-        var warpRunning = true;
-        var introTimers = [];
-
-        function initWarpStars() {
-            warpStars = [];
-            warpCanvas.width = window.innerWidth || 1920;
-            warpCanvas.height = window.innerHeight || 1080;
-            for (var i = 0; i < 300; i++) {
-                warpStars.push({
-                    x: (Math.random() - 0.5) * warpCanvas.width * 2,
-                    y: (Math.random() - 0.5) * warpCanvas.height * 2,
-                    z: Math.random() * warpCanvas.width
-                });
-            }
-        }
-        initWarpStars();
-        window.addEventListener('resize', initWarpStars);
-
-        function drawWarp() {
-            if (!warpRunning) return;
-            warpCtx.fillStyle = "rgba(1, 4, 10, 0.3)";
-            warpCtx.fillRect(0, 0, warpCanvas.width, warpCanvas.height);
-
-            var cx = warpCanvas.width / 2;
-            var cy = warpCanvas.height / 2;
-
-            for (var i = 0; i < warpStars.length; i++) {
-                var s = warpStars[i];
-                s.z -= 11;
-                if (s.z <= 0) s.z = warpCanvas.width;
-
-                var k = 250 / s.z;
-                var px = s.x * k + cx;
-                var py = s.y * k + cy;
-
-                if (px >= 0 && px <= warpCanvas.width && py >= 0 && py <= warpCanvas.height) {
-                    var size = (1 - s.z / warpCanvas.width) * 3.8;
-                    var alpha = (1 - s.z / warpCanvas.width);
-                    warpCtx.beginPath();
-                    warpCtx.arc(px, py, Math.max(0.5, size), 0, Math.PI * 2);
-                    warpCtx.fillStyle = "rgba(0, 240, 255, " + alpha + ")";
-                    warpCtx.shadowBlur = 8;
-                    warpCtx.shadowColor = "#00f0ff";
-                    warpCtx.fill();
-                }
-            }
-            requestAnimationFrame(drawWarp);
+            }, 90);
         }
 
-        function startLaunchSequence() {
-            if (sessionStorage.getItem('hasSeenLaunch') === 'true') {
-                var overlay = document.getElementById('launchSequenceOverlay');
-                if (overlay) overlay.style.display = 'none';
-                return;
-            }
-
-            warpRunning = true;
-            var overlay = document.getElementById('launchSequenceOverlay');
-            if (overlay) {
-                overlay.style.display = 'flex';
-                overlay.classList.remove('fade-out');
-            }
-            drawWarp();
-
-            var msg = document.getElementById('launchStatusMsg');
-            var sub = document.getElementById('launchSubMsg');
-            if (msg) msg.innerText = "STAGE 1: LAUNCH PAD IGNITION & ASCENT...";
-            if (sub) sub.innerText = "CARTOSAT / SENTINEL SENSOR ARRAY CALIBRATION";
-            playSciFiBeep(520, 'sawtooth', 0.2);
-
-            introTimers.push(setTimeout(function() {
-                if (msg) msg.innerText = "STAGE 2: FAIRING SEPARATION & STRATOSPHERE ESCAPE...";
-                if (sub) sub.innerText = "ACCELERATING TO ESCAPE VELOCITY (7.8 KM/S)";
-                playSciFiBeep(880, 'sine', 0.15);
-            }, 1800));
-
-            introTimers.push(setTimeout(function() {
-                if (msg) msg.innerText = "STAGE 3: ORBITAL INSERTION & SOLAR ARRAYS UNFURLED...";
-                if (sub) sub.innerText = "LOCKING 786 KM SUN-SYNCHRONOUS ORBIT (SSO)";
-                playSciFiBeep(1100, 'triangle', 0.2);
-            }, 3600));
-
-            introTimers.push(setTimeout(function() {
-                if (msg) msg.innerText = "STAGE 4: ENTERING MULTISPECTRAL SENSOR PAYLOAD...";
-                if (sub) sub.innerText = "ACTIVATING GEMINI 3.6 FLASH VISION-LANGUAGE NEURAL MATRIX";
-                playSciFiBeep(1400, 'sine', 0.25);
-            }, 5200));
-
-            introTimers.push(setTimeout(function() {
-                endIntroSequence();
-            }, 7000));
+        function stopWaveformAnimation() {
+            if (waveInterval) clearInterval(waveInterval);
+            var bars = [document.getElementById('wb1'), document.getElementById('wb2'), document.getElementById('wb3'), document.getElementById('wb4'), document.getElementById('wb5')];
+            var led = document.getElementById('carrierLed');
+            if (led) led.classList.remove('active');
+            bars.forEach(function(b) { if (b) b.style.height = "4px"; });
         }
 
-        function endIntroSequence() {
-            sessionStorage.setItem('hasSeenLaunch', 'true');
-            introTimers.forEach(clearTimeout);
-            warpRunning = false;
-            var overlay = document.getElementById('launchSequenceOverlay');
-            if (overlay) {
-                overlay.classList.add('fade-out');
-                setTimeout(function() { overlay.style.display = 'none'; }, 950);
-            }
-            playSciFiBeep(1500, 'sawtooth', 0.25);
-        }
-
-        function replayLaunchSequence() {
-            sessionStorage.removeItem('hasSeenLaunch');
-            var overlay = document.getElementById('launchSequenceOverlay');
-            var rocket = document.querySelector('.rocket-icon');
-            var progress = document.querySelector('.progress-bar-fill');
-            
-            if (rocket) {
-                rocket.style.animation = 'none';
-                rocket.offsetHeight;
-                rocket.style.animation = null;
-            }
-            if (progress) {
-                progress.style.animation = 'none';
-                progress.offsetHeight;
-                progress.style.animation = null;
-            }
-            startLaunchSequence();
-        }
-
-        startLaunchSequence();
-
-        /* ⏱️ UTC & IST Clocks */
-        setInterval(function() {
-            var now = new Date();
-            
-            // UTC Clock
-            var uHours = String(now.getUTCHours()).padStart(2, '0');
-            var uMins = String(now.getUTCMinutes()).padStart(2, '0');
-            var uSecs = String(now.getUTCSeconds()).padStart(2, '0');
-            var clockEl = document.getElementById('telemetryClock');
-            if (clockEl) {
-                clockEl.innerText = uHours + ":" + uMins + ":" + uSecs + " UTC";
-            }
-
-            // IST Clock
-            var istString = now.toLocaleTimeString('en-IN', { 
-                timeZone: 'Asia/Kolkata', 
-                hour12: false, 
-                hour: '2-digit', 
-                minute: '2-digit', 
-                second: '2-digit' 
-            });
-            var clockISTEl = document.getElementById('telemetryClockIST');
-            if (clockISTEl) {
-                clockISTEl.innerText = istString + " IST";
-            }
-        }, 1000);
-
-        /* Synthetic Sound Generator */
-        var audioCtx = null;
-        function playSciFiBeep(freq, type, duration) {
-            try {
-                if (!audioCtx) { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
-                var osc = audioCtx.createOscillator();
-                var gain = audioCtx.createGain();
-                osc.type = type || 'sine';
-                osc.frequency.value = freq || 800;
-                gain.gain.setValueAtTime(0.03, audioCtx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + (duration || 0.1));
-                osc.connect(gain);
-                gain.connect(audioCtx.destination);
-                osc.start();
-                osc.stop(audioCtx.currentTime + (duration || 0.1));
-            } catch(e) {}
-        }
-
-        /* Leaflet Interactive Map */
+        /* FEATURE 1: MULTISPECTRAL SVG FILTER MAP SWITCHER */
         var mapElement = document.getElementById('map');
         var osmLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 });
         var satelliteLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { maxZoom: 19 });
@@ -1927,10 +1170,26 @@
             map.removeLayer(osmLayer);
             map.removeLayer(satelliteLayer);
             map.removeLayer(topoLayer);
-            if (mode === 'RGB') { osmLayer.addTo(map); }
-            else if (mode === 'NIR') { satelliteLayer.addTo(map); }
-            else if (mode === 'NDVI') { topoLayer.addTo(map); }
-            else { satelliteLayer.addTo(map); }
+
+            var tilePane = map.getPane('tilePane');
+            if (tilePane) {
+                tilePane.classList.remove('leaf-nir-active', 'leaf-sar-active', 'leaf-ndvi-active');
+            }
+
+            if (mode === 'RGB') {
+                osmLayer.addTo(map);
+            } else if (mode === 'NIR') {
+                satelliteLayer.addTo(map);
+                if (tilePane) tilePane.classList.add('leaf-nir-active');
+            } else if (mode === 'SAR') {
+                satelliteLayer.addTo(map);
+                if (tilePane) tilePane.classList.add('leaf-sar-active');
+            } else if (mode === 'NDVI') {
+                topoLayer.addTo(map);
+                if (tilePane) tilePane.classList.add('leaf-ndvi-active');
+            } else {
+                satelliteLayer.addTo(map);
+            }
         }
 
         function setPreset(lat, lng, label) {
@@ -1940,9 +1199,19 @@
             document.getElementById('user_question').value = "Execute multi-sensor structural assessment on " + label;
             document.getElementById('mgrsDisplay').innerText = "MGRS: 43REQ " + Math.floor(lat * 312) + " " + Math.floor(lng * 184);
             map.setView([lat, lng], 15);
-            if (marker) { marker.setLatLng([lat, lng]); }
-            else { marker = L.marker([lat, lng]).addTo(map); }
+            if (marker) { marker.setLatLng([lat, lng]); } else { marker = L.marker([lat, lng]).addTo(map); }
         }
+
+        /* FEATURE 2: BEARING & AZIMUTH COMPUTATION ON MAP MOVE */
+        map.on('move', function() {
+            var center = map.getCenter();
+            var az = Math.floor((center.lng * 3.4 + center.lat * 1.8 + 360) % 360);
+            var azStr = String(az).padStart(3, '0');
+            var azTag = document.getElementById('hudAzimuth');
+            if (azTag) {
+                azTag.innerText = "AZ: " + azStr + "° // TRACKING";
+            }
+        });
 
         map.on('click', function(e) {
             playSciFiBeep(650, 'sine', 0.08);
@@ -1951,36 +1220,22 @@
             document.getElementById('coordinates').value = lat + ", " + lng;
             document.getElementById('use_coord_fetch').checked = true;
             document.getElementById('mgrsDisplay').innerText = "MGRS: 43REQ " + Math.floor(lat * 312) + " " + Math.floor(lng * 184);
-            if (marker) { marker.setLatLng(e.latlng); }
-            else { marker = L.marker(e.latlng).addTo(map); }
+            if (marker) { marker.setLatLng(e.latlng); } else { marker = L.marker(e.latlng).addTo(map); }
         });
 
-        function showLoader() {
-            playSciFiBeep(440, 'sawtooth', 0.3);
-            document.getElementById('loader').style.display = 'flex';
-        }
+        function showLoader() { playSciFiBeep(440, 'sawtooth', 0.3); document.getElementById('loader').style.display = 'flex'; }
+        function openLightbox(src) { document.getElementById('lightboxImg').src = src; document.getElementById('lightboxModal').style.display = 'flex'; }
+        function closeLightbox() { document.getElementById('lightboxModal').style.display = 'none'; }
 
-        function openLightbox(src) {
-            document.getElementById('lightboxImg').src = src;
-            document.getElementById('lightboxModal').style.display = 'flex';
-        }
-        function closeLightbox() {
-            document.getElementById('lightboxModal').style.display = 'none';
-        }
-
-        /* Shader Matrix */
         function applyShader(shaderName) {
             playSciFiBeep(1100, 'sine', 0.05);
             document.querySelectorAll('.btn-shader').forEach(function(b) { b.classList.remove('active'); });
             event.target.classList.add('active');
-
             var targets = document.querySelectorAll('.shader-target');
-            targets.forEach(function(img) {
-                img.className = 'shader-target ' + (shaderName !== 'normal' ? shaderName : '');
-            });
+            targets.forEach(function(img) { img.className = 'shader-target ' + (shaderName !== 'normal' ? shaderName : ''); });
         }
 
-        /* 🎚️ Bi-Temporal Split Slider Drag Engine */
+        /* Bi-Temporal Split Slider Engine */
         document.addEventListener('DOMContentLoaded', function () {
             var sliderContainer = document.getElementById('splitSlider');
             var beforeWrapper = document.getElementById('splitBeforeWrapper');
@@ -1989,74 +1244,35 @@
 
             if (sliderContainer && beforeWrapper && handle && beforeImg) {
                 var isDragging = false;
-
-                function syncImageWidth() {
-                    var containerWidth = sliderContainer.offsetWidth;
-                    beforeImg.style.width = containerWidth + 'px';
-                }
-
-                syncImageWidth();
-                window.addEventListener('resize', syncImageWidth);
+                function syncImageWidth() { var containerWidth = sliderContainer.offsetWidth; beforeImg.style.width = containerWidth + 'px'; }
+                syncImageWidth(); window.addEventListener('resize', syncImageWidth);
 
                 function setSliderPosition(xPos) {
-                    var rect = sliderContainer.getBoundingClientRect();
-                    var offsetX = xPos - rect.left;
-
-                    if (offsetX < 0) offsetX = 0;
-                    if (offsetX > rect.width) offsetX = rect.width;
-
+                    var rect = sliderContainer.getBoundingClientRect(); var offsetX = xPos - rect.left;
+                    if (offsetX < 0) offsetX = 0; if (offsetX > rect.width) offsetX = rect.width;
                     var percentage = (offsetX / rect.width) * 100;
-                    beforeWrapper.style.width = percentage + '%';
-                    handle.style.left = percentage + '%';
+                    beforeWrapper.style.width = percentage + '%'; handle.style.left = percentage + '%';
                 }
 
-                sliderContainer.addEventListener('mousedown', function (e) {
-                    isDragging = true;
-                    setSliderPosition(e.clientX);
-                    playSciFiBeep(850, 'triangle', 0.05);
-                });
-
-                window.addEventListener('mousemove', function (e) {
-                    if (!isDragging) return;
-                    setSliderPosition(e.clientX);
-                });
-
-                window.addEventListener('mouseup', function () {
-                    if (isDragging) {
-                        isDragging = false;
-                        playSciFiBeep(1200, 'sine', 0.03);
-                    }
-                });
-
-                sliderContainer.addEventListener('touchstart', function (e) {
-                    isDragging = true;
-                    setSliderPosition(e.touches[0].clientX);
-                }, { passive: true });
-
-                window.addEventListener('touchmove', function (e) {
-                    if (!isDragging) return;
-                    setSliderPosition(e.touches[0].clientX);
-                }, { passive: true });
-
-                window.addEventListener('touchend', function () {
-                    isDragging = false;
-                });
+                sliderContainer.addEventListener('mousedown', function (e) { isDragging = true; setSliderPosition(e.clientX); playSciFiBeep(850, 'triangle', 0.05); });
+                window.addEventListener('mousemove', function (e) { if (!isDragging) return; setSliderPosition(e.clientX); });
+                window.addEventListener('mouseup', function () { if (isDragging) { isDragging = false; playSciFiBeep(1200, 'sine', 0.03); } });
+                sliderContainer.addEventListener('touchstart', function (e) { isDragging = true; setSliderPosition(e.touches[0].clientX); }, { passive: true });
+                window.addEventListener('touchmove', function (e) { if (!isDragging) return; setSliderPosition(e.touches[0].clientX); }, { passive: true });
+                window.addEventListener('touchend', function () { isDragging = false; });
             }
 
-            /* Analytics Parsing with Hover Tooltip Integration */
-            var rawText = document.getElementById('rawAnalysisData') ? document.getElementById('rawAnalysisData').innerText.trim() : "";
+            var rawText = document.getElementById('rawAnalysisData').innerText.trim();
             var analysisBox = document.getElementById('analysisBox');
-            if (rawText && analysisBox) {
+            if (rawText) {
                 var parsedHTML = (typeof marked !== 'undefined') ? marked.parse(rawText) : rawText;
                 parsedHTML = addHoverTooltips(parsedHTML);
                 analysisBox.innerHTML = parsedHTML;
             }
 
-            var lulcRaw = document.getElementById('lulc-json-data') ? document.getElementById('lulc-json-data').textContent.trim() : "{}";
-            var lulcData = {};
-            try { lulcData = JSON.parse(lulcRaw); } catch(e) {}
+            var lulcRaw = document.getElementById('lulc-json-data').textContent.trim();
+            var lulcData = {}; try { lulcData = JSON.parse(lulcRaw); } catch(e) {}
 
-            /* LULC Doughnut */
             var chartCanvas = document.getElementById('lulcChart');
             if (chartCanvas) {
                 var ctx = chartCanvas.getContext('2d');
@@ -2066,27 +1282,11 @@
 
                 new Chart(ctx, {
                     type: 'doughnut',
-                    data: {
-                        labels: labels,
-                        datasets: [{
-                            data: values,
-                            backgroundColor: ['#00ff66', '#ff0055', '#00f0ff', '#ffaa00'],
-                            borderWidth: 0
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        plugins: {
-                            legend: {
-                                position: 'bottom',
-                                labels: { color: '#8b949e', font: { size: 8, family: 'JetBrains Mono' } }
-                            }
-                        }
-                    }
+                    data: { labels: labels, datasets: [{ data: values, backgroundColor: ['#00ff66', '#ff0055', '#00f0ff', '#ffaa00'], borderWidth: 0 }] },
+                    options: { responsive: true, plugins: { legend: { position: 'bottom', labels: { color: '#8b949e', font: { size: 8, family: 'JetBrains Mono' } } } } }
                 });
             }
 
-            /* Radiometric Spectral Profile Line Chart */
             var spectralCanvas = document.getElementById('spectralChart');
             if (spectralCanvas) {
                 var sCtx = spectralCanvas.getContext('2d');
@@ -2094,34 +1294,22 @@
                     type: 'line',
                     data: {
                         labels: ['B2-Blue', 'B3-Green', 'B4-Red', 'B8-NIR', 'B11-SWIR'],
-                        datasets: [{
-                            label: 'Radiance (DN)',
-                            data: [120, 145, 180, 240, 195],
-                            borderColor: '#00f0ff',
-                            backgroundColor: 'rgba(0, 240, 255, 0.15)',
-                            fill: true,
-                            tension: 0.4,
-                            pointRadius: 2
-                        }]
+                        datasets: [{ label: 'Radiance (DN)', data: [120, 145, 180, 240, 195], borderColor: '#00f0ff', backgroundColor: 'rgba(0, 240, 255, 0.15)', fill: true, tension: 0.4, pointRadius: 2 }]
                     },
                     options: {
                         responsive: true,
-                        scales: {
-                            x: { ticks: { color: '#8b949e', font: { size: 7.5, family: 'JetBrains Mono' } }, grid: { display: false } },
-                            y: { ticks: { color: '#8b949e', font: { size: 7.5, family: 'JetBrains Mono' } }, grid: { color: 'rgba(56, 189, 248, 0.1)' } }
-                        },
+                        scales: { x: { ticks: { color: '#8b949e', font: { size: 7.5, family: 'JetBrains Mono' } }, grid: { display: false } }, y: { ticks: { color: '#8b949e', font: { size: 7.5, family: 'JetBrains Mono' } }, grid: { color: 'rgba(56, 189, 248, 0.1)' } } },
                         plugins: { legend: { display: false } }
                     }
                 });
             }
 
-            // AUTO-SWITCH TO PAYLOAD / ANALYTICS TAB ON SUBMIT RESULTS
             {% if has_report or uploaded_images %}
                 switchTab('tab-payload', document.querySelectorAll('.tab-btn')[1]);
             {% endif %}
         });
 
-        /* Voice STT */
+        /* Voice STT & Reactive Visualizer */
         var recognition = null;
         var isListening = false;
         if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
@@ -2140,10 +1328,7 @@
         }
 
         function toggleVoiceRecognition() {
-            if (!recognition) {
-                alert("Speech recognition not supported in this browser.");
-                return;
-            }
+            if (!recognition) { alert("Speech recognition not supported in this browser."); return; }
             if (isListening) {
                 recognition.stop();
                 stopListening();
@@ -2153,6 +1338,7 @@
                 isListening = true;
                 document.getElementById('micBtn').classList.add('listening');
                 document.getElementById('user_question').placeholder = "Comms open... Transmit now";
+                startWaveformAnimation();
             }
         }
 
@@ -2160,22 +1346,338 @@
             isListening = false;
             document.getElementById('micBtn').classList.remove('listening');
             document.getElementById('user_question').placeholder = "Transmit query or click mic...";
+            stopWaveformAnimation();
         }
 
-        /* Voice TTS */
         function playAudioReport() {
             var text = document.getElementById('analysisBox').innerText;
-            if (!text || text.indexOf("Upload satellite image") !== -1) {
-                alert("No telemetry data decoded yet.");
-                return;
-            }
+            if (!text || text.indexOf("Upload satellite image") !== -1) { alert("No telemetry data decoded yet."); return; }
             playSciFiBeep(880, 'triangle', 0.15);
             window.speechSynthesis.cancel();
+            startWaveformAnimation();
             var cleanSpeech = text.replace(/###/g, '').replace(/\*/g, '');
             var utterance = new SpeechSynthesisUtterance(cleanSpeech);
             utterance.rate = 1.05;
             utterance.pitch = 0.9;
+            utterance.onend = function() { stopWaveformAnimation(); };
             window.speechSynthesis.speak(utterance);
+        }
+
+        /* PDF & JSON Exporters */
+        function downloadPDFReport() {
+            playSciFiBeep(1100, 'sine', 0.12);
+            var rawText = document.getElementById('rawAnalysisData') ? document.getElementById('rawAnalysisData').innerText.trim() : "";
+            if (!rawText || rawText.indexOf("Upload satellite image") !== -1) { alert("Pehle image upload karke analysis run karein!"); return; }
+
+            var analysisHTML = document.getElementById('analysisBox') ? document.getElementById('analysisBox').innerHTML : rawText;
+            var coords = document.getElementById('coordinates') ? document.getElementById('coordinates').value : "Not Specified";
+            var query = document.getElementById('user_question') ? document.getElementById('user_question').value : "Standard Assessment";
+            var timestamp = new Date().toUTCString();
+
+            var pdfContainer = document.createElement('div');
+            pdfContainer.style.padding = '35px';
+            pdfContainer.style.background = '#020617';
+            pdfContainer.style.color = '#f8fafc';
+            pdfContainer.style.fontFamily = 'Arial, sans-serif';
+
+            pdfContainer.innerHTML = `
+                <div style="border-bottom: 2px solid #00f0ff; padding-bottom: 12px; margin-bottom: 20px;">
+                    <h1 style="color: #00f0ff; margin: 0; font-size: 22px;">SATQUERY AI // TACTICAL DOSSIER</h1>
+                    <p style="color: #94a3b8; margin: 4px 0 0 0; font-size: 11px;">ISRO / SAC EARTH OBSERVATION — GEMINI 3.6 FLASH CORE</p>
+                </div>
+                <div style="background: rgba(0, 240, 255, 0.06); border: 1px solid rgba(0, 240, 255, 0.3); padding: 14px; border-radius: 6px; margin-bottom: 22px; font-size: 11px; line-height: 1.6;">
+                    <p style="margin: 2px 0;"><strong>TIMESTAMP:</strong> ${timestamp}</p>
+                    <p style="margin: 2px 0;"><strong>TARGET RETICLE:</strong> ${coords}</p>
+                    <p style="margin: 2px 0;"><strong>QUERY:</strong> "${query}"</p>
+                </div>
+                <div style="font-size: 12px; line-height: 1.7; color: #e2e8f0; margin-bottom: 30px;">
+                    ${analysisHTML}
+                </div>
+                <div style="border-top: 2px dashed #00f0ff; padding-top: 18px;">
+                    <h3 style="color: #00f0ff; font-size: 13px; margin: 0 0 10px 0;">📖 ANNEXURE: KEY TECHNICAL TERMS GLOSSARY</h3>
+                    <table style="width: 100%; border-collapse: collapse; font-size: 10px; color: #cbd5e1;">
+                        <tr style="background: rgba(0, 240, 255, 0.1); color: #00f0ff;">
+                            <th style="padding: 6px; text-align: left; border: 1px solid #00f0ff;">TERM</th>
+                            <th style="padding: 6px; text-align: left; border: 1px solid #00f0ff;">MEANING</th>
+                        </tr>
+                        <tr><td style="padding: 5px; border: 1px solid rgba(0,240,255,0.2);">SAR</td><td style="padding: 5px; border: 1px solid rgba(0,240,255,0.2);">Synthetic Aperture Radar: Cloud-penetrating 24/7 radar imaging.</td></tr>
+                        <tr><td style="padding: 5px; border: 1px solid rgba(0,240,255,0.2);">LULC</td><td style="padding: 5px; border: 1px solid rgba(0,240,255,0.2);">Land Use / Land Cover: Automated pixel surface classification.</td></tr>
+                        <tr><td style="padding: 5px; border: 1px solid rgba(0,240,255,0.2);">NIR</td><td style="padding: 5px; border: 1px solid rgba(0,240,255,0.2);">Near-Infrared: Chlorophyll vegetative reflectance band.</td></tr>
+                    </table>
+                </div>
+            `;
+            html2pdf().set({ margin: 10, filename: 'SatQuery_Tactical_Dossier_' + Date.now() + '.pdf', image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2, backgroundColor: '#020617' }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } }).from(pdfContainer).save();
+        }
+
+        function downloadReportDirect() {
+            playSciFiBeep(1100, 'sine', 0.1);
+            var rawText = document.getElementById('rawAnalysisData') ? document.getElementById('rawAnalysisData').innerText.trim() : "";
+            if (!rawText || rawText.indexOf("Upload satellite image") !== -1) { alert("Pehle image upload karke analysis run karein!"); return; }
+            var lulcRaw = document.getElementById('lulc-json-data') ? document.getElementById('lulc-json-data').textContent.trim() : "{}";
+            var lulcData = {}; try { lulcData = JSON.parse(lulcRaw); } catch(e) {}
+            var coords = document.getElementById('coordinates') ? document.getElementById('coordinates').value : "Not Specified";
+            var query = document.getElementById('user_question') ? document.getElementById('user_question').value : "Standard Assessment";
+
+            var tacticalReport = { "mission": "SatQuery AI", "timestamp": new Date().toISOString(), "query": query, "coordinates": coords, "analysis": rawText, "lulc": lulcData };
+            var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(tacticalReport, null, 4));
+            var downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", "SatQuery_Tactical_Report_" + Date.now() + ".json");
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
+        }
+
+        function downloadGeoJSONDirect() {
+            playSciFiBeep(1100, 'triangle', 0.1);
+            window.location.href = "/download-geojson";
+        }
+
+        /* Space Header Canvas */
+        document.addEventListener('DOMContentLoaded', function () {
+            var headerCanvas = document.getElementById('spaceCanvas');
+            if (!headerCanvas) return;
+            var hCtx = headerCanvas.getContext('2d');
+            var hStars = []; var hMeteors = []; var hNumStars = 85;
+
+            function resizeHeaderCanvas() {
+                if (headerCanvas.parentElement) {
+                    headerCanvas.width = headerCanvas.parentElement.offsetWidth;
+                    headerCanvas.height = headerCanvas.parentElement.offsetHeight;
+                }
+            }
+            resizeHeaderCanvas(); window.addEventListener('resize', resizeHeaderCanvas);
+
+            var colors = ['#ffffff', '#00f0ff', '#c084fc', '#38bdf8', '#fde047'];
+            for (var i = 0; i < hNumStars; i++) {
+                hStars.push({
+                    x: Math.random() * (headerCanvas.width || 1200), y: Math.random() * (headerCanvas.height || 200),
+                    radius: Math.random() * 1.8 + 0.6, color: colors[Math.floor(Math.random() * colors.length)],
+                    alpha: Math.random() * 0.9 + 0.2, speed: Math.random() * 0.04 + 0.01,
+                    delta: Math.random() * Math.PI * 2, vx: (Math.random() - 0.5) * 0.25, vy: (Math.random() - 0.5) * 0.25
+                });
+            }
+
+            function spawnHeaderMeteor() {
+                if (hMeteors.length < 2 && Math.random() < 0.04) {
+                    hMeteors.push({ x: Math.random() * headerCanvas.width * 0.85, y: 0, len: Math.random() * 90 + 50, speed: Math.random() * 7 + 5, angle: Math.PI / 4, opacity: 1 });
+                }
+            }
+
+            function drawHeaderSpace() {
+                hCtx.clearRect(0, 0, headerCanvas.width, headerCanvas.height);
+                for (var i = 0; i < hStars.length; i++) {
+                    for (var j = i + 1; j < hStars.length; j++) {
+                        var dx = hStars[i].x - hStars[j].x; var dy = hStars[i].y - hStars[j].y; var dist = Math.sqrt(dx * dx + dy * dy);
+                        if (dist < 80) {
+                            hCtx.beginPath(); hCtx.moveTo(hStars[i].x, hStars[i].y); hCtx.lineTo(hStars[j].x, hStars[j].y);
+                            hCtx.strokeStyle = "rgba(0, 240, 255, " + (0.24 - dist / 80 * 0.24) + ")"; hCtx.lineWidth = 0.8; hCtx.stroke();
+                        }
+                    }
+                }
+                for (var k = 0; k < hStars.length; k++) {
+                    var s = hStars[k]; s.delta += s.speed; s.x += s.vx; s.y += s.vy;
+                    if (s.x < 0) s.x = headerCanvas.width; if (s.x > headerCanvas.width) s.x = 0;
+                    if (s.y < 0) s.y = headerCanvas.height; if (s.y > headerCanvas.height) s.y = 0;
+                    var dynamicAlpha = Math.abs(Math.sin(s.delta)) * 0.8 + 0.2;
+                    hCtx.beginPath(); hCtx.arc(s.x, s.y, s.radius, 0, Math.PI * 2); hCtx.fillStyle = s.color; hCtx.globalAlpha = dynamicAlpha;
+                    hCtx.shadowBlur = s.radius > 1.2 ? 10 : 0; hCtx.shadowColor = s.color; hCtx.fill(); hCtx.shadowBlur = 0; hCtx.globalAlpha = 1;
+                }
+                spawnHeaderMeteor();
+                for (var m = hMeteors.length - 1; m >= 0; m--) {
+                    var met = hMeteors[m]; var x2 = met.x - met.len * Math.cos(met.angle); var y2 = met.y - met.len * Math.sin(met.angle);
+                    var grad = hCtx.createLinearGradient(met.x, met.y, x2, y2);
+                    grad.addColorStop(0, "rgba(255, 255, 255, " + met.opacity + ")"); grad.addColorStop(0.5, "rgba(0, 240, 255, " + (met.opacity * 0.8) + ")"); grad.addColorStop(1, "transparent");
+                    hCtx.beginPath(); hCtx.moveTo(met.x, met.y); hCtx.lineTo(x2, y2); hCtx.strokeStyle = grad; hCtx.lineWidth = 2.4; hCtx.stroke();
+                    met.x += met.speed * Math.cos(met.angle); met.y += met.speed * Math.sin(met.angle); met.opacity -= 0.015;
+                    if (met.opacity <= 0 || met.x > headerCanvas.width || met.y > headerCanvas.height) { hMeteors.splice(m, 1); }
+                }
+                requestAnimationFrame(drawHeaderSpace);
+            }
+            drawHeaderSpace();
+        });
+
+        /* Global Space Canvas */
+        document.addEventListener('DOMContentLoaded', function () {
+            var canvas = document.getElementById('globalSpaceCanvas');
+            if (!canvas) return;
+            var ctx = canvas.getContext('2d'); var stars = []; var meteors = []; var numStars = 150;
+            function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+            resizeCanvas(); window.addEventListener('resize', resizeCanvas);
+
+            var starColors = ['#ffffff', '#00f0ff', '#818cf8', '#38bdf8', '#c084fc', '#fde047'];
+            for (var i = 0; i < numStars; i++) {
+                stars.push({
+                    x: Math.random() * canvas.width, y: Math.random() * canvas.height, radius: Math.random() * 1.8 + 0.5,
+                    color: starColors[Math.floor(Math.random() * starColors.length)], alpha: Math.random() * 0.85 + 0.15,
+                    speed: Math.random() * 0.02 + 0.005, delta: Math.random() * Math.PI * 2, vx: (Math.random() - 0.5) * 0.15, vy: (Math.random() - 0.5) * 0.15
+                });
+            }
+
+            var astronauts = [
+                { x: 180, y: 220, vx: 0.22, vy: 0.07, angle: 0.2, rotSpeed: 0.0025, scale: 2.2 },
+                { x: canvas.width - 240, y: canvas.height - 280, vx: -0.18, vy: -0.05, angle: -0.3, rotSpeed: -0.002, scale: 2.0 }
+            ];
+            var shuttle = { x: -120, y: canvas.height * 0.35, vx: 0.55, vy: 0.11, angle: Math.atan2(0.11, 0.55), scale: 2.5 };
+
+            function drawAstronaut(ast) {
+                ctx.save(); ctx.translate(ast.x, ast.y); ctx.rotate(ast.angle); ctx.scale(ast.scale, ast.scale);
+                ctx.beginPath(); ctx.moveTo(-10, 0); ctx.quadraticCurveTo(-45, 25, -90, 45); ctx.strokeStyle = "rgba(0, 240, 255, 0.35)"; ctx.lineWidth = 1.2; ctx.stroke();
+                ctx.fillStyle = "#1e293b"; ctx.fillRect(-13, -14, 8, 28); ctx.fillStyle = "#0284c7"; ctx.fillRect(-12, -10, 2, 20);
+                ctx.fillStyle = "#f8fafc"; ctx.beginPath(); ctx.roundRect(-6, -13, 16, 26, 4); ctx.fill();
+                ctx.fillStyle = "#0284c7"; ctx.fillRect(-2, -6, 8, 10); ctx.fillStyle = "#00ff66"; ctx.fillRect(-1, -4, 2, 2); ctx.fillStyle = "#ff0055"; ctx.fillRect(2, -4, 2, 2);
+                ctx.beginPath(); ctx.arc(2, -21, 9, 0, Math.PI * 2); ctx.fillStyle = "#f8fafc"; ctx.fill();
+                ctx.beginPath(); ctx.arc(4, -21, 5.5, 0, Math.PI * 2); ctx.fillStyle = "#f59e0b"; ctx.shadowColor = "#fbbf24"; ctx.shadowBlur = 12; ctx.fill(); ctx.shadowBlur = 0;
+                ctx.fillStyle = "#e2e8f0"; ctx.fillRect(-5, 13, 5, 14); ctx.fillRect(3, 13, 5, 15); ctx.fillStyle = "#475569"; ctx.fillRect(-6, 27, 6, 4); ctx.fillRect(2, 28, 6, 4);
+                ctx.fillStyle = "#e2e8f0"; ctx.fillRect(-11, -10, 6, 13); ctx.fillRect(10, -10, 6, 13); ctx.fillStyle = "#0284c7"; ctx.fillRect(-11, 3, 6, 3); ctx.fillRect(10, 3, 6, 3);
+                ctx.restore();
+            }
+
+            function drawShuttle(sh) {
+                ctx.save(); ctx.translate(sh.x, sh.y); ctx.rotate(sh.angle); ctx.scale(sh.scale, sh.scale);
+                var flameGrad = ctx.createLinearGradient(-40, 0, -10, 0); flameGrad.addColorStop(0, "transparent"); flameGrad.addColorStop(0.4, "rgba(0, 240, 255, 0.8)"); flameGrad.addColorStop(1, "rgba(255, 255, 255, 0.95)");
+                ctx.fillStyle = flameGrad; ctx.shadowColor = "#00f0ff"; ctx.shadowBlur = 18;
+                ctx.beginPath(); ctx.moveTo(-10, -4); ctx.lineTo(-42, -2); ctx.lineTo(-10, 0); ctx.closePath(); ctx.fill();
+                ctx.beginPath(); ctx.moveTo(-10, 0); ctx.lineTo(-42, 2); ctx.lineTo(-10, 4); ctx.closePath(); ctx.fill(); ctx.shadowBlur = 0;
+                ctx.beginPath(); ctx.moveTo(22, 0); ctx.lineTo(-15, -18); ctx.lineTo(-10, -3); ctx.lineTo(-10, 3); ctx.lineTo(-15, 18); ctx.closePath(); ctx.fillStyle = "#0f172a"; ctx.fill();
+                ctx.beginPath(); ctx.moveTo(26, 0); ctx.lineTo(10, -7); ctx.lineTo(-18, -6); ctx.lineTo(-18, 6); ctx.lineTo(10, 7); ctx.closePath(); ctx.fillStyle = "#f8fafc"; ctx.fill();
+                ctx.beginPath(); ctx.moveTo(26, 0); ctx.lineTo(16, -3.5); ctx.lineTo(16, 3.5); ctx.closePath(); ctx.fillStyle = "#0284c7"; ctx.fill();
+                ctx.beginPath(); ctx.moveTo(-10, 0); ctx.lineTo(-18, -13); ctx.lineTo(-18, 0); ctx.closePath(); ctx.fillStyle = "#f8fafc"; ctx.fill();
+                ctx.restore();
+            }
+
+            function spawnMeteor() {
+                if (meteors.length < 2 && Math.random() < 0.02) {
+                    meteors.push({ x: Math.random() * canvas.width * 0.85, y: 0, len: Math.random() * 120 + 70, speed: Math.random() * 8 + 6, angle: Math.PI / 4.2, opacity: 0.95 });
+                }
+            }
+
+            function renderLiveSpace() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                for (var i = 0; i < stars.length; i++) {
+                    for (var j = i + 1; j < stars.length; j++) {
+                        var dx = stars[i].x - stars[j].x; var dy = stars[i].y - stars[j].y; var dist = Math.sqrt(dx * dx + dy * dy);
+                        if (dist < 90) {
+                            ctx.beginPath(); ctx.moveTo(stars[i].x, stars[i].y); ctx.lineTo(stars[j].x, stars[j].y);
+                            ctx.strokeStyle = "rgba(0, 240, 255, " + (0.08 - dist / 90 * 0.08) + ")"; ctx.lineWidth = 0.5; ctx.stroke();
+                        }
+                    }
+                }
+                for (var k = 0; k < stars.length; k++) {
+                    var s = stars[k]; s.delta += s.speed; s.x += s.vx; s.y += s.vy;
+                    if (s.x < 0) s.x = canvas.width; if (s.x > canvas.width) s.x = 0;
+                    if (s.y < 0) s.y = canvas.height; if (s.y > canvas.height) s.y = 0;
+                    var dynamicAlpha = Math.abs(Math.sin(s.delta)) * 0.75 + 0.25;
+                    ctx.beginPath(); ctx.arc(s.x, s.y, s.radius, 0, Math.PI * 2); ctx.fillStyle = s.color; ctx.globalAlpha = dynamicAlpha;
+                    if (s.radius > 1.3) { ctx.shadowBlur = 8; ctx.shadowColor = s.color; } ctx.fill(); ctx.shadowBlur = 0; ctx.globalAlpha = 1;
+                }
+                for (var a = 0; a < astronauts.length; a++) {
+                    var ast = astronauts[a]; ast.x += ast.vx; ast.y += ast.vy; ast.angle += ast.rotSpeed;
+                    if (ast.x > canvas.width + 120) ast.x = -100; if (ast.x < -120) ast.x = canvas.width + 80;
+                    if (ast.y > canvas.height + 100) ast.y = -80; if (ast.y < -100) ast.y = canvas.height + 80;
+                    drawAstronaut(ast);
+                }
+                shuttle.x += shuttle.vx; shuttle.y += shuttle.vy;
+                if (shuttle.x > canvas.width + 160) { shuttle.x = -130; shuttle.y = Math.random() * (canvas.height * 0.65) + 60; }
+                drawShuttle(shuttle);
+
+                spawnMeteor();
+                for (var m = meteors.length - 1; m >= 0; m--) {
+                    var met = meteors[m]; var x2 = met.x - met.len * Math.cos(met.angle); var y2 = met.y - met.len * Math.sin(met.angle);
+                    var grad = ctx.createLinearGradient(met.x, met.y, x2, y2);
+                    grad.addColorStop(0, "rgba(255, 255, 255, " + met.opacity + ")"); grad.addColorStop(0.4, "rgba(251, 146, 60, " + (met.opacity * 0.75) + ")"); grad.addColorStop(1, "transparent");
+                    ctx.beginPath(); ctx.moveTo(met.x, met.y); ctx.lineTo(x2, y2); ctx.strokeStyle = grad; ctx.lineWidth = 2.2; ctx.stroke();
+                    met.x += met.speed * Math.cos(met.angle); met.y += met.speed * Math.sin(met.angle); met.opacity -= 0.012;
+                    if (met.opacity <= 0 || met.x > canvas.width || met.y > canvas.height) { meteors.splice(m, 1); }
+                }
+                requestAnimationFrame(renderLiveSpace);
+            }
+            renderLiveSpace();
+        });
+
+        /* Launch Sequence Loop */
+        var warpCanvas = document.getElementById('warpCanvas');
+        var warpCtx = warpCanvas.getContext('2d'); var warpStars = []; var warpRunning = true; var introTimers = [];
+        function initWarpStars() {
+            warpStars = []; warpCanvas.width = window.innerWidth || 1920; warpCanvas.height = window.innerHeight || 1080;
+            for (var i = 0; i < 300; i++) {
+                warpStars.push({ x: (Math.random() - 0.5) * warpCanvas.width * 2, y: (Math.random() - 0.5) * warpCanvas.height * 2, z: Math.random() * warpCanvas.width });
+            }
+        }
+        initWarpStars(); window.addEventListener('resize', initWarpStars);
+
+        function drawWarp() {
+            if (!warpRunning) return;
+            warpCtx.fillStyle = "rgba(1, 4, 10, 0.3)"; warpCtx.fillRect(0, 0, warpCanvas.width, warpCanvas.height);
+            var cx = warpCanvas.width / 2; var cy = warpCanvas.height / 2;
+            for (var i = 0; i < warpStars.length; i++) {
+                var s = warpStars[i]; s.z -= 11; if (s.z <= 0) s.z = warpCanvas.width;
+                var k = 250 / s.z; var px = s.x * k + cx; var py = s.y * k + cy;
+                if (px >= 0 && px <= warpCanvas.width && py >= 0 && py <= warpCanvas.height) {
+                    var size = (1 - s.z / warpCanvas.width) * 3.8; var alpha = (1 - s.z / warpCanvas.width);
+                    warpCtx.beginPath(); warpCtx.arc(px, py, Math.max(0.5, size), 0, Math.PI * 2); warpCtx.fillStyle = "rgba(0, 240, 255, " + alpha + ")";
+                    warpCtx.shadowBlur = 8; warpCtx.shadowColor = "#00f0ff"; warpCtx.fill();
+                }
+            }
+            requestAnimationFrame(drawWarp);
+        }
+
+        function startLaunchSequence() {
+            if (sessionStorage.getItem('hasSeenLaunch') === 'true') {
+                var overlay = document.getElementById('launchSequenceOverlay'); if (overlay) overlay.style.display = 'none'; return;
+            }
+            warpRunning = true; var overlay = document.getElementById('launchSequenceOverlay'); if (overlay) { overlay.style.display = 'flex'; overlay.classList.remove('fade-out'); }
+            drawWarp();
+            var msg = document.getElementById('launchStatusMsg'); var sub = document.getElementById('launchSubMsg');
+            if (msg) msg.innerText = "STAGE 1: LAUNCH PAD IGNITION & ASCENT..."; if (sub) sub.innerText = "CARTOSAT / SENTINEL SENSOR ARRAY CALIBRATION";
+            playSciFiBeep(520, 'sawtooth', 0.2);
+
+            introTimers.push(setTimeout(function() { if (msg) msg.innerText = "STAGE 2: FAIRING SEPARATION & STRATOSPHERE ESCAPE..."; if (sub) sub.innerText = "ACCELERATING TO ESCAPE VELOCITY (7.8 KM/S)"; playSciFiBeep(880, 'sine', 0.15); }, 1800));
+            introTimers.push(setTimeout(function() { if (msg) msg.innerText = "STAGE 3: ORBITAL INSERTION & SOLAR ARRAYS UNFURLED..."; if (sub) sub.innerText = "LOCKING 786 KM SUN-SYNCHRONOUS ORBIT (SSO)"; playSciFiBeep(1100, 'triangle', 0.2); }, 3600));
+            introTimers.push(setTimeout(function() { if (msg) msg.innerText = "STAGE 4: ENTERING MULTISPECTRAL SENSOR PAYLOAD..."; if (sub) sub.innerText = "ACTIVATING GEMINI 3.6 FLASH VISION-LANGUAGE NEURAL MATRIX"; playSciFiBeep(1400, 'sine', 0.25); }, 5200));
+            introTimers.push(setTimeout(function() { endIntroSequence(); }, 7000));
+        }
+
+        function endIntroSequence() {
+            sessionStorage.setItem('hasSeenLaunch', 'true'); introTimers.forEach(clearTimeout); warpRunning = false;
+            var overlay = document.getElementById('launchSequenceOverlay'); if (overlay) { overlay.classList.add('fade-out'); setTimeout(function() { overlay.style.display = 'none'; }, 950); }
+            playSciFiBeep(1500, 'sawtooth', 0.25);
+        }
+
+        function replayLaunchSequence() {
+            sessionStorage.removeItem('hasSeenLaunch');
+            var overlay = document.getElementById('launchSequenceOverlay'); var rocket = document.querySelector('.rocket-icon'); var progress = document.querySelector('.progress-bar-fill');
+            if (rocket) { rocket.style.animation = 'none'; rocket.offsetHeight; rocket.style.animation = null; }
+            if (progress) { progress.style.animation = 'none'; progress.offsetHeight; progress.style.animation = null; }
+            startLaunchSequence();
+        }
+
+        startLaunchSequence();
+
+        /* Clocks */
+        setInterval(function() {
+            var now = new Date();
+            var uHours = String(now.getUTCHours()).padStart(2, '0');
+            var uMins = String(now.getUTCMinutes()).padStart(2, '0');
+            var uSecs = String(now.getUTCSeconds()).padStart(2, '0');
+            var clockEl = document.getElementById('telemetryClock');
+            if (clockEl) clockEl.innerText = uHours + ":" + uMins + ":" + uSecs + " UTC";
+
+            var istString = now.toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata', hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            var clockISTEl = document.getElementById('telemetryClockIST');
+            if (clockISTEl) clockISTEl.innerText = istString + " IST";
+        }, 1000);
+
+        /* Synthetic Sound Generator */
+        var audioCtx = null;
+        function playSciFiBeep(freq, type, duration) {
+            try {
+                if (!audioCtx) { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
+                var osc = audioCtx.createOscillator(); var gain = audioCtx.createGain();
+                osc.type = type || 'sine'; osc.frequency.value = freq || 800;
+                gain.gain.setValueAtTime(0.03, audioCtx.currentTime); gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + (duration || 0.1));
+                osc.connect(gain); gain.connect(audioCtx.destination); osc.start(); osc.stop(audioCtx.currentTime + (duration || 0.1));
+            } catch(e) {}
         }
     </script>
 </body>
