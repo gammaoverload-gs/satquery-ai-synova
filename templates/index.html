@@ -186,32 +186,34 @@
         /* ================== 🗂️ SYNOVA COMMAND CENTER TABS ================== */
         .workspace-tabs-nav {
             display: flex;
-            gap: 10px;
+            gap: 8px;
             background: rgba(4, 9, 20, 0.85);
             border: 1px solid var(--border-color);
             padding: 8px;
             border-radius: 10px;
             backdrop-filter: blur(18px);
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+            flex-wrap: wrap;
         }
 
         .tab-btn {
             flex: 1;
+            min-width: 180px;
             background: rgba(2, 6, 23, 0.85);
             border: 1px solid rgba(56, 189, 248, 0.2);
             color: var(--text-muted);
-            padding: 12px 18px;
+            padding: 12px 16px;
             border-radius: 6px;
             font-family: 'Orbitron', sans-serif;
-            font-size: 11.5px;
+            font-size: 11px;
             font-weight: 700;
-            letter-spacing: 1px;
+            letter-spacing: 0.8px;
             cursor: pointer;
             transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
+            gap: 8px;
         }
 
         .tab-btn:hover {
@@ -230,8 +232,8 @@
 
         .tab-badge {
             font-family: 'JetBrains Mono', monospace;
-            font-size: 9px;
-            padding: 2px 7px;
+            font-size: 8.5px;
+            padding: 2px 6px;
             border-radius: 3px;
             text-transform: uppercase;
         }
@@ -249,6 +251,96 @@
         @keyframes fadeInTab {
             from { opacity: 0; transform: translateY(8px); }
             to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ================== 💡 INTERACTIVE TOOLTIP POPUP STYLES ================== */
+        .geo-tooltip {
+            position: relative;
+            color: var(--accent-cyan);
+            border-bottom: 1.5px dotted var(--accent-cyan);
+            cursor: help;
+            font-weight: 600;
+        }
+
+        .geo-tooltip::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%) translateY(4px);
+            background: #020a1a;
+            border: 1px solid var(--accent-cyan);
+            color: #f8fafc;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 11px;
+            line-height: 1.4;
+            white-space: normal;
+            width: 240px;
+            text-shadow: none;
+            box-shadow: 0 4px 20px rgba(0, 240, 255, 0.4);
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 9999;
+            font-family: 'Inter', sans-serif;
+            font-weight: 400;
+        }
+
+        .geo-tooltip:hover::after {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* Glossary Grid Layout */
+        .glossary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 14px;
+            margin-top: 10px;
+        }
+
+        .glossary-card {
+            background: #030816;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+
+        .glossary-card:hover {
+            border-color: var(--accent-cyan);
+            box-shadow: 0 0 15px var(--accent-glow);
+            transform: translateY(-2px);
+        }
+
+        .glossary-term {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 13px;
+            font-weight: 800;
+            color: var(--accent-cyan);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .glossary-tag {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 9px;
+            padding: 2px 6px;
+            background: rgba(0, 240, 255, 0.1);
+            border: 1px solid rgba(0, 240, 255, 0.3);
+            border-radius: 3px;
+            color: var(--accent-cyan);
+        }
+
+        .glossary-desc {
+            font-size: 12px;
+            color: #cbd5e1;
+            line-height: 1.5;
         }
 
         /* ================== CARDS & PANELS ================== */
@@ -767,6 +859,9 @@
                 <span>🧠</span> DECODED REASONING & LULC 
                 {% if has_report %}<span class="tab-badge cyan">DECODED</span>{% endif %}
             </button>
+            <button class="tab-btn" onclick="switchTab('tab-glossary', this)">
+                <span>📖</span> TERMINOLOGY GLOSSARY
+            </button>
         </nav>
 
         <!-- TAB 1: SENSOR INGESTION & TARGETING FORM -->
@@ -931,7 +1026,7 @@
                         <span>🧠 DECODED AGENTIC REASONING & RADIOMETRIC TELEMETRY</span>
                     </div>
                     <div class="action-bar">
-                        <button type="button" class="btn-action" onclick="playAudioReport()">🔊 COMMS</button>
+                        <button type="button" class="btn-action" onclick="playAudioReport()">🔊 VOICE COMMS</button>
                         <button type="button" class="btn-action" onclick="downloadGeoJSONDirect()">🗺️ GEOJSON</button>
                         <button type="button" class="btn-action" onclick="downloadReportDirect()">📥 JSON</button>
                         <button type="button" class="btn-action" onclick="downloadPDFReport()" style="background: rgba(0, 255, 102, 0.15); border-color: var(--accent-green); color: var(--accent-green);">📄 PDF REPORT</button>
@@ -981,6 +1076,61 @@
             </div>
         </div>
 
+        <!-- TAB 4: TERMINOLOGY & KEYWORDS GLOSSARY -->
+        <div id="tab-glossary" class="tab-content">
+            <div class="card">
+                <div class="card-title">
+                    <span>📖 GEOSPATIAL & REMOTE SENSING TERMINOLOGY GLOSSARY</span>
+                    <div style="width: 250px;">
+                        <input type="text" id="glossary_search" placeholder="Filter term (e.g. SAR, LULC)..." onkeyup="filterGlossary()" style="padding: 5px 10px; font-size: 11px;">
+                    </div>
+                </div>
+
+                <div class="glossary-grid" id="glossaryGrid">
+                    <div class="glossary-card">
+                        <div class="glossary-term">SAR <span class="glossary-tag">RADAR SENSOR</span></div>
+                        <div class="glossary-desc"><strong>Synthetic Aperture Radar:</strong> Radar-based imaging that pierces through dense clouds, smoke, and darkness to capture terrain structure 24/7.</div>
+                    </div>
+                    <div class="glossary-card">
+                        <div class="glossary-term">LULC <span class="glossary-tag">ANALYTICS</span></div>
+                        <div class="glossary-desc"><strong>Land Use / Land Cover:</strong> Automatic classification of satellite pixels into vegetation, urban buildings, water bodies, and bare soil.</div>
+                    </div>
+                    <div class="glossary-card">
+                        <div class="glossary-term">NIR <span class="glossary-tag">OPTICAL BAND</span></div>
+                        <div class="glossary-desc"><strong>Near-Infrared Light:</strong> Wavelength just beyond visible red light, heavily reflected by healthy chlorophyll in plants to detect vegetation health.</div>
+                    </div>
+                    <div class="glossary-card">
+                        <div class="glossary-term">NDVI <span class="glossary-tag">SPECTRAL INDEX</span></div>
+                        <div class="glossary-desc"><strong>Normalized Difference Vegetation Index:</strong> A mathematical formula measuring greenery density and crop health from satellite bands.</div>
+                    </div>
+                    <div class="glossary-card">
+                        <div class="glossary-term">GeoTIFF <span class="glossary-tag">DATA FORMAT</span></div>
+                        <div class="glossary-desc"><strong>Geographic TIFF Image:</strong> A high-resolution satellite image file embedded with real-world spatial coordinates and map projections.</div>
+                    </div>
+                    <div class="glossary-card">
+                        <div class="glossary-term">MGRS <span class="glossary-tag">NAVIGATION</span></div>
+                        <div class="glossary-desc"><strong>Military Grid Reference System:</strong> Standardized alpha-numeric global grid system used by defense forces for pinpoint target location.</div>
+                    </div>
+                    <div class="glossary-card">
+                        <div class="glossary-term">VLM <span class="glossary-tag">AI CORE</span></div>
+                        <div class="glossary-desc"><strong>Vision-Language Model:</strong> AI neural network (like Gemini 3.6 Flash) capable of understanding satellite images and text queries simultaneously.</div>
+                    </div>
+                    <div class="glossary-card">
+                        <div class="glossary-term">SWIR <span class="glossary-tag">INFRARED BAND</span></div>
+                        <div class="glossary-desc"><strong>Short-Wave Infrared:</strong> Wavelength used to detect moisture levels, wildfire hotspots, soil composition, and urban concrete.</div>
+                    </div>
+                    <div class="glossary-card">
+                        <div class="glossary-term">Grounding <span class="glossary-tag">AI DETECTION</span></div>
+                        <div class="glossary-desc"><strong>Visual Object Grounding:</strong> Locating specific targets (runways, vessels, solar panels) mentioned in a text query and drawing bounding boxes.</div>
+                    </div>
+                    <div class="glossary-card">
+                        <div class="glossary-term">Bi-Temporal <span class="glossary-tag">CHANGE DETECT</span></div>
+                        <div class="glossary-desc"><strong>Time-Series Comparison:</strong> Analyzing two satellite photos of the exact same area taken at different dates ($T_1$ vs $T_2$) to detect changes.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <div id="rawAnalysisData" style="display: none;">{{ analysis }}</div>
@@ -1003,6 +1153,40 @@
             if (tabId === 'tab-ingestion' && map) {
                 setTimeout(function() { map.invalidateSize(); }, 100);
             }
+        }
+
+        /* 💡 Highlight Keywords with On-Hover Tooltips */
+        var termDict = {
+            "SAR": "Synthetic Aperture Radar: Radar imaging that pierces through clouds & darkness 24/7.",
+            "LULC": "Land Use / Land Cover: Automatic classification into vegetation, urban, water, and soil.",
+            "NIR": "Near-Infrared: Wavelength reflected by healthy plant leaves to measure vegetation.",
+            "NDVI": "Normalized Difference Vegetation Index: Formula measuring greenery & crop health.",
+            "GeoTIFF": "Geographic TIFF: Satellite image file embedded with real-world map coordinates.",
+            "MGRS": "Military Grid Reference System: Standardized alphanumeric location grid.",
+            "SWIR": "Short-Wave Infrared: Band used for moisture, fire hotspots & soil detection.",
+            "Grounding": "Visual Object Grounding: Detecting & bounding targets mentioned in text.",
+            "Bi-temporal": "Two-date satellite image comparison (T1 vs T2) for change detection."
+        };
+
+        function addHoverTooltips(htmlText) {
+            var keys = Object.keys(termDict);
+            keys.forEach(function(key) {
+                var regex = new RegExp("\\b(" + key + ")\\b", "gi");
+                htmlText = htmlText.replace(regex, function(match) {
+                    return '<span class="geo-tooltip" data-tooltip="' + termDict[key] + '">' + match + '</span>';
+                });
+            });
+            return htmlText;
+        }
+
+        /* Filter Glossary Cards */
+        function filterGlossary() {
+            var query = document.getElementById('glossary_search').value.toLowerCase();
+            var cards = document.querySelectorAll('.glossary-card');
+            cards.forEach(function(card) {
+                var text = card.innerText.toLowerCase();
+                card.style.display = text.indexOf(query) !== -1 ? 'flex' : 'none';
+            });
         }
 
         /* 🌐 Global OpenStreetMap Nominatim Location Search Engine */
@@ -1038,7 +1222,7 @@
                 });
         }
 
-        /* 📄 Client-Side High-Fidelity PDF Dossier Generator */
+        /* 📄 Client-Side High-Fidelity PDF Dossier Generator with Glossary Appendix */
         function downloadPDFReport() {
             playSciFiBeep(1100, 'sine', 0.12);
             
@@ -1074,11 +1258,26 @@
                     <p style="margin: 2px 0;"><strong>SENSOR CONSTELLATION:</strong> Sentinel-1A C-Band SAR & Cartosat VIS-NIR</p>
                 </div>
 
-                <div style="font-size: 12px; line-height: 1.7; color: #e2e8f0;">
+                <div style="font-size: 12px; line-height: 1.7; color: #e2e8f0; margin-bottom: 30px;">
                     ${analysisHTML}
                 </div>
 
-                <div style="margin-top: 35px; border-top: 1px solid rgba(0, 240, 255, 0.2); padding-top: 12px; text-align: center; font-size: 9px; color: #64748b; letter-spacing: 1px;">
+                <div style="border-top: 2px dashed #00f0ff; padding-top: 18px; margin-top: 30px;">
+                    <h3 style="color: #00f0ff; font-size: 13px; margin: 0 0 10px 0;">📖 ANNEXURE: KEY TECHNICAL TERMS GLOSSARY</h3>
+                    <table style="width: 100%; border-collapse: collapse; font-size: 10px; color: #cbd5e1;">
+                        <tr style="background: rgba(0, 240, 255, 0.1); color: #00f0ff;">
+                            <th style="padding: 6px; text-align: left; border: 1px solid #00f0ff;">TERM</th>
+                            <th style="padding: 6px; text-align: left; border: 1px solid #00f0ff;">SIMPLE ENGLISH MEANING</th>
+                        </tr>
+                        <tr><td style="padding: 5px; border: 1px solid rgba(0,240,255,0.2);"><strong>SAR</strong></td><td style="padding: 5px; border: 1px solid rgba(0,240,255,0.2);">Synthetic Aperture Radar: Cloud-penetrating radar imaging.</td></tr>
+                        <tr><td style="padding: 5px; border: 1px solid rgba(0,240,255,0.2);"><strong>LULC</strong></td><td style="padding: 5px; border: 1px solid rgba(0,240,255,0.2);">Land Use / Land Cover: Automated vegetation/urban/water classification.</td></tr>
+                        <tr><td style="padding: 5px; border: 1px solid rgba(0,240,255,0.2);"><strong>NIR / SWIR</strong></td><td style="padding: 5px; border: 1px solid rgba(0,240,255,0.2);">Near / Short-Wave Infrared: Light bands for crop health & fire detection.</td></tr>
+                        <tr><td style="padding: 5px; border: 1px solid rgba(0,240,255,0.2);"><strong>MGRS</strong></td><td style="padding: 5px; border: 1px solid rgba(0,240,255,0.2);">Military Grid Reference System: Precision alphanumeric location grid.</td></tr>
+                        <tr><td style="padding: 5px; border: 1px solid rgba(0,240,255,0.2);"><strong>GeoTIFF</strong></td><td style="padding: 5px; border: 1px solid rgba(0,240,255,0.2);">Geographical TIFF image embedded with real-world map coordinates.</td></tr>
+                    </table>
+                </div>
+
+                <div style="margin-top: 30px; border-top: 1px solid rgba(0, 240, 255, 0.2); padding-top: 12px; text-align: center; font-size: 9px; color: #64748b; letter-spacing: 1px;">
                     CONFIDENTIAL // OFFICIAL ISRO SIH 2026 GEOSPATIAL AGENTIC ANALYSIS DOSSIER
                 </div>
             `;
@@ -1829,11 +2028,12 @@
                 });
             }
 
-            /* Analytics Parsing */
+            /* Analytics Parsing with Hover Tooltip Integration */
             var rawText = document.getElementById('rawAnalysisData').innerText.trim();
             var analysisBox = document.getElementById('analysisBox');
             if (rawText) {
                 var parsedHTML = (typeof marked !== 'undefined') ? marked.parse(rawText) : rawText;
+                parsedHTML = addHoverTooltips(parsedHTML);
                 analysisBox.innerHTML = parsedHTML;
             }
 
